@@ -20,7 +20,7 @@ It is intended for:
 
 ---
 
-## 🚀 What’s New in 4.0
+## 🚀 Major Changes Introduced in 4.0
 
 This version introduces **significant internal refactoring and performance improvements**:
 
@@ -75,9 +75,10 @@ No content migration required.
 
 ## ❗ Limitations
 
-- Not suitable for new projects
-- Not compatible with block-based multilingual systems
-- Still relies on legacy content encoding
+- qTranslate-KQ currently **forces the Classic Widgets interface**. Block Widgets / Site Editor support is not yet implemented and tested.
+- **Classic Editor is the currently tested editing environment.** Gutenberg / Block Editor is not part of the current production workflow and has not yet been fully validated.
+- Still relies on the legacy qTranslate multilingual content encoding format.
+- Intended primarily for maintaining existing qTranslate-based sites rather than new projects.
 
 ---
 
@@ -98,6 +99,17 @@ Do NOT use this plugin if:
 - you are building a new website
 - you plan long-term scalability
 - you want modern multilingual architecture
+
+---
+
+## 🛠 Roadmap / TODO
+
+- [ ] Test and improve Gutenberg / Block Editor compatibility.
+- [ ] Add and test Block Widgets / Site Editor support.
+- [ ] Remove the forced Classic Widgets mode once Block Widgets support is ready.
+- [ ] Extend testing across current WordPress, PHP, themes and third-party plugins.
+
+For now, qTranslate-KQ intentionally uses Classic Widgets, and Classic Editor is the tested editing environment.
 
 ---
 
@@ -128,7 +140,7 @@ Refactor & performance improvements:
 
 **Testing release for legacy usage.**
 
-The Classic Editor + Classic Widgets workflow has been tested in production-like use. Gutenberg / Block Widgets support has not yet been fully validated. Test on a staging copy first and keep a current backup before deployment.
+The Classic Editor + Classic Widgets workflow has been tested in production-like use. Gutenberg / Block Editor and Block Widgets / Site Editor support has not yet been fully validated. Test on a staging copy first and keep a current backup before deployment.
 
 ---
 

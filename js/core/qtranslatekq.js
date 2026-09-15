@@ -1,11 +1,12 @@
+/*! Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. */
 /**
- * Main qTranslateX class for LSB and content hooks
+ * Main qTranslateKQ class for LSB and content hooks
  *
  * Search for 'Designed as interface for other plugin integration' in comments to functions
  * to find out which functions are safe to use in the 3rd-party integration.
  * Avoid accessing internal variables directly, as they are subject to be re-designed at any time.
  * Single global variable 'qTranslateConfig' is an entry point to the interface.
- * - qTranslateConfig.qtx - is a shorthand reference to the only global object of type 'qTranslateX'.
+ * - qTranslateConfig.qtkq - is a shorthand reference to the only global object of type 'qTranslateKQ'.
  * - qTranslateConfig.js - is a place where custom Java script functions are stored, if needed.
  * Read Integration Guide: https://github.com/qtranslate/qtranslate-xt/wiki/Integration-Guide for more information.
  */
@@ -18,8 +19,8 @@ const $ = jQuery;
 
 const qTranslateConfig = window.qTranslateConfig;
 
-const qTranslateX = function (pg) {
-    const qtx = this;
+const qTranslateKQ = function (pg) {
+    const qtkq = this;
 
     /**
      * Internal state of hooks and languageSwitch, not exposed
@@ -153,7 +154,7 @@ const qTranslateX = function (pg) {
                     return contentHooks[inputField.id];
                 // otherwise some Java script already removed previously hooked element
                 console.warn('No input field with id=', inputField.id);
-                qtx.removeContentHook(inputField);
+                qtkq.removeContentHook(inputField);
             }
         } else if (!contentHooks[fieldName]) {
             inputField.id = fieldName;
@@ -168,25 +169,25 @@ const qTranslateX = function (pg) {
         const hook = contentHooks[inputField.id] = {};
         hook.name = fieldName;
         hook.lang = qTranslateConfig.activeLanguage;
-        qtx.attachContentHook(inputField);
+        qtkq.attachContentHook(inputField);
 
-        let qtxPrefix;
+        let qtkqPrefix;
         if (encode) {
             switch (encode) {
                 case 'slug':
-                    qtxPrefix = 'qtranslate-slugs[';
+                    qtkqPrefix = 'qtranslate-slugs[';
                     break;
                 case 'term':
-                    qtxPrefix = 'qtranslate-terms[';
+                    qtkqPrefix = 'qtranslate-terms[';
                     break;
                 default:
-                    qtxPrefix = 'qtranslate-fields[';
+                    qtkqPrefix = 'qtranslate-fields[';
                     break;
             }
         } else {
             // since 3.1 we get rid of <--:--> encoding
             encode = '[';
-            qtxPrefix = 'qtranslate-fields[';
+            qtkqPrefix = 'qtranslate-fields[';
         }
 
         hook.encode = encode;
@@ -194,9 +195,9 @@ const qTranslateX = function (pg) {
         let baseName, suffixName;
         const pos = hook.name.indexOf('[');
         if (pos < 0) {
-            baseName = qtxPrefix + hook.name + ']';
+            baseName = qtkqPrefix + hook.name + ']';
         } else {
-            baseName = qtxPrefix + hook.name.substring(0, pos) + ']';
+            baseName = qtkqPrefix + hook.name.substring(0, pos) + ']';
             if (hook.name.lastIndexOf('[]') < 0) {
                 baseName += hook.name.substring(pos);
             } else {
@@ -287,14 +288,14 @@ const qTranslateX = function (pg) {
         return hook;
     };
     this.addContentHookC = function (inputField) {
-        return qtx.addContentHook(inputField, '['); // TODO shouldn't it be '<' ?!
+        return qtkq.addContentHook(inputField, '['); // TODO shouldn't it be '<' ?!
     };
     this.addContentHookB = function (inputField) {
-        return qtx.addContentHook(inputField, '[');
+        return qtkq.addContentHook(inputField, '[');
     };
 
     this.addContentHookById = function (id, sep, name) {
-        return qtx.addContentHook(document.getElementById(id), sep, name);
+        return qtkq.addContentHook(document.getElementById(id), sep, name);
     };
     this.addContentHookByIdName = function (name) {
         let sep;
@@ -307,13 +308,13 @@ const qTranslateX = function (pg) {
             default:
                 break;
         }
-        return qtx.addContentHookById(name, sep);
+        return qtkq.addContentHookById(name, sep);
     };
     this.addContentHookByIdC = function (id) {
-        return qtx.addContentHookById(id, '['); // TODO shouldn't it be '<' ?!
+        return qtkq.addContentHookById(id, '['); // TODO shouldn't it be '<' ?!
     };
     this.addContentHookByIdB = function (id) {
-        return qtx.addContentHookById(id, '[');
+        return qtkq.addContentHookById(id, '[');
     };
 
     /**
@@ -325,7 +326,7 @@ const qTranslateX = function (pg) {
     this.addContentHooks = function (fields, sep, fieldName) {
         for (let i = 0; i < fields.length; ++i) {
             const field = fields[i];
-            qtx.addContentHook(field, sep, fieldName);
+            qtkq.addContentHook(field, sep, fieldName);
         }
     };
 
@@ -333,7 +334,7 @@ const qTranslateX = function (pg) {
         if (!container)
             container = document;
         const fields = container.getElementsByClassName(name);
-        qtx.addContentHooks(fields, sep);
+        qtkq.addContentHooks(fields, sep);
     };
 
     this.addContentHooksByClass = function (name, container) {
@@ -356,7 +357,7 @@ const qTranslateX = function (pg) {
         for (let i = 0; i < elems.length; ++i) {
             const elem = elems[i];
             const items = elem.getElementsByTagName(tag);
-            qtx.addContentHooks(items);
+            qtkq.addContentHooks(items);
         }
     };
 
@@ -399,8 +400,8 @@ const qTranslateX = function (pg) {
      * Re-create a hook, after a piece of HTML is dynamically replaced with a custom Java script.
      */
     this.refreshContentHook = function (inputField) {
-        qtx.removeContentHook(inputField);
-        return qtx.addContentHook(inputField);
+        qtkq.removeContentHook(inputField);
+        return qtkq.addContentHook(inputField);
     };
 
     /**
@@ -498,7 +499,7 @@ const qTranslateX = function (pg) {
                 switch (node.nodeType) {
                     // https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-1950641247
                     case 1: // ELEMENT_NODE
-                        nbHooks += qtx.addDisplayHook(node);
+                        nbHooks += qtkq.addDisplayHook(node);
                         break;
                     case 2: // ATTRIBUTE_NODE
                     case 3: // TEXT_NODE
@@ -519,7 +520,7 @@ const qTranslateX = function (pg) {
      * @since 3.0
      */
     this.addDisplayHookById = function (id) {
-        return qtx.addDisplayHook(document.getElementById(id));
+        return qtkq.addDisplayHook(document.getElementById(id));
     };
 
     const updateMceEditorContent = function (hook) {
@@ -562,9 +563,13 @@ const qTranslateX = function (pg) {
             const blocks = qtranxj_get_split_blocks(text);
             if (!blocks || blocks.length <= 1) {
                 // value is not ML, switch it to other language
-                hook.fields[hook.lang].value = text;
-                hook.lang = lang;
-                const value = hook.fields[hook.lang].value;
+				const currentLang = qTranslateConfig.activeLanguage;
+
+				hook.fields[currentLang].value = text;
+				hook.lang = lang;
+
+				const value = hook.fields[lang].value;
+				
                 if (hook.contentField.placeholder && value !== '') {
                     // since 3.2.7
                     hook.contentField.placeholder = '';
@@ -596,7 +601,7 @@ const qTranslateX = function (pg) {
     this.addDisplayHooks = function (elems) {
         for (let i = 0; i < elems.length; ++i) {
             const e = elems[i];
-            qtx.addDisplayHook(e);
+            qtkq.addDisplayHook(e);
         }
     };
 
@@ -622,7 +627,7 @@ const qTranslateX = function (pg) {
     this.addDisplayHooksAttrs = function (elems, attrs) {
         for (let i = 0; i < elems.length; ++i) {
             const e = elems[i];
-            qtx.addDisplayHookAttrs(e, attrs);
+            qtkq.addDisplayHookAttrs(e, attrs);
         }
     };
 
@@ -634,7 +639,7 @@ const qTranslateX = function (pg) {
      */
     this.addDisplayHooksByClass = function (name, container) {
         const elems = container.getElementsByClassName(name);
-        qtx.addDisplayHooks(elems);
+        qtkq.addDisplayHooks(elems);
     };
 
     /**
@@ -648,7 +653,7 @@ const qTranslateX = function (pg) {
         for (let i = 0; i < elems.length; ++i) {
             const elem = elems[i];
             const items = elem.getElementsByTagName(tag);
-            qtx.addDisplayHooks(items);
+            qtkq.addDisplayHooks(items);
         }
     };
 
@@ -661,13 +666,13 @@ const qTranslateX = function (pg) {
     this.addCustomContentHooks = function () {
         for (let i = 0; i < qTranslateConfig.custom_fields.length; ++i) {
             const fieldName = qTranslateConfig.custom_fields[i];
-            qtx.addContentHookByIdName(fieldName);
+            qtkq.addContentHookByIdName(fieldName);
         }
         for (let i = 0; i < qTranslateConfig.custom_field_classes.length; ++i) {
             const className = qTranslateConfig.custom_field_classes[i];
-            qtx.addContentHooksByClass(className);
+            qtkq.addContentHooksByClass(className);
         }
-        qtx.addContentHooksTinyMCE();
+        qtkq.addContentHooksTinyMCE();
     };
 
     /**
@@ -681,19 +686,19 @@ const qTranslateX = function (pg) {
      */
     const addMultilingualHooks = function () {
         $('.i18n-multilingual').each(function (i, e) {
-            qtx.addContentHook(e, '[');
+            qtkq.addContentHook(e, '[');
         });
         $('.i18n-multilingual-curly').each(function (i, e) {
-            qtx.addContentHook(e, '{');
+            qtkq.addContentHook(e, '{');
         });
         $('.i18n-multilingual-term').each(function (i, e) {
-            qtx.addContentHook(e, 'term');
+            qtkq.addContentHook(e, 'term');
         });
         $('.i18n-multilingual-slug').each(function (i, e) {
-            qtx.addContentHook(e, 'slug');
+            qtkq.addContentHook(e, 'slug');
         });
         $('.i18n-multilingual-display').each(function (i, e) {
-            qtx.addDisplayHook(e);
+            qtkq.addDisplayHook(e);
         });
     };
 
@@ -748,18 +753,18 @@ const qTranslateX = function (pg) {
                                 const container = containers[i];
                                 const fields = $(container).find(field.jquery);
                                 if (field.attrs) {
-                                    qtx.addDisplayHooksAttrs(fields, field.attrs);
+                                    qtkq.addDisplayHooksAttrs(fields, field.attrs);
                                 } else {
-                                    qtx.addDisplayHooks(fields);
+                                    qtkq.addDisplayHooks(fields);
                                 }
                             }
                         } else {
                             const id = field.id ? field.id : handle;
                             const element = document.getElementById(id);
                             if (field.attrs) {
-                                qtx.addDisplayHookAttrs(element, field.attrs);
+                                qtkq.addDisplayHookAttrs(element, field.attrs);
                             } else {
-                                qtx.addDisplayHook(element);
+                                qtkq.addDisplayHook(element);
                             }
                         }
                         break;
@@ -772,11 +777,11 @@ const qTranslateX = function (pg) {
                             for (let i = 0; i < containers.length; ++i) {
                                 const container = containers[i];
                                 const fields = $(container).find(field.jquery);
-                                qtx.addContentHooks(fields, sep, field.name);
+                                qtkq.addContentHooks(fields, sep, field.name);
                             }
                         } else {
                             const id = field.id ? field.id : handle;
-                            qtx.addContentHookById(id, sep, field.name);
+                            qtkq.addContentHookById(id, sep, field.name);
                         }
                         break;
                 }
@@ -837,7 +842,7 @@ const qTranslateX = function (pg) {
                 continue;
             hook.mceInit = tinyMCEPreInit.mceInit[key];
             tinyMCEPreInit.mceInit[key].init_instance_callback = function (editor) {
-                qtx.attachEditorHook(editor);
+                qtkq.attachEditorHook(editor);
             }
         }
     };
@@ -848,7 +853,7 @@ const qTranslateX = function (pg) {
     this.loadAdditionalTinyMceHooks = function () {
         if (window.tinyMCE) {
             tinyMCE.get().forEach(function (editor) {
-                qtx.attachEditorHook(editor);
+                qtkq.attachEditorHook(editor);
             });
         }
     };
@@ -866,7 +871,7 @@ const qTranslateX = function (pg) {
      * Two arguments are supplied:
      * - two-letter language code of currently active language from which the edit language is being switched.
      * - the language code to which the edit language is being switched.
-     * The value of "this" is set to the only global instance of qTranslateX object.
+     * The value of "this" is set to the only global instance of qTranslateKQ object.
      */
     this.addLanguageSwitchBeforeListener = function (func) {
         qTranslateConfig.onTabSwitchFunctionsSave.push(func);
@@ -897,7 +902,7 @@ const qTranslateX = function (pg) {
      * Two arguments are supplied:
      * - two-letter language code of active language to which the edit language is already switched.
      * - the language code from which the edit language is being switched.
-     * The value of "this" is set to the only global instance of qTranslateX object.
+     * The value of "this" is set to the only global instance of qTranslateKQ object.
      */
     this.addLanguageSwitchAfterListener = function (func) {
         qTranslateConfig.onTabSwitchFunctionsLoad.push(func);
@@ -961,7 +966,7 @@ const qTranslateX = function (pg) {
     this.onLoadLanguage = function (lang, langFrom) {
         const onTabSwitchFunctionsLoad = qTranslateConfig.onTabSwitchFunctionsLoad;
         for (let i = 0; i < onTabSwitchFunctionsLoad.length; ++i) {
-            onTabSwitchFunctionsLoad[i].call(qTranslateConfig.qtx, lang, langFrom);
+            onTabSwitchFunctionsLoad[i].call(qTranslateConfig.qtkq, lang, langFrom);
         }
     };
 
@@ -977,7 +982,7 @@ const qTranslateX = function (pg) {
             let ok2switch = true;
             const onTabSwitchFunctionsSave = qTranslateConfig.onTabSwitchFunctionsSave;
             for (let i = 0; i < onTabSwitchFunctionsSave.length; ++i) {
-                const ok = onTabSwitchFunctionsSave[i].call(qTranslateConfig.qtx, qTranslateConfig.activeLanguage, lang);
+                const ok = onTabSwitchFunctionsSave[i].call(qTranslateConfig.qtkq, qTranslateConfig.activeLanguage, lang);
                 if (ok === false)
                     ok2switch = false;
             }
@@ -1004,25 +1009,25 @@ const qTranslateX = function (pg) {
         }
         const onTabSwitchFunctions = qTranslateConfig.onTabSwitchFunctions;
         for (let i = 0; i < onTabSwitchFunctions.length; ++i) {
-            onTabSwitchFunctions[i].call(qTranslateConfig.qtx, lang, langFrom);
+            onTabSwitchFunctions[i].call(qTranslateConfig.qtkq, lang, langFrom);
         }
-        qtx.onLoadLanguage(lang, langFrom);
+        qtkq.onLoadLanguage(lang, langFrom);
     };
 
     this.clickSwitchLanguage = function () {
         const tabSwitch = $(this).hasClass('button') ? this.parentNode : this;
         const lang = tabSwitch.lang;
         if (!lang) {
-            alert('qTranslate-XT: This should not have happened: Please, report this incident to the developers: !lang');
+            alert('qTranslate-KQ: This should not have happened: Please, report this incident to the developers: !lang');
             return;
         }
         if ($('.qtranxs-lang-switch-wrap').hasClass('copying')) {
-            qtx.copyContentFrom(lang);
+            qtkq.copyContentFrom(lang);
             $(tabSwitch).find('.button').blur();	// remove focus of source language in case of layout with button
             $('.qtranxs-lang-switch-wrap').removeClass('copying');
             $('.qtranxs-lang-copy .button').removeClass('active');
         } else {
-            qtx.switchActiveLanguage(lang);
+            qtkq.switchActiveLanguage(lang);
         }
     };
 
@@ -1064,7 +1069,7 @@ const qTranslateX = function (pg) {
             changed = true;
         }
         if (changed)
-            qtx.onLoadLanguage(lang, langFrom);
+            qtkq.onLoadLanguage(lang, langFrom);
     };
 
     /**
@@ -1083,7 +1088,7 @@ const qTranslateX = function (pg) {
                 lang: lang,
                 className: 'qtranxs-lang-switch qtranxs-lang-switch-' + lang,
                 title: li_title,
-                onclick: qtx.clickSwitchLanguage
+                onclick: qtkq.clickSwitchLanguage
             }, langSwitchWrap);
             let tabItem = tabSwitch;
             if (qTranslateConfig.lsb_style_subitem === 'button') {
@@ -1106,7 +1111,7 @@ const qTranslateX = function (pg) {
                 className: 'button button-secondary',
                 type: 'button',
                 title: qTranslateConfig.strings.CopyFromAlt,
-                onclick: qtx.toggleCopyFrom
+                onclick: qtkq.toggleCopyFrom
             }, tab);
             qtranxj_ce('span', {innerHTML: qTranslateConfig.strings.CopyFrom}, btn);
         }
@@ -1117,7 +1122,7 @@ const qTranslateX = function (pg) {
      * @since 3.4.8
      */
     this.createSetOfLSB = function () {
-        return qtx.createSetOfLSBwith(qTranslateConfig.lsb_style_wrap_class + ' widefat');
+        return qtkq.createSetOfLSBwith(qTranslateConfig.lsb_style_wrap_class + ' widefat');
     };
 
     const setupMetaBoxLSB = function () {
@@ -1136,9 +1141,9 @@ const qTranslateX = function (pg) {
         metaBox.insertBefore(span, insideElems[0]);
         span.classList.add('hndle', 'ui-sortable-handle');
 
-        const langSwitchWrap = qtx.createSetOfLSBwith(qTranslateConfig.lsb_style_wrap_class);
+        const langSwitchWrap = qtkq.createSetOfLSBwith(qTranslateConfig.lsb_style_wrap_class);
         span.appendChild(langSwitchWrap);
-        $('#qtranxs-meta-box-lsb .hndle').unbind('click.postboxes');
+        $('#qtranxs-meta-box-lsb .hndle').off('click.postboxes');
     };
 
     const setupAnchorsLSB = function () {
@@ -1169,19 +1174,19 @@ const qTranslateX = function (pg) {
         for (let i = 0; i < anchors.length; ++i) {
             const anchor = anchors[i];
             if (!anchor.where || anchor.where.indexOf('before') >= 0) {
-                const langSwitchWrap = qtx.createSetOfLSB();
+                const langSwitchWrap = qtkq.createSetOfLSB();
                 anchor.target.parentNode.insertBefore(langSwitchWrap, anchor.target);
             }
             if (anchor.where && anchor.where.indexOf('after') >= 0) {
-                const langSwitchWrap = qtx.createSetOfLSB();
+                const langSwitchWrap = qtkq.createSetOfLSB();
                 anchor.target.parentNode.insertBefore(langSwitchWrap, anchor.target.nextSibling);
             }
             if (anchor.where && anchor.where.indexOf('first') >= 0) {
-                const langSwitchWrap = qtx.createSetOfLSB();
+                const langSwitchWrap = qtkq.createSetOfLSB();
                 anchor.target.insertBefore(langSwitchWrap, anchor.target.firstChild);
             }
             if (anchor.where && anchor.where.indexOf('last') >= 0) {
-                const langSwitchWrap = qtx.createSetOfLSB();
+                const langSwitchWrap = qtkq.createSetOfLSB();
                 anchor.target.insertBefore(langSwitchWrap, null);
             }
         }
@@ -1206,20 +1211,84 @@ const qTranslateX = function (pg) {
         setupMetaBoxLSB();
         setupAnchorsLSB();
         // Synchronization of multiple sets of Language Switching Buttons
-        qtx.addLanguageSwitchListener(onTabSwitch);
+        qtkq.addLanguageSwitchListener(onTabSwitch);
         if (pg.onTabSwitch) {
-            qtx.addLanguageSwitchListener(pg.onTabSwitch);
+            qtkq.addLanguageSwitchListener(pg.onTabSwitch);
         }
 
         languageSwitchInitialized = true;
+		
+		
+		/*	// Oby ten ch** wiedzia³ co robi!...
+		$('form').off('submit.qtranslateSync').on('submit.qtranslateSync', function () {
+		
+			console.log('QTKQ SUBMIT START');
+
+			for (const key in contentHooks) {
+
+				const hook = contentHooks[key];
+
+				if (!hook || !hook.fields || !hook.contentField) {
+					continue;
+				}
+
+				const visualMode = hook.mce && !hook.mce.hidden;
+
+				if (visualMode) {
+					hook.mce.save();
+				}
+
+				const currentValue = hook.contentField.value.trim();
+
+				console.log('HOOK:', key);
+				console.log('hook.lang =', hook.lang);
+				console.log('activeLanguage =', qTranslateConfig.activeLanguage);
+				console.log('currentValue =', currentValue);
+
+				for (const lang in hook.fields) {
+					console.log(
+						'BEFORE FIELD',
+						lang,
+						hook.fields[lang].value
+					);
+				}
+
+				const activeLang = qTranslateConfig.activeLanguage;
+
+			
+			//	if (hook.fields[activeLang]) {
+			//		hook.fields[activeLang].value = currentValue;
+			//	}
+			
+			
+				if (hook.fields[hook.lang]) {
+					hook.fields[hook.lang].value = currentValue;
+				}
+
+				hook.lang = activeLang;
+			
+			
+				for (const lang in hook.fields) {
+					console.log(
+						'AFTER FIELD',
+						lang,
+						hook.fields[lang].value
+					);
+				}
+			}
+
+		});
+		*/
+		
+		
     }
 
     const initialize = function () {
         if (qTranslateConfig.LSB) {
             qTranslateConfig.activeLanguage = getStoredEditLanguage();
-            if (!qTranslateConfig.activeLanguage || !qtx.isLanguageEnabled(qTranslateConfig.activeLanguage)) {
+            if (!qTranslateConfig.activeLanguage || !qtkq.isLanguageEnabled(qTranslateConfig.activeLanguage)) {
                 qTranslateConfig.activeLanguage = qTranslateConfig.language;
-                if (qtx.isLanguageEnabled(qTranslateConfig.activeLanguage)) {
+                if (qtkq.isLanguageEnabled(qTranslateConfig.activeLanguage)) {
                     storeEditLanguage(qTranslateConfig.activeLanguage);
                 } else {
                     // fallback to single mode
@@ -1238,18 +1307,73 @@ const qTranslateX = function (pg) {
             qTranslateConfig.onTabSwitchFunctionsSave = [];
         if (!qTranslateConfig.onTabSwitchFunctionsLoad)
             qTranslateConfig.onTabSwitchFunctionsLoad = [];
+			
+		
+			
+
+        // Keep the edit language field aligned with the active tab even if the form is submitted
+        // without a language switch immediately before saving.
+        $('form').filter(function () {
+            return $(this).find('input[name="qtranslate-edit-language"]').length > 0;
+        }).off('submit.qtkqEditLanguage').on('submit.qtkqEditLanguage', function () {
+            $('input[name="qtranslate-edit-language"]').val(qTranslateConfig.activeLanguage);
+        });
 
         if (typeof (pg.addContentHooks) == "function")
-            pg.addContentHooks(qtx);
+            pg.addContentHooks(qtkq);
 
         if (qTranslateConfig.page_config && qTranslateConfig.page_config.forms)
             addPageHooks(qTranslateConfig.page_config.forms);
 
         addMultilingualHooks();
 
-        qtx.addContentHooksTinyMCE();
+        qtkq.addContentHooksTinyMCE();
+		
+		
+		// Reinitialize hooks after AJAX widget refresh
+		$(document).on('widget-added widget-updated', function (event, widget) {
 
-        qtx.setupLanguageSwitch();
+			widget.find('.i18n-multilingual').each(function () {
+
+				// usuñ stary hook jeœli istnieje
+				if (this.id && qtkq.hasContentHook(this.id)) {
+					qtkq.removeContentHook(this);
+				}
+
+				// utwórz nowy hook dla nowego textarea/input
+				qtkq.addContentHook(this, '[');
+			});
+		});
+
+
+		// Synchronize visible value -> hidden language field before submit
+
+		$(document).on('submit', 'form', function () {
+
+			for (const key in contentHooks) {
+
+				const hook = contentHooks[key];
+
+				if (!hook || !hook.fields || !hook.contentField) {
+					continue;
+				}
+
+				const visualMode = hook.mce && !hook.mce.hidden;
+
+				if (visualMode) {
+					hook.mce.save();
+				}
+
+				const activeLang = qTranslateConfig.activeLanguage;
+
+				if (hook.fields[activeLang]) {
+					hook.fields[activeLang].value = hook.contentField.value;
+				}
+			}
+		});
+		
+		
+        qtkq.setupLanguageSwitch();
     };
 
     initialize();
@@ -1259,15 +1383,15 @@ const qTranslateX = function (pg) {
  * Designed as interface for other plugin integration. The documentation is available at
  * https://github.com/qtranslate/qtranslate-xt/wiki/Integration-Guide
  *
- * qTranslateX instance is saved in global variable qTranslateConfig.qtx,
+ * qTranslateKQ instance is saved in global variable qTranslateConfig.qtkq,
  * which can be used by theme or plugins to dynamically change content hooks.
  *
  * Note: be sure to enqueue this script before using it in other plugin (!)
  *
  * @since 3.4
  */
-qTranslateConfig.js.get_qtx = function () {
-    if (!qTranslateConfig.qtx)
-        qTranslateConfig.qtx = new qTranslateX(qTranslateConfig.js);
-    return qTranslateConfig.qtx;
+qTranslateConfig.js.get_qtkq = function () {
+    if (!qTranslateConfig.qtkq)
+        qTranslateConfig.qtkq = new qTranslateKQ(qTranslateConfig.js);
+    return qTranslateConfig.qtkq;
 };

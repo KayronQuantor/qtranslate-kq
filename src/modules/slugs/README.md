@@ -1,6 +1,8 @@
 # Module: Slugs
 
-Adds support for permalink (slug/URL) translations to qTranslate-XT.
+<!-- Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. -->
+
+Adds support for permalink (slug/URL) translations to qTranslate-KQ.
 
 This module was created from [qtranslate-slug](https://github.com/not-only-code/qtranslate-slug) plugin v1.1.18, integrated as [a module](https://github.com/qtranslate/qtranslate-xt/pull/1060).
 For more details see the discussion [Include qtranslate slug into -XT](https://github.com/qtranslate/qtranslate-xt/issues/671).
@@ -23,7 +25,7 @@ If you are migrating from using *qTranslate X* and the *qtranslate-slug* (QTS) p
 1. Make sure that you are on **latest version of the legacy plugin**
 2. **Deactivate the legacy plugin**
 3. **Activate the *Slugs* module**
-4. **Migrate** using `Migrate QTS slugs` in *QTX Settings > Import/Export*. The dry-run mode allows to test the import and see the number of rows changed before updating the database.
+4. **Migrate** using `Migrate QTS slugs` in *QTKQ Settings > Import/Export*. The dry-run mode allows to test the import and see the number of rows changed before updating the database.
 5. **Delete the legacy plugin**
 
 If you are using functions from the legacy plugin in your theme files, you may want to switch to a neutral theme.
@@ -52,6 +54,6 @@ Original plugin
 * [Bastian Heist](https://github.com/beheist)
 * [John Clause](https://github.com/johnclause)
 
-Integration into qTranslate-XT
+Integration into qTranslate-KQ
 * [Giovanni Cascione](https://github.com/spleen1981)
 * [HerrVigg](https://github.com/herrvigg)

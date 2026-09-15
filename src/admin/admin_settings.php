@@ -1,4 +1,9 @@
 <?php
+
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -9,19 +14,19 @@ require_once QTRANSLATE_DIR . '/src/admin/import_export.php';
 require_once QTRANSLATE_DIR . '/src/modules/admin_module_settings.php';
 
 /**
- * Class QTX_Admin_Settings
+ * Class QTKQ_Admin_Settings
  *
- * Display the settings of qTranslate-XT in the admin options page
+ * Display the settings of qTranslate-KQ in the admin options page
  */
-class QTX_Admin_Settings {
+class QTKQ_Admin_Settings {
 
     /**
-     * @var string URI to the admin options page of qTranslate-XT
+     * @var string URI to the admin options page of qTranslate-KQ
      */
     private $options_uri;
 
     public function __construct() {
-        $this->options_uri = admin_url( 'options-general.php?page=qtranslate-xt' );
+        $this->options_uri = admin_url( 'options-general.php?page=qtranslate-kq' );
     }
 
     public static function add_submit_button( string $button_name ): void {
@@ -44,7 +49,7 @@ class QTX_Admin_Settings {
     }
 
     public function display(): void {
-        $nonce_action = 'qtranslate-x_configuration_form';
+        $nonce_action = 'qtranslate-kq_configuration_form';
         if ( ! qtranxf_verify_nonce( $nonce_action ) ) {
             return;
         }
@@ -58,11 +63,11 @@ class QTX_Admin_Settings {
                     href="<?php echo $this->options_uri . '#languages' ?>"><?php _e( 'back to configuration page', 'qtranslate' ) ?></a>
             </p>
         <?php else: ?>
-            <h2><?php _e( 'Language Management (qTranslate-XT Configuration)', 'qtranslate' ) ?></h2>
+            <h2><?php _e( 'Language Management (qTranslate-KQ Configuration)', 'qtranslate' ) ?></h2>
             <p class="qtranxs_heading" style="font-size: small">
                 <?php printf( __( 'For help on how to configure qTranslate correctly, take a look at the <a href="%1$s">qTranslate FAQ</a> and the <a href="%2$s">Support Forum</a>.', 'qtranslate' ),
                     'https://github.com/qtranslate/qtranslate-xt/wiki/FAQ',
-                    'https://github.com/qTranslate/qtranslate-xt/issues' );
+                    'https://github.com/KayronQuantor/qtranslate-kq/issues' );
                 ?>
             </p>
             <?php if ( isset( $_GET['config_inspector'] ) ) {
@@ -194,7 +199,7 @@ class QTX_Admin_Settings {
                         <br/>
                         <?php _e( '%LANG:&lt;normal_separator&gt;:&lt;last_separator&gt;% generates a list of languages separated by &lt;normal_separator&gt; except for the last one, where &lt;last_separator&gt; will be used instead.', 'qtranslate' );
                         echo ' ';
-                        printf( __( 'The language names substituted into the list of available languages are shown translated in the active language. The nominative form of language names is used as it is fetched from %s may not fit the grammar rules of your language. It is then advisable to include quotes in this message like this "%s". Alternatively you may modify "%s" files in folder "%s" with names that fit your grammar rules. Please, %scontact the development team%s, if you decide to modify "%s" files.', 'qtranslate' ), '<a href="https://unicode.org/Public/cldr/latest" title="Unicode Common Locale Data Repository" target="_blank" tabindex="-1">CLDR</a>', 'Sorry, this entry is only available in "%LANG:", ":" and "%".', '.po', '<a href="https://github.com/qtranslate/qtranslate-xt/tree/master/lang/language-names" target="_blank" tabindex="-1">/lang/language-names/</a>', '<a href="https://github.com/qtranslate/qtranslate-xt/issues" target="_blank" tabindex="-1">', '</a>', '.po' );
+                        printf( __( 'The language names substituted into the list of available languages are shown translated in the active language. The nominative form of language names is used as it is fetched from %s may not fit the grammar rules of your language. It is then advisable to include quotes in this message like this "%s". Alternatively you may modify "%s" files in folder "%s" with names that fit your grammar rules. Please, %scontact the development team%s, if you decide to modify "%s" files.', 'qtranslate' ), '<a href="https://unicode.org/Public/cldr/latest" title="Unicode Common Locale Data Repository" target="_blank" tabindex="-1">CLDR</a>', 'Sorry, this entry is only available in "%LANG:", ":" and "%".', '.po', '<a href="https://github.com/qtranslate/qtranslate-xt/tree/master/lang/language-names" target="_blank" tabindex="-1">/lang/language-names/</a>', '<a href="https://github.com/KayronQuantor/qtranslate-kq/issues" target="_blank" tabindex="-1">', '</a>', '.po' );
                         ?>
                     </p>
                 </div>
@@ -255,7 +260,7 @@ class QTX_Admin_Settings {
         }
         $admin_sections['integration'] = __( 'Integration', 'qtranslate' );
 
-        $settings_modules = QTX_Admin_Module_Settings::get_settings_modules();
+        $settings_modules = QTKQ_Admin_Module_Settings::get_settings_modules();
         foreach ( $settings_modules as $module ) {
             if ( $module->is_active() && $module->has_settings() ) {
                 $admin_sections[ $module->id ] = $module->name;
@@ -338,7 +343,7 @@ class QTX_Admin_Settings {
                         <legend class="hidden"><?php _e( 'URL Modification Mode', 'qtranslate' ) ?></legend>
                         <label title="Pre-Path Mode">
                             <input type="radio" name="url_mode"
-                                   value="<?php echo QTX_URL_PATH; ?>" <?php checked( $url_mode, QTX_URL_PATH );
+                                   value="<?php echo QTKQ_URL_PATH; ?>" <?php checked( $url_mode, QTKQ_URL_PATH );
                             disabled( $permalink_is_query ) ?> /> <?php echo __( 'Use Pre-Path Mode (Default, puts /en/ in front of URL)', 'qtranslate' ) . '. ' . __( 'SEO friendly.', 'qtranslate' );
                             if ( $permalink_is_query ) {
                                 echo ' ' . __( 'Requires a permalink structure without query string or index.php (not Plain).', 'qtranslate' );
@@ -346,19 +351,19 @@ class QTX_Admin_Settings {
                         </label><br/>
                         <label title="Pre-Domain Mode">
                             <input type="radio" name="url_mode"
-                                   value="<?php echo QTX_URL_DOMAIN; ?>" <?php checked( $url_mode, QTX_URL_DOMAIN ) ?> /> <?php echo __( 'Use Pre-Domain Mode (uses https://en.yoursite.com)', 'qtranslate' ) . '. ' . __( 'You will need to configure DNS sub-domains on your site.', 'qtranslate' ) ?>
+                                   value="<?php echo QTKQ_URL_DOMAIN; ?>" <?php checked( $url_mode, QTKQ_URL_DOMAIN ) ?> /> <?php echo __( 'Use Pre-Domain Mode (uses https://en.yoursite.com)', 'qtranslate' ) . '. ' . __( 'You will need to configure DNS sub-domains on your site.', 'qtranslate' ) ?>
                         </label><br/>
                         <label title="Per-Domain Mode">
                             <input type="radio" name="url_mode"
-                                   value="<?php echo QTX_URL_DOMAINS; ?>" <?php checked( $url_mode, QTX_URL_DOMAINS ) ?> /> <?php echo __( 'Use Per-Domain mode: specify separate user-defined domain for each language.', 'qtranslate' ) ?>
+                                   value="<?php echo QTKQ_URL_DOMAINS; ?>" <?php checked( $url_mode, QTKQ_URL_DOMAINS ) ?> /> <?php echo __( 'Use Per-Domain mode: specify separate user-defined domain for each language.', 'qtranslate' ) ?>
                         </label><br/>
                         <label title="Query Mode">
                             <input type="radio" name="url_mode"
-                                   value="<?php echo QTX_URL_QUERY; ?>" <?php checked( $url_mode, QTX_URL_QUERY ) ?> /> <?php echo __( 'Use Query Mode (?lang=en)', 'qtranslate' ) . '. ' . __( 'Most SEO unfriendly, not recommended.', 'qtranslate' ) ?>
+                                   value="<?php echo QTKQ_URL_QUERY; ?>" <?php checked( $url_mode, QTKQ_URL_QUERY ) ?> /> <?php echo __( 'Use Query Mode (?lang=en)', 'qtranslate' ) . '. ' . __( 'Most SEO unfriendly, not recommended.', 'qtranslate' ) ?>
                         </label><br/>
                     </fieldset>
                     <?php
-                    if ( $url_mode == QTX_URL_DOMAINS ) : ?>
+                    if ( $url_mode == QTKQ_URL_DOMAINS ) : ?>
                         <div style="margin: 10px 0">
                             <?php
                             $home_info = qtranxf_get_home_info();
@@ -501,9 +506,9 @@ class QTX_Admin_Settings {
                 <th scope="row"><?php _e( 'Ignore Links', 'qtranslate' ) ?></th>
                 <td>
                     <input type="text" name="ignore_file_types" id="ignore_file_types"
-                           value="<?php echo implode( ',', array_diff( $q_config['ignore_file_types'], explode( ',', QTX_IGNORE_FILE_TYPES ) ) ) ?>"
+                           value="<?php echo implode( ',', array_diff( $q_config['ignore_file_types'], explode( ',', QTKQ_IGNORE_FILE_TYPES ) ) ) ?>"
                            style="width:100%"/>
-                    <p class="qtranxs-notes"><?php printf( __( 'Don\'t convert links to files of the given file types. (Always included: %s)', 'qtranslate' ), implode( ', ', explode( ',', QTX_IGNORE_FILE_TYPES ) ) ) ?></p>
+                    <p class="qtranxs-notes"><?php printf( __( 'Don\'t convert links to files of the given file types. (Always included: %s)', 'qtranslate' ), implode( ', ', explode( ',', QTKQ_IGNORE_FILE_TYPES ) ) ) ?></p>
                 </td>
             </tr>
             <tr>
@@ -526,14 +531,14 @@ class QTX_Admin_Settings {
                     <label for="disable_client_cookies"><input type="checkbox" name="disable_client_cookies"
                                                                id="disable_client_cookies"
                                                                value="1"<?php checked( $q_config['disable_client_cookies'] );
-                        disabled( $url_mode == QTX_URL_DOMAIN || $url_mode == QTX_URL_DOMAINS ) ?> /> <?php printf( __( 'Disable language client cookie "%s" (not recommended).', 'qtranslate' ), QTX_COOKIE_NAME_FRONT ) ?>
+                        disabled( $url_mode == QTKQ_URL_DOMAIN || $url_mode == QTKQ_URL_DOMAINS ) ?> /> <?php printf( __( 'Disable language client cookie "%s" (not recommended).', 'qtranslate' ), QTKQ_COOKIE_NAME_FRONT ) ?>
                     </label>
                     <p class="qtranxs-notes"><?php echo sprintf( __( 'Language cookie is auto-disabled for "%s" "Pre-Domain" and "Per-Domain", as language is always unambiguously defined by a url in those modes.', 'qtranslate' ), __( 'URL Modification Mode', 'qtranslate' ) ) . ' ' . sprintf( __( 'Otherwise, use this option with a caution, for simple enough sites only. If checked, the user choice of browsing language will not be saved between sessions and some AJAX calls may deliver unexpected language, as well as some undesired language switching during browsing may occur under certain themes (%sRead More%s).', 'qtranslate' ), '<a href="https://github.com/qtranslate/qtranslate-xt/wiki/Browser-redirection" target="_blank">', '</a>' ) ?></p>
                     <br/>
                     <label for="use_secure_cookie">
                         <input type="checkbox" name="use_secure_cookie"
                                id="use_secure_cookie"
-                               value="1"<?php checked( $q_config['use_secure_cookie'] ) ?> /><?php printf( __( 'Make %s cookies available only through HTTPS connections.', 'qtranslate' ), 'qTranslate&#8209;XT' ) ?>
+                               value="1"<?php checked( $q_config['use_secure_cookie'] ) ?> /><?php printf( __( 'Make %s cookies available only through HTTPS connections.', 'qtranslate' ), 'qTranslate&#8209;KQ' ) ?>
                     </label>
                     <p class="qtranxs-notes"><?php _e( "Don't check this if you don't know what you're doing!", 'qtranslate' ) ?></p>
                 </td>
@@ -560,26 +565,26 @@ class QTX_Admin_Settings {
                 <td>
                     <label>
                         <input type="radio" name="use_strftime"
-                               value="<?php echo QTX_DATE_WP; ?>" <?php checked( $q_config['use_strftime'], QTX_DATE_WP ) ?>/> <?php _e( 'Use WordPress options and translation. Ignore language date / time formats.', 'qtranslate' ) ?>
+                               value="<?php echo QTKQ_DATE_WP; ?>" <?php checked( $q_config['use_strftime'], QTKQ_DATE_WP ) ?>/> <?php _e( 'Use WordPress options and translation. Ignore language date / time formats.', 'qtranslate' ) ?>
                     </label><br/>
                     <label>
                         <input type="radio" name="use_strftime"
-                               value="<?php echo QTX_DATE; ?>" <?php checked( $q_config['use_strftime'], QTX_DATE ) ?>/> <?php _e( 'Use emulated date function.', 'qtranslate' ) ?>
+                               value="<?php echo QTKQ_DATE; ?>" <?php checked( $q_config['use_strftime'], QTKQ_DATE ) ?>/> <?php _e( 'Use emulated date function.', 'qtranslate' ) ?>
                     </label><br/>
                     <label
-                        class="<?php echo( ( $q_config['use_strftime'] == QTX_DATE_OVERRIDE ) ? "qtranxs-deprecated-warning" : "qtranxs-deprecated" ) ?>">
+                        class="<?php echo( ( $q_config['use_strftime'] == QTKQ_DATE_OVERRIDE ) ? "qtranxs-deprecated-warning" : "qtranxs-deprecated" ) ?>">
                         <input type="radio" name="use_strftime"
-                               value="<?php echo QTX_DATE_OVERRIDE; ?>" <?php checked( $q_config['use_strftime'], QTX_DATE_OVERRIDE ) ?>/> <?php _e( 'Use emulated date function and replace formats with the predefined formats for each language.', 'qtranslate' ) ?>
+                               value="<?php echo QTKQ_DATE_OVERRIDE; ?>" <?php checked( $q_config['use_strftime'], QTKQ_DATE_OVERRIDE ) ?>/> <?php _e( 'Use emulated date function and replace formats with the predefined formats for each language.', 'qtranslate' ) ?>
                         <span><?php _e( 'Deprecated.', 'qtranslate' ); ?></span>
                     </label><br/>
                     <label>
                         <input type="radio" name="use_strftime"
-                               value="<?php echo QTX_STRFTIME; ?>" <?php checked( $q_config['use_strftime'], QTX_STRFTIME ) ?>/> <?php _e( 'Use strftime instead of date.', 'qtranslate' ) ?>
+                               value="<?php echo QTKQ_STRFTIME; ?>" <?php checked( $q_config['use_strftime'], QTKQ_STRFTIME ) ?>/> <?php _e( 'Use strftime instead of date.', 'qtranslate' ) ?>
                     </label><br/>
                     <label
-                        class="<?php echo( ( $q_config['use_strftime'] == QTX_STRFTIME_OVERRIDE ) ? "qtranxs-deprecated-warning" : "qtranxs-deprecated" ) ?>">
+                        class="<?php echo( ( $q_config['use_strftime'] == QTKQ_STRFTIME_OVERRIDE ) ? "qtranxs-deprecated-warning" : "qtranxs-deprecated" ) ?>">
                         <input type="radio" name="use_strftime"
-                               value="<?php echo QTX_STRFTIME_OVERRIDE; ?>" <?php checked( $q_config['use_strftime'], QTX_STRFTIME_OVERRIDE ) ?>/> <?php _e( 'Use strftime instead of date and replace formats with the predefined formats for each language.', 'qtranslate' ) ?>
+                               value="<?php echo QTKQ_STRFTIME_OVERRIDE; ?>" <?php checked( $q_config['use_strftime'], QTKQ_STRFTIME_OVERRIDE ) ?>/> <?php _e( 'Use strftime instead of date and replace formats with the predefined formats for each language.', 'qtranslate' ) ?>
                         <span><?php _e( 'Deprecated.', 'qtranslate' ); ?></span>
                     </label>
                     <p class="qtranxs-notes"><?php _e( 'Depending on the mode selected, additional customizations of the theme may be needed.', 'qtranslate' ) ?></p>
@@ -591,19 +596,19 @@ class QTX_Admin_Settings {
                     <label for="filter_options_mode_all">
                         <input type="radio" name="filter_options_mode"
                                id="filter_options_mode_all"
-                               value=<?php echo '"' . QTX_FILTER_OPTIONS_ALL . '"';
-                        checked( $q_config['filter_options_mode'], QTX_FILTER_OPTIONS_ALL ) ?>/> <?php _e( 'Filter all WordPress options for translation at front-end. It may hurt performance of the site, but ensures that all options are translated.', 'qtranslate' ) ?> <?php _e( 'Starting from version 3.2.5, only options with multilingual content get filtered, which should help on performance issues.', 'qtranslate' ) ?>
+                               value=<?php echo '"' . QTKQ_FILTER_OPTIONS_ALL . '"';
+                        checked( $q_config['filter_options_mode'], QTKQ_FILTER_OPTIONS_ALL ) ?>/> <?php _e( 'Filter all WordPress options for translation at front-end. It may hurt performance of the site, but ensures that all options are translated.', 'qtranslate' ) ?> <?php _e( 'Starting from version 3.2.5, only options with multilingual content get filtered, which should help on performance issues.', 'qtranslate' ) ?>
                     </label>
                     <br/>
                     <label for="filter_options_mode_list">
                         <input type="radio" name="filter_options_mode"
                                id="filter_options_mode_list"
-                               value=<?php echo '"' . QTX_FILTER_OPTIONS_LIST . '"';
-                        checked( $q_config['filter_options_mode'], QTX_FILTER_OPTIONS_LIST ) ?>/> <?php _e( 'Translate only options listed below (for experts only):', 'qtranslate' ) ?>
+                               value=<?php echo '"' . QTKQ_FILTER_OPTIONS_LIST . '"';
+                        checked( $q_config['filter_options_mode'], QTKQ_FILTER_OPTIONS_LIST ) ?>/> <?php _e( 'Translate only options listed below (for experts only):', 'qtranslate' ) ?>
                     </label>
                     <br/>
                     <input type="text" name="filter_options" id="qtranxs_filter_options"
-                           value="<?php echo isset( $q_config['filter_options'] ) ? implode( ' ', $q_config['filter_options'] ) : QTX_FILTER_OPTIONS_DEFAULT; ?>"
+                           value="<?php echo isset( $q_config['filter_options'] ) ? implode( ' ', $q_config['filter_options'] ) : QTKQ_FILTER_OPTIONS_DEFAULT; ?>"
                            style="width:100%">
                     <p class="qtranxs-notes"><?php printf( __( 'By default, all options are filtered to be translated at front-end for the sake of simplicity of configuration. However, for a developed site, this may cause a considerable performance degradation. Normally, there are very few options, which actually need a translation. You may simply list them above to minimize the performance impact, while still getting translations needed. Options names must match the field "%s" of table "%s" of WordPress database. A minimum common set of option, normally needed a translation, is already entered in the list above as a default example. Option names in the list may contain wildcard with symbol "%s".', 'qtranslate' ), 'option_name', 'options', '%' ) ?></p>
                 </td>
@@ -614,14 +619,14 @@ class QTX_Admin_Settings {
                     <label for="qtranxs_editor_mode_lsb">
                         <input type="radio" name="editor_mode"
                                id="qtranxs_editor_mode_lsb"
-                               value="<?php echo QTX_EDITOR_MODE_LSB; ?>"<?php checked( $q_config['editor_mode'], QTX_EDITOR_MODE_LSB ) ?>/>&nbsp;<?php _e( 'Use Language Switching Buttons (LSB).', 'qtranslate' ) ?>
+                               value="<?php echo QTKQ_EDITOR_MODE_LSB; ?>"<?php checked( $q_config['editor_mode'], QTKQ_EDITOR_MODE_LSB ) ?>/>&nbsp;<?php _e( 'Use Language Switching Buttons (LSB).', 'qtranslate' ) ?>
                     </label>
                     <p class="qtranxs-notes"><?php echo __( 'This is the default mode.', 'qtranslate' ) . ' ' . __( 'Pages with translatable fields have Language Switching Buttons, which control what language is being edited, while admin language stays the same.', 'qtranslate' ) ?></p>
                     <br/>
                     <label for="qtranxs_editor_mode_raw">
                         <input type="radio" name="editor_mode"
                                id="qtranxs_editor_mode_raw"
-                               value="<?php echo QTX_EDITOR_MODE_RAW; ?>"<?php checked( $q_config['editor_mode'], QTX_EDITOR_MODE_RAW ) ?>/>&nbsp;<?php _e( 'Editor Raw Mode', 'qtranslate' ) ?>
+                               value="<?php echo QTKQ_EDITOR_MODE_RAW; ?>"<?php checked( $q_config['editor_mode'], QTKQ_EDITOR_MODE_RAW ) ?>/>&nbsp;<?php _e( 'Editor Raw Mode', 'qtranslate' ) ?>
                         . <?php _e( 'Do not use Language Switching Buttons to edit multi-language text entries.', 'qtranslate' ) ?>
                     </label>
                     <p class="qtranxs-notes"><?php _e( 'Some people prefer to edit the raw entries containing all languages together separated by language defining tags, as they are stored in database.', 'qtranslate' ) ?></p>
@@ -629,17 +634,17 @@ class QTX_Admin_Settings {
                     <label for="qtranxs_editor_mode_single">
                         <input type="radio" name="editor_mode"
                                id="qtranxs_editor_mode_single"
-                               value="<?php echo QTX_EDITOR_MODE_SINGLE; ?>"<?php checked( $q_config['editor_mode'], QTX_EDITOR_MODE_SINGLE ) ?>/>&nbsp;<?php echo __( 'Single Language Mode.', 'qtranslate' ) . ' ' . __( 'The language edited is the same as admin language.', 'qtranslate' ) ?>
+                               value="<?php echo QTKQ_EDITOR_MODE_SINGLE; ?>"<?php checked( $q_config['editor_mode'], QTKQ_EDITOR_MODE_SINGLE ) ?>/>&nbsp;<?php echo __( 'Single Language Mode.', 'qtranslate' ) . ' ' . __( 'The language edited is the same as admin language.', 'qtranslate' ) ?>
                     </label>
                     <p class="qtranxs-notes"><?php echo __( 'Edit language cannot be switched without page re-loading. Try this mode, if some of the advanced translatable fields do not properly respond to the Language Switching Buttons due to incompatibility with a plugin, which severely alters the default WP behaviour. This mode is the most compatible with other themes and plugins.', 'qtranslate' ) . ' ' . __( 'One may find convenient to use the default Editor Mode, while remembering not to switch edit languages on custom advanced translatable fields, where LSB do not work.', 'qtranslate' ) ?></p>
                 </td>
             </tr>
             <?php
             $lsb_styles = [
-                QTX_LSB_STYLE_SIMPLE_BUTTONS => __( 'Simple Buttons', 'qtranslate' ),
-                QTX_LSB_STYLE_SIMPLE_TABS    => __( 'Simple Tabs', 'qtranslate' ),
-                QTX_LSB_STYLE_TABS_IN_BLOCK  => __( 'Tabs in Block', 'qtranslate' ),
-                QTX_LSB_STYLE_CUSTOM         => __( 'Use custom CSS', 'qtranslate' ),
+                QTKQ_LSB_STYLE_SIMPLE_BUTTONS => __( 'Simple Buttons', 'qtranslate' ),
+                QTKQ_LSB_STYLE_SIMPLE_TABS    => __( 'Simple Tabs', 'qtranslate' ),
+                QTKQ_LSB_STYLE_TABS_IN_BLOCK  => __( 'Tabs in Block', 'qtranslate' ),
+                QTKQ_LSB_STYLE_CUSTOM         => __( 'Use custom CSS', 'qtranslate' ),
             ]; ?>
             <tr id="option_lsb_style">
                 <th scope="row"><?php _e( 'LSB Style', 'qtranslate' ) ?></th>
@@ -664,7 +669,7 @@ class QTX_Admin_Settings {
                 <?php
                 $highlight_mode = $q_config['highlight_mode'];
                 // reset default custom CSS when the field is empty, or when the "custom" option is not checked
-                if ( empty( $q_config['highlight_mode_custom_css'] ) || $highlight_mode != QTX_HIGHLIGHT_MODE_CUSTOM_CSS ) {
+                if ( empty( $q_config['highlight_mode_custom_css'] ) || $highlight_mode != QTKQ_HIGHLIGHT_MODE_CUSTOM_CSS ) {
                     $highlight_mode_custom_css = qtranxf_get_admin_highlight_css( $highlight_mode );
                 } else {
                     $highlight_mode_custom_css = $q_config['highlight_mode_custom_css'];
@@ -677,33 +682,33 @@ class QTX_Admin_Settings {
                         <legend class="hidden"><?php _e( 'Highlight Style', 'qtranslate' ) ?></legend>
                         <label title="<?php _e( 'Do not highlight the translatable fields.', 'qtranslate' ) ?>">
                             <input type="radio" name="highlight_mode"
-                                   value="<?php echo QTX_HIGHLIGHT_MODE_NONE; ?>" <?php checked( $highlight_mode, QTX_HIGHLIGHT_MODE_NONE ) ?> />
+                                   value="<?php echo QTKQ_HIGHLIGHT_MODE_NONE; ?>" <?php checked( $highlight_mode, QTKQ_HIGHLIGHT_MODE_NONE ) ?> />
                             <?php _e( 'Do not highlight the translatable fields.', 'qtranslate' ) ?>
                         </label><br/>
                         <label
                             title="<?php _e( 'Show a line on the left border of translatable fields.', 'qtranslate' ) ?>">
                             <input type="radio" name="highlight_mode"
-                                   value="<?php echo QTX_HIGHLIGHT_MODE_BORDER_LEFT; ?>" <?php checked( $highlight_mode, QTX_HIGHLIGHT_MODE_BORDER_LEFT ) ?> />
+                                   value="<?php echo QTKQ_HIGHLIGHT_MODE_BORDER_LEFT; ?>" <?php checked( $highlight_mode, QTKQ_HIGHLIGHT_MODE_BORDER_LEFT ) ?> />
                             <?php _e( 'Show a line on the left border of translatable fields.', 'qtranslate' ) ?>
                         </label><br/>
                         <label title="<?php _e( 'Draw a border around translatable fields.', 'qtranslate' ) ?>">
                             <input type="radio" name="highlight_mode"
-                                   value="<?php echo QTX_HIGHLIGHT_MODE_BORDER; ?>" <?php checked( $highlight_mode, QTX_HIGHLIGHT_MODE_BORDER ) ?> />
+                                   value="<?php echo QTKQ_HIGHLIGHT_MODE_BORDER; ?>" <?php checked( $highlight_mode, QTKQ_HIGHLIGHT_MODE_BORDER ) ?> />
                             <?php _e( 'Draw a border around translatable fields.', 'qtranslate' ) ?>
                         </label><br/>
                         <label title="<?php _e( 'Show a shadow on the left of translatable fields.', 'qtranslate' ) ?>">
                             <input type="radio" name="highlight_mode"
-                                   value="<?php echo QTX_HIGHLIGHT_MODE_LEFT_SHADOW; ?>" <?php checked( $highlight_mode, QTX_HIGHLIGHT_MODE_LEFT_SHADOW ) ?> />
+                                   value="<?php echo QTKQ_HIGHLIGHT_MODE_LEFT_SHADOW; ?>" <?php checked( $highlight_mode, QTKQ_HIGHLIGHT_MODE_LEFT_SHADOW ) ?> />
                             <?php _e( 'Show a shadow on the left of translatable fields.', 'qtranslate' ) ?>
                         </label><br/>
                         <label title="<?php _e( 'Outline border around translatable fields.', 'qtranslate' ) ?>">
                             <input type="radio" name="highlight_mode"
-                                   value="<?php echo QTX_HIGHLIGHT_MODE_OUTLINE; ?>" <?php checked( $highlight_mode, QTX_HIGHLIGHT_MODE_OUTLINE ) ?> />
+                                   value="<?php echo QTKQ_HIGHLIGHT_MODE_OUTLINE; ?>" <?php checked( $highlight_mode, QTKQ_HIGHLIGHT_MODE_OUTLINE ) ?> />
                             <?php _e( 'Outline border around translatable fields.', 'qtranslate' ) ?>
                         </label><br/>
                         <label title="<?php _e( 'Use custom CSS', 'qtranslate' ) ?>">
                             <input type="radio" name="highlight_mode"
-                                   value="<?php echo QTX_HIGHLIGHT_MODE_CUSTOM_CSS; ?>" <?php checked( $highlight_mode, QTX_HIGHLIGHT_MODE_CUSTOM_CSS ) ?>/>
+                                   value="<?php echo QTKQ_HIGHLIGHT_MODE_CUSTOM_CSS; ?>" <?php checked( $highlight_mode, QTKQ_HIGHLIGHT_MODE_CUSTOM_CSS ) ?>/>
                             <?php echo __( 'Use custom CSS', 'qtranslate' ) . ':' ?>
                         </label><br/>
                     </fieldset>
@@ -720,7 +725,7 @@ class QTX_Admin_Settings {
     }
 
     /**
-     * @param QTX_Admin_Module_Settings[] $settings_modules
+     * @param QTKQ_Admin_Module_Settings[] $settings_modules
      *
      * @return void
      */
@@ -731,9 +736,9 @@ class QTX_Admin_Settings {
         <table class="form-table qtranxs-form-table" id="qtranxs_integration_config">
             <tr>
                 <td colspan="2"><p class="heading">
-                        <?php printf( __( 'If your theme or some plugins are not fully integrated with %s, suggest their authors to review the %sIntegration Guide%s. In many cases they would only need to create a simple text file in order to be fully compatible with %s. Alternatively, you may create such a file for them and for yourselves.', 'qtranslate' ), 'qTranslate&#8209;XT', '<a href="https://github.com/qtranslate/qtranslate-xt/wiki/Integration-Guide" target="_blank">', '</a>', 'qTranslate&#8209;XT' );
+                        <?php printf( __( 'If your theme or some plugins are not fully integrated with %s, suggest their authors to review the %sIntegration Guide%s. In many cases they would only need to create a simple text file in order to be fully compatible with %s. Alternatively, you may create such a file for them and for yourselves.', 'qtranslate' ), 'qTranslate&#8209;KQ', '<a href="https://github.com/qtranslate/qtranslate-xt/wiki/Integration-Guide" target="_blank">', '</a>', 'qTranslate&#8209;KQ' );
                         echo ' ';
-                        printf( __( 'Read %sIntegration Guide%s for more information on how to customize the configuration of %s.', 'qtranslate' ), '<a href="https://github.com/qtranslate/qtranslate-xt/wiki/Integration-Guide" target="_blank">', '</a>', 'qTranslate&#8209;XT' ); ?>
+                        printf( __( 'Read %sIntegration Guide%s for more information on how to customize the configuration of %s.', 'qtranslate' ), '<a href="https://github.com/qtranslate/qtranslate-xt/wiki/Integration-Guide" target="_blank">', '</a>', 'qTranslate&#8209;KQ' ); ?>
                     </p></td>
             </tr>
             <tr>
@@ -796,7 +801,7 @@ class QTX_Admin_Settings {
                            class="qtranxs_explanation <?php echo( empty( $q_config['custom_i18n_config'] ) ? "qtranxs-deprecated" : "qtranxs-deprecated-warning" ) ?>"><?php
                         _e( 'Deprecated.', 'qtranslate' );
                         echo( '<br/>' );
-                        printf( __( 'Additional custom JSON-encoded configuration of %s for all admin pages. It is processed after all files from option "%s" are loaded, providing opportunity to add or to override configuration tokens as necessary.', 'qtranslate' ), 'qTranslate&#8209;XT', __( 'Configuration Files', 'qtranslate' ) ); ?></label>
+                        printf( __( 'Additional custom JSON-encoded configuration of %s for all admin pages. It is processed after all files from option "%s" are loaded, providing opportunity to add or to override configuration tokens as necessary.', 'qtranslate' ), 'qTranslate&#8209;KQ', __( 'Configuration Files', 'qtranslate' ) ); ?></label>
                     <br/><textarea name="json_custom_i18n_config" id="qtranxs_json_custom_i18n_config"
                                    rows="4"
                                    style="width:100%"><?php if ( isset( $_POST['json_custom_i18n_config'] ) ) {
@@ -832,7 +837,7 @@ class QTX_Admin_Settings {
                         <input type="text" name="custom_field_classes" id="qtranxs_custom_field_classes"
                                value="<?php echo implode( ' ', $q_config['custom_field_classes'] ) ?>"
                                style="width:100%"></label>
-                    <p class="qtranxs-notes"><?php printf( __( 'All the fields of specified classes will respond to Language Switching Buttons. Be careful not to include a class, which would affect language-neutral fields. If you cannot uniquely identify a field needed neither by %s, nor by %s attribute, report the issue on %sSupport Forum%s', 'qtranslate' ), '"id"', '"class"', '<a href="https://github.com/qTranslate/qtranslate-xt/issues">', '</a>' ) ?></p>
+                    <p class="qtranxs-notes"><?php printf( __( 'All the fields of specified classes will respond to Language Switching Buttons. Be careful not to include a class, which would affect language-neutral fields. If you cannot uniquely identify a field needed neither by %s, nor by %s attribute, report the issue on %sSupport Forum%s', 'qtranslate' ), '"id"', '"class"', '<a href="https://github.com/KayronQuantor/qtranslate-kq/issues">', '</a>' ) ?></p>
                 </td>
             </tr>
             <tr>
@@ -865,7 +870,7 @@ class QTX_Admin_Settings {
             <tr>
                 <th scope="row"><?php _e( 'Debugging Information', 'qtranslate' ) ?></th>
                 <td>
-                    <p class="qtranxs_explanation"><?php printf( __( 'If you encounter any problems and you are unable to solve them yourself, you can visit the <a href="%s">Support Forum</a>. Posting the following Content will help other detect any misconfigurations.', 'qtranslate' ), 'https://github.com/qTranslate/qtranslate-xt/issues' ) ?></p>
+                    <p class="qtranxs_explanation"><?php printf( __( 'If you encounter any problems and you are unable to solve them yourself, you can visit the <a href="%s">Support Forum</a>. Posting the following Content will help other detect any misconfigurations.', 'qtranslate' ), 'https://github.com/KayronQuantor/qtranslate-kq/issues' ) ?></p>
                     <br>
                     <input type="button" id="qtranxs_debug_query" class="button"
                            value="<?php _e( 'Collect information', 'qtranslate' ); ?>">
@@ -911,7 +916,7 @@ class QTX_Admin_Settings {
                         printf( __( 'Click %s to modify language properties.', 'qtranslate' ), '"' . __( 'Edit', 'qtranslate' ) . '"' );
                         ?></p>
                     <?php
-                    $language_list = new QTX_Admin_Settings_Language_List( $language_names, $this->options_uri );
+                    $language_list = new QTKQ_Admin_Settings_Language_List( $language_names, $this->options_uri );
                     $language_list->prepare_items();
                     $language_list->display();
                     ?>

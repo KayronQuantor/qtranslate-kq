@@ -1,4 +1,11 @@
 <?php
+
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
+require_once __DIR__ . '/admin/activation_hook.php';
+
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -7,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Default domain translation for strings already translated by WordPress.
  * Use of this function prevents xgettext, poedit and other translating parsers from including the string that does not need translation.
  */
+
+
 function qtranxf_translate_wp( $string ): ?string {
     return __( $string );
 }
@@ -59,7 +68,7 @@ function qtranxf_dir_from_wp_content( string $plugin ): string {
 }
 
 /**
- * Return path to QTX plugin folder relative to WP_CONTENT_DIR.
+ * Return path to QTKQ plugin folder relative to WP_CONTENT_DIR.
  * Uses qtranxf_dir_from_wp_content
  * @since 3.4
  * @since 3.4.5 modified for multisite.
@@ -248,8 +257,8 @@ function qtranxf_post_type() {
     if ( $post && isset( $post->post_type ) ) {
         return $post->post_type;
     }
-    if ( isset( $_REQUEST['post_type'] ) ) {
-        return $_REQUEST['post_type'];
+    if ( isset( $_REQUEST['post_type'] ) && is_string( $_REQUEST['post_type'] ) ) {
+        return sanitize_key( wp_unslash( $_REQUEST['post_type'] ) );
     }
 
     return null;
@@ -629,3 +638,34 @@ function qtranxf_match_language_locale( string $locale ): ?string {
     return null;
 }
 
+
+
+
+// ==============================
+// Dynamic Properties Helper
+// ==============================
+
+function qtranxf_set_property( $obj, string $key, $value ): void {
+
+    if ( is_object( $obj ) ) {
+
+        // if the property exists › normally
+        if ( property_exists( $obj, $key ) ) {
+            $obj->$key = $value;
+            return;
+        }
+
+        // WP_Post and similar - we allow it, but without warning
+        if ( $obj instanceof stdClass ) {
+            $obj->$key = $value;
+            return;
+        }
+
+        // fallback - safe assignment
+        try {
+            $obj->$key = $value;
+        } catch ( Throwable $e ) {
+            // ignore — betterthan fatal
+        }
+    }
+}

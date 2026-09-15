@@ -1,4 +1,9 @@
 <?php
+
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -9,7 +14,7 @@ require_once QTRANSLATE_DIR . '/src/modules/admin_module_manager.php';
 
 function qtranxf_edit_config(): void {
     global $q_config;
-    if ( ! qtranxf_verify_nonce( 'qtranslate-x_configuration_form' ) ) {
+    if ( ! qtranxf_verify_nonce( 'qtranslate-kq_configuration_form' ) ) {
         return;
     }
     // init some needed variables
@@ -58,7 +63,7 @@ function qtranxf_edit_config(): void {
         if ( $_POST['language_name'] == '' ) {
             $errors[] = __( 'The Language must have a name!', 'qtranslate' );
         }
-        if ( ! preg_match( '/^' . QTX_LANG_CODE_FORMAT . '$/', $lang ) ) {
+        if ( ! preg_match( '/^' . QTKQ_LANG_CODE_FORMAT . '$/', $lang ) ) {
             // TODO: still allow 2-letter upper case for existing values, keep only case-sensitive check once legacy fixed in DB
             if ( ! empty ( $original_lang ) && $lang === $original_lang && preg_match( '/^[a-z]{2}$/i', $lang ) ) {
                 $warnings[] = sprintf( _( 'The 2-letter language code "%s" should be lower case (ISO 639-1). Upper case is still allowed for legacy codes but not for new entries.', 'qtranslate' ), $lang );
@@ -200,7 +205,7 @@ function qtranxf_edit_config(): void {
         }
     } elseif ( isset( $_GET['edit'] ) ) {
         $lang = sanitize_text_field( $_GET['edit'] );
-        if ( ! preg_match( '/^' . QTX_LANG_CODE_FORMAT . '$/', $lang ) ) {
+        if ( ! preg_match( '/^' . QTKQ_LANG_CODE_FORMAT . '$/', $lang ) ) {
             // TODO: still allow 2-letter upper case for existing values, keep only case-sensitive check once legacy fixed in DB
             if ( preg_match( '/^[a-z]{2}$/i', $lang ) ) {
                 $warnings[] = sprintf( _( 'The 2-letter language code "%s" should be lower case (ISO 639-1). Upper case is still allowed for legacy codes but not for new entries.', 'qtranslate' ), $lang );
@@ -348,9 +353,9 @@ function qtranxf_reset_config(): void {
     // internal private options not loaded by default
     delete_option( 'qtranslate_next_update_mo' );
     delete_option( 'qtranslate_next_thanks' );
-    delete_option( QTX_OPTIONS_MODULES_STATE );
-    delete_option( QTX_OPTIONS_MODULE_ACF );
-    delete_option( QTX_OPTIONS_MODULE_SLUGS );
+    delete_option( QTKQ_OPTIONS_MODULES_STATE );
+    delete_option( QTKQ_OPTIONS_MODULE_ACF );
+    delete_option( QTKQ_OPTIONS_MODULE_SLUGS );
 
     // obsolete options
     delete_option( 'qtranslate_custom_pages' );
@@ -369,7 +374,7 @@ function qtranxf_reset_config(): void {
     qtranxf_reload_config();
     add_filter( 'locale', 'qtranxf_localeForCurrentLanguage', 99 );
 
-    QTX_Admin_Module_Manager::update_modules_state();
+    QTKQ_Admin_Module_Manager::update_modules_state();
 }
 
 add_action( 'qtranslate_save_config', 'qtranxf_reset_config', 20 );
@@ -455,7 +460,7 @@ function qtranxf_save_config(): void {
 
     qtranxf_update_option( 'flag_location', qtranxf_flag_location_default() );
 
-    qtranxf_update_option( 'filter_options', explode( ' ', QTX_FILTER_OPTIONS_DEFAULT ) );
+    qtranxf_update_option( 'filter_options', explode( ' ', QTKQ_FILTER_OPTIONS_DEFAULT ) );
 
     qtranxf_update_option( 'term_name' );//uniquely special case
 
@@ -502,13 +507,13 @@ function qtranxf_reload_config(): void {
     qtranxf_load_option_qtrans_compatibility();
 }
 
-function qtranxf_update_setting( $var, int $type = QTX_STRING, $def = null ): bool {
+function qtranxf_update_setting( $var, int $type = QTKQ_STRING, $def = null ): bool {
     global $q_config, $qtranslate_options;
     if ( ! isset( $_POST['submit'] ) ) {
         return false;
     }
     // Require POST data except for booleans, as unchecked boxes are not sent with the form.
-    if ( ! isset( $_POST[ $var ] ) && $type != QTX_BOOLEAN && $type != QTX_BOOLEAN_SET ) {
+    if ( ! isset( $_POST[ $var ] ) && $type != QTKQ_BOOLEAN && $type != QTKQ_BOOLEAN_SET ) {
         return false;
     }
 
@@ -519,13 +524,13 @@ function qtranxf_update_setting( $var, int $type = QTX_STRING, $def = null ): bo
         $def = call_user_func( $def );
     }
     switch ( $type ) {
-        case QTX_URL:
-        case QTX_LANGUAGE:
-        case QTX_STRING:
+        case QTKQ_URL:
+        case QTKQ_LANGUAGE:
+        case QTKQ_STRING:
             $val = sanitize_text_field( $_POST[ $var ] );
-            if ( $type == QTX_URL ) {
+            if ( $type == QTKQ_URL ) {
                 $val = trailingslashit( $val );
-            } else if ( $type == QTX_LANGUAGE && ! qtranxf_isEnabled( $val ) ) {
+            } else if ( $type == QTKQ_LANGUAGE && ! qtranxf_isEnabled( $val ) ) {
                 return false;
             }
             if ( isset( $q_config[ $var ] ) ) {
@@ -546,7 +551,7 @@ function qtranxf_update_setting( $var, int $type = QTX_STRING, $def = null ): bo
 
             return true;
 
-        case QTX_TEXT:
+        case QTKQ_TEXT:
             $val = $_POST[ $var ];
             // standardize multi-line string
             $lns = preg_split( '/\r?\n\r?/', $val );
@@ -572,7 +577,7 @@ function qtranxf_update_setting( $var, int $type = QTX_STRING, $def = null ): bo
 
             return true;
 
-        case QTX_ARRAY:
+        case QTKQ_ARRAY:
             $val = $_POST[ $var ] ?? array();
             if ( ! is_array( $val ) ) {
                 $val = sanitize_text_field( $val );
@@ -593,7 +598,7 @@ function qtranxf_update_setting( $var, int $type = QTX_STRING, $def = null ): bo
 
             return true;
 
-        case QTX_BOOLEAN_SET:
+        case QTKQ_BOOLEAN_SET:
             $val = $_POST[ $var ] ?? array();
             // Convert all input values to boolean types
             foreach ( $val as &$value ) {
@@ -615,7 +620,7 @@ function qtranxf_update_setting( $var, int $type = QTX_STRING, $def = null ): bo
 
             return true;
 
-        case QTX_BOOLEAN:
+        case QTKQ_BOOLEAN:
             if ( isset( $_POST[ $var ] ) && $_POST[ $var ] == 1 ) {
                 if ( $q_config[ $var ] ) {
                     return false;
@@ -631,7 +636,7 @@ function qtranxf_update_setting( $var, int $type = QTX_STRING, $def = null ): bo
 
             return true;
 
-        case QTX_INTEGER:
+        case QTKQ_INTEGER:
             $val = sanitize_text_field( $_POST[ $var ] );
             $val = intval( $val );
             if ( $q_config[ $var ] == $val ) {
@@ -709,7 +714,7 @@ function qtranxf_update_setting_ignore_file_types( string $name ): bool {
         return false;
     }
     $posted  = preg_split( '/[\s,]+/', strtolower( sanitize_text_field( $_POST[ $name ] ) ), -1, PREG_SPLIT_NO_EMPTY );
-    $ignored = explode( ',', QTX_IGNORE_FILE_TYPES );
+    $ignored = explode( ',', QTKQ_IGNORE_FILE_TYPES );
     if ( is_array( $posted ) ) {
         foreach ( $posted as $posted_value ) {
             if ( empty( $posted_value ) ) {
@@ -765,7 +770,7 @@ function qtranxf_update_settings(): void {
     do_action( 'qtranslate_update_settings_pre' );
 
     // special cases handling for front options
-    qtranxf_update_setting( 'default_language', QTX_LANGUAGE );
+    qtranxf_update_setting( 'default_language', QTKQ_LANGUAGE );
     // enabled_languages are not changed at this place
     qtranxf_update_setting_flag_location( 'flag_location' );
     qtranxf_update_setting_ignore_file_types( 'ignore_file_types' );
@@ -773,33 +778,33 @@ function qtranxf_update_settings(): void {
     // special cases handling for front options - end
 
     foreach ( $qtranslate_options['front']['int'] as $name => $default ) {
-        qtranxf_update_setting( $name, QTX_INTEGER, $default );
+        qtranxf_update_setting( $name, QTKQ_INTEGER, $default );
     }
 
     foreach ( $qtranslate_options['front']['bool'] as $name => $default ) {
-        qtranxf_update_setting( $name, QTX_BOOLEAN, $default );
+        qtranxf_update_setting( $name, QTKQ_BOOLEAN, $default );
     }
-    qtranxf_update_setting( 'qtrans_compatibility', QTX_BOOLEAN );
+    qtranxf_update_setting( 'qtrans_compatibility', QTKQ_BOOLEAN );
 
     foreach ( $qtranslate_options['front']['str'] as $name => $default ) {
-        qtranxf_update_setting( $name, QTX_STRING, $default );
+        qtranxf_update_setting( $name, QTKQ_STRING, $default );
     }
 
     foreach ( $qtranslate_options['front']['text'] as $name => $default ) {
-        qtranxf_update_setting( $name, QTX_TEXT, $default );
+        qtranxf_update_setting( $name, QTKQ_TEXT, $default );
     }
 
     foreach ( $qtranslate_options['front']['array'] as $name => $default ) {
-        qtranxf_update_setting( $name, QTX_ARRAY, $default );
+        qtranxf_update_setting( $name, QTKQ_ARRAY, $default );
     }
 
-    qtranxf_update_setting( 'filter_options', QTX_ARRAY );
+    qtranxf_update_setting( 'filter_options', QTKQ_ARRAY );
 
     switch ( $q_config['url_mode'] ) {
-        case QTX_URL_DOMAIN:
+        case QTKQ_URL_DOMAIN:
             $q_config['disable_client_cookies'] = true;
             break;
-        case QTX_URL_DOMAINS:
+        case QTKQ_URL_DOMAINS:
             $q_config['disable_client_cookies'] = true;
             // Reload 'domains' option, in case the URL mode was just changed.
             qtranxf_load_option_array( 'domains' );
@@ -821,10 +826,10 @@ function qtranxf_update_settings(): void {
                 qtranxf_update_option( 'domains' );
             }
             break;
-        case QTX_URL_QUERY:
-        case QTX_URL_PATH:
+        case QTKQ_URL_QUERY:
+        case QTKQ_URL_PATH:
         default:
-            qtranxf_update_setting( 'disable_client_cookies', QTX_BOOLEAN );
+            qtranxf_update_setting( 'disable_client_cookies', QTKQ_BOOLEAN );
             break;
     }
 
@@ -874,10 +879,10 @@ function qtranxf_update_settings(): void {
         }
     }
 
-    if ( $_POST['highlight_mode'] != QTX_HIGHLIGHT_MODE_CUSTOM_CSS ) {
+    if ( $_POST['highlight_mode'] != QTKQ_HIGHLIGHT_MODE_CUSTOM_CSS ) {
         $_POST['highlight_mode_custom_css'] = '';
     }
-    if ( isset( $_POST['lsb_style'] ) && $_POST['lsb_style'] !== QTX_LSB_STYLE_CUSTOM ) {
+    if ( isset( $_POST['lsb_style'] ) && $_POST['lsb_style'] !== QTKQ_LSB_STYLE_CUSTOM ) {
         // Admin can only select some option, if CSS file doesn't exist in expected path it's a bug, not a config error.
         assert( file_exists( QTRANSLATE_DIR . '/css/lsb/' . $_POST['lsb_style'] ) );
     }
@@ -888,23 +893,23 @@ function qtranxf_update_settings(): void {
     do_action( 'qtranslate_update_settings_admin' );
 
     foreach ( $qtranslate_options['admin']['int'] as $name => $default ) {
-        qtranxf_update_setting( $name, QTX_INTEGER, $default );
+        qtranxf_update_setting( $name, QTKQ_INTEGER, $default );
     }
 
     foreach ( $qtranslate_options['admin']['bool'] as $name => $default ) {
-        qtranxf_update_setting( $name, QTX_BOOLEAN, $default );
+        qtranxf_update_setting( $name, QTKQ_BOOLEAN, $default );
     }
 
     foreach ( $qtranslate_options['admin']['str'] as $name => $default ) {
-        qtranxf_update_setting( $name, QTX_STRING, $default );
+        qtranxf_update_setting( $name, QTKQ_STRING, $default );
     }
 
     foreach ( $qtranslate_options['admin']['text'] as $name => $default ) {
-        qtranxf_update_setting( $name, QTX_TEXT, $default );
+        qtranxf_update_setting( $name, QTKQ_TEXT, $default );
     }
 
     foreach ( $qtranslate_options['admin']['array'] as $name => $default ) {
-        qtranxf_update_setting( $name, QTX_ARRAY, $default );
+        qtranxf_update_setting( $name, QTKQ_ARRAY, $default );
     }
 
     if ( empty( $_POST['json_config_files'] ) ) {
@@ -913,9 +918,9 @@ function qtranxf_update_settings(): void {
 
     $q_config['i18n-cache'] = array(); // clear i18n-config cache
 
-    qtranxf_update_setting( 'admin_enabled_modules', QTX_BOOLEAN_SET, $qtranslate_options['admin']['admin_enabled_modules'] );
+    qtranxf_update_setting( 'admin_enabled_modules', QTKQ_BOOLEAN_SET, $qtranslate_options['admin']['admin_enabled_modules'] );
 
-    QTX_Admin_Module_Manager::update_modules_state();
+    QTKQ_Admin_Module_Manager::update_modules_state();
 
     // opportunity to update special custom settings on sub-plugins
     do_action( 'qtranslate_update_settings' );

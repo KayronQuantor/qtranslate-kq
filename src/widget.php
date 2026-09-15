@@ -1,9 +1,14 @@
 <?php
+
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'QTX_WIDGET_CSS',
+define( 'QTKQ_WIDGET_CSS',
     '.qtranxs_widget ul { margin: 0; }
 .qtranxs_widget ul li
 {
@@ -25,11 +30,11 @@ transition: 1s ease opacity;
 .qtranxs_flag span { display:none; }
 ' );
 
-//define('QTX_WIDGET_CUSTOM_FORMAT','%f<span>%n</span>');
+//define('QTKQ_WIDGET_CUSTOM_FORMAT','%f<span>%n</span>');
 
-/* qTranslate-X Widget */
+/* qTranslate-KQ Widget */
 
-class qTranslateXWidget extends WP_Widget {
+class qTranslateKQWidget extends WP_Widget {
 
     function __construct() {
         $widget_ops = array(
@@ -42,12 +47,20 @@ class qTranslateXWidget extends WP_Widget {
     function widget( $args, $instance ): void {
         if ( ! isset( $instance['widget-css-off'] ) ) {
             echo '<style>' . PHP_EOL;
-            echo empty( $instance['widget-css'] ) ? QTX_WIDGET_CSS : $instance['widget-css'];
+            echo empty( $instance['widget-css'] ) ? QTKQ_WIDGET_CSS : $instance['widget-css'];
             echo '</style>' . PHP_EOL;
         }
         echo $args['before_widget'];
         if ( empty( $instance['hide-title'] ) ) {
-            $title = $instance['title'];
+
+		//	BEFORE:
+		//	$title = $instance['title'];
+
+		//	AFTER:
+			$title = function_exists('qtranxf_translate')
+				? qtranxf_translate($instance['title'])
+				: qtranxf_translate_wp($instance['title']);
+
             if ( empty( $title ) ) {
                 $title = qtranxf_translate_wp( 'Language' );
             }    //translators: expected in WordPress default textdomain
@@ -61,9 +74,62 @@ class qTranslateXWidget extends WP_Widget {
         echo $args['after_widget'];
     }
 
-    function update( $new_instance, $old_instance ): array {
-        $instance          = $old_instance;
-        $instance['title'] = $new_instance['title'];
+	function update( $new_instance, $old_instance ): array {
+
+		// TEST
+		// error_log(print_r($_POST, true));
+		// TEST
+
+		/*
+		//	OLD
+		$instance = $old_instance;
+		$instance['title'] = $new_instance['title'];
+		*/
+
+
+		// NEW
+		$instance = $old_instance;
+
+		// 🔥 PRAWIDŁOWE źródło danych (qtranslate-fields)
+
+		$widget_id = $this->number; // np. 8
+
+		if (
+			isset($_POST['qtranslate-fields']['widget-qtranslate'][$widget_id]['title']) &&
+			is_array($_POST['qtranslate-fields']['widget-qtranslate'][$widget_id]['title'])
+		) {
+
+			$translations = $_POST['qtranslate-fields']['widget-qtranslate'][$widget_id]['title'];
+
+
+/*
+			$result = '';
+
+			foreach ($translations as $lang => $text) {
+
+				if ($lang === 'qtranslate-separator') {
+					continue;
+				}
+
+				$result .= "[:{$lang}]{$text}";
+			}
+
+			$result .= '[:]';
+*/
+
+			$result = qtranxf_build_multilang_string($translations);		// Nowe zamiast powyższego
+
+
+			$instance['title'] = $result;
+
+		} else {
+
+			// fallback (jakby coś się wywaliło)
+			$instance['title'] = $new_instance['title'];
+		}
+		// END NEW
+
+
 
         if ( isset( $new_instance['hide-title'] ) ) {
             $instance['hide-title'] = true;
@@ -91,7 +157,7 @@ class qTranslateXWidget extends WP_Widget {
             $instance['widget-css-off'] = true;
         }
 
-        if ( $new_instance['widget-css'] == QTX_WIDGET_CSS ) {
+        if ( $new_instance['widget-css'] == QTKQ_WIDGET_CSS ) {
             unset( $instance['widget-css'] );
         } else {
             $instance['widget-css'] = $new_instance['widget-css'];
@@ -105,7 +171,7 @@ class qTranslateXWidget extends WP_Widget {
             'title'      => '',
             'type'       => 'text',
             'format'     => '',
-            'widget-css' => QTX_WIDGET_CSS
+            'widget-css' => QTKQ_WIDGET_CSS
         ) );
         $title            = $instance['title'];
         $hide_title       = isset( $instance['hide-title'] ) && $instance['hide-title'] !== false;
@@ -115,14 +181,44 @@ class qTranslateXWidget extends WP_Widget {
         $widget_css_on    = ! isset( $instance['widget-css-off'] );
         $widget_css       = $instance['widget-css'];
         if ( empty( $widget_css ) ) {
-            $widget_css = QTX_WIDGET_CSS;
+            $widget_css = QTKQ_WIDGET_CSS;
         }
         ?>
-        <p><label for="<?php echo $this->get_field_id( 'title' ) ?>"><?php _e( 'Title:', 'qtranslate' ) ?> <input
+
+
+
+
+
+		<!-- BEFORE
+		<p><label for="<?php echo $this->get_field_id( 'title' ) ?>"><?php _e( 'Title:', 'qtranslate' ) ?> <input
                     class="widefat" id="<?php echo $this->get_field_id( 'title' ) ?>"
                     name="<?php echo $this->get_field_name( 'title' ) ?>" type="text"
                     value="<?php echo esc_attr( $title ) ?>"/></label></p>
-        <p><label for="<?php echo $this->get_field_id( 'hide-title' ) ?>"><?php _e( 'Hide Title:', 'qtranslate' ) ?>
+        -->
+
+		<!-- AFTER -->
+		<p>
+			<label for="<?php echo $this->get_field_id( 'title' ) ?>">
+				<?php _e( 'Title:', 'qtranslate' ) ?>
+
+				<input
+					class="widefat qtranxs-translatable"
+					id="<?php echo $this->get_field_id( 'title' ) ?>"
+					name="<?php echo $this->get_field_name( 'title' ) ?>"
+					type="text"
+					value="<?php echo esc_attr( $title ) ?>"
+				/>
+
+				<?php
+				// 🔥 KLUCZOWE: rejestracja pola jako multilingual
+				$field_name = $this->get_field_name( 'title' );
+				?>
+			</label>
+		</p>
+		<!-- END AFTER -->
+
+
+		<p><label for="<?php echo $this->get_field_id( 'hide-title' ) ?>"><?php _e( 'Hide Title:', 'qtranslate' ) ?>
                 <input type="checkbox" id="<?php echo $this->get_field_id( 'hide-title' ) ?>"
                        name="<?php echo $this->get_field_name( 'hide-title' ) ?>" <?php checked( $hide_title ) ?>/></label>
         </p>
@@ -343,6 +439,116 @@ function qtranxf_generateLanguageSelectCode( $args = array(), $id = '' ) {
 }
 
 function qtranxf_widget_init() {
-    register_widget( 'qTranslateXWidget' );
+    register_widget( 'qTranslateKQWidget' );
     do_action( 'qtranslate_widget_init' );
 }
+
+
+
+function qtranxf_build_multilang_string($translations) {
+
+    if (!is_array($translations)) {
+        return '';
+    }
+
+    $result = '';
+
+    foreach ($translations as $lang => $text) {
+
+        if ($lang === 'qtranslate-separator') continue;
+
+        $result .= "[:{$lang}]{$text}";
+    }
+
+    return $result . '[:]';
+}
+
+
+
+
+add_filter('pre_update_option', 'qtranxf_fix_all_widgets_translation', 10, 3);
+
+function qtranxf_fix_all_widgets_translation($value, $option, $old_value) {
+
+    // interesują nas tylko widgety
+    if (strpos($option, 'widget_') !== 0) {
+        return $value;
+    }
+
+    if (!isset($_POST['qtranslate-fields']) || !is_array($_POST['qtranslate-fields'])) {
+        return $value;
+    }
+
+    foreach ($_POST['qtranslate-fields'] as $group => $widgets) {
+
+        if (!is_array($widgets)) continue;
+
+        foreach ($widgets as $widget_id => $fields) {
+
+            if (!isset($value[$widget_id])) continue;
+
+            foreach ($fields as $field_name => $translations) {
+
+                if (!is_array($translations)) continue;
+
+
+//                $result = '';
+//
+//                foreach ($translations as $lang => $text) {
+//
+//                    if ($lang === 'qtranslate-separator') continue;
+//
+//                    $result .= "[:{$lang}]{$text}";
+//                }
+//
+//                $result .= '[:]';
+
+
+				$result = qtranxf_build_multilang_string($translations);		// Nowe zamiast powyższego
+
+
+                // 🔥 KLUCZ: nadpisujemy konkretne pole widgetu
+                $value[$widget_id][$field_name] = $result;
+            }
+        }
+    }
+
+    return $value;
+}
+
+
+
+/*
+add_filter('pre_update_option', 'qtranxf_fix_all_widgets_translation', 10, 3);
+
+function qtranxf_fix_all_widgets_translation($value, $option, $old_value) {
+
+    if (strpos($option, 'widget_') !== 0) {
+        return $value;
+    }
+
+    if (!isset($_POST['qtranslate-fields']) || !is_array($_POST['qtranslate-fields'])) {
+        return $value;
+    }
+
+    foreach ($_POST['qtranslate-fields'] as $group => $widgets) {
+
+        if (!is_array($widgets)) continue;
+
+        foreach ($widgets as $widget_id => $fields) {
+
+            if (!isset($value[$widget_id])) continue;
+
+            foreach ($fields as $field_name => $translations) {
+
+                if (!is_array($translations)) continue;
+
+                $value[$widget_id][$field_name] = qtranxf_build_multilang_string($translations);
+            }
+        }
+    }
+
+    return $value;
+}
+
+*/

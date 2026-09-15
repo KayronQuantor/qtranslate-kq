@@ -1,4 +1,9 @@
 <?php
+
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -6,11 +11,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once QTRANSLATE_DIR . '/src/translator_interface.php';
 
 /**
- * Implementation of QTX_Translator_Interface interface.
- * For a function documentation look up definition of QTX_Translator_Interface.
+ * Implementation of QTKQ_Translator_Interface interface.
+ * For a function documentation look up definition of QTKQ_Translator_Interface.
  * @since 3.4
  */
-class QTX_Translator implements QTX_Translator_Interface {
+class QTKQ_Translator implements QTKQ_Translator_Interface {
     public function __construct() {
         add_filter( 'translate_text', array( $this, 'translate_text' ), 10, 3 );
         add_filter( 'translate_term', array( $this, 'translate_term' ), 10, 3 );
@@ -21,7 +26,7 @@ class QTX_Translator implements QTX_Translator_Interface {
     public static function get_translator() {
         global $q_config;
         if ( ! isset( $q_config['translator'] ) ) {
-            $q_config['translator'] = new QTX_Translator;
+            $q_config['translator'] = new QTKQ_Translator;
         }
 
         return $q_config['translator'];
@@ -48,8 +53,8 @@ class QTX_Translator implements QTX_Translator_Interface {
         if ( ! $lang ) {
             $lang = $q_config['language'];
         }
-        $show_available = $flags & QTX_TRANSLATOR_SHOW_AVAILABLE;
-        $show_empty     = $flags & QTX_TRANSLATOR_SHOW_EMPTY;
+        $show_available = $flags & QTKQ_TRANSLATOR_SHOW_AVAILABLE;
+        $show_empty     = $flags & QTKQ_TRANSLATOR_SHOW_EMPTY;
 
         return qtranxf_use( $lang, $text, $show_available, $show_empty );
     }

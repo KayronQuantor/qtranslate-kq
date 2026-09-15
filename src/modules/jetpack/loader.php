@@ -1,4 +1,9 @@
 <?php
+
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 /**
  * Built-in module for Jetpack
  */
@@ -6,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class QTX_Module_Jetpack {
+class QTKQ_Module_Jetpack {
     public function __construct() {
         add_filter( 'jetpack_relatedposts_returned_results', array( $this, 'translate_related_posts' ) );
     }
@@ -30,4 +35,4 @@ class QTX_Module_Jetpack {
 
 }
 
-new QTX_Module_Jetpack();
+new QTKQ_Module_Jetpack();

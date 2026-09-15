@@ -1,9 +1,10 @@
+/*! Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. */
 /**
  * Storage for admin edit language
  */
 'use strict';
 // the edit language corresponds to the current LSB selection or the main admin language for single mode
-const keyEditLanguage = 'qtranslate-xt-admin-edit-language';
+const keyEditLanguage = 'qtranslate-kq-admin-edit-language';
 
 export const getStoredEditLanguage = function () {
     return sessionStorage.getItem(keyEditLanguage);

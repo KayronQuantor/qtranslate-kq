@@ -1,4 +1,9 @@
 <?php
+
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -83,8 +88,8 @@ function qtranxf_migrate_export_qtranslate_xp(): void {
 function qtranxf_migrate_import( string $plugin_name, string $name_from ): void {
     qtranxf_migrate_options_update( 'qtranslate', $name_from );
     $nm = '<strong>' . $plugin_name . '</strong>';
-    qtranxf_add_warning( sprintf( __( 'Applicable options and taxonomy names from plugin %s have been imported. Note that the multilingual content of posts, pages and other objects has not been altered during this operation. There is no additional operation needed to import content, since its format is compatible with %s.', 'qtranslate' ), $nm, 'qTranslate&#8209;XT' ) . ' ' . sprintf( __( 'It might be a good idea to review %smigration instructions%s, if you have not yet done so.', 'qtranslate' ), '<a href="https://github.com/qtranslate/qtranslate-xt/wiki/Migration-Guide" target="_blank">', '</a>' ) );
-    qtranxf_add_warning( sprintf( __( '%sImportant%s: Before you start making edits to post and pages, please, make sure that both, your front site and admin back-end, work under this configuration. It may help to review "%s" and see if any of conflicting plugins mentioned there are used here. While the current content, coming from %s, is compatible with this plugin, the newly modified posts and pages will be saved with a new square-bracket-only encoding, which has a number of advantages comparing to former %s encoding. However, the new encoding is not straightforwardly compatible with %s and you will need an additional step available under "%s" option if you ever decide to go back to %s. Even with this additional conversion step, the 3rd-party plugins custom-stored data will not be auto-converted, but manual editing will still work. That is why it is advisable to create a test-copy of your site before making any further changes. In case you encounter a problem, please give us a chance to improve %s, send the login information to the test-copy of your site to %s along with a detailed step-by-step description of what is not working, and continue using your main site with %s meanwhile. It would also help, if you share a success story as well, either on %sthe forum%s, or via the same e-mail as mentioned above. Thank you very much for trying %s.', 'qtranslate' ), '<strong>', '</strong>', '<a href="https://github.com/qtranslate/qtranslate-xt/issues" target="_blank">' . 'Known Issues' . '</a>', $nm, 'qTranslate', $nm, '<a href="https://github.com/qtranslate/qtranslate-xt/wiki/Migration-Guide#convert-database" target="_blank"><strong>' . __( 'Convert Database', 'qtranslate' ) . '</strong></a>', $nm, 'qTranslate&#8209;XT', '[no mail support]', $nm, '<a href="https://github.com/qTranslate/qtranslate-xt/issues">', '</a>', 'qTranslate&#8209;XT' ) . '<br/>' . __( 'This is a one-time message, which you will not see again, unless the same import is repeated.', 'qtranslate' ) );
+    qtranxf_add_warning( sprintf( __( 'Applicable options and taxonomy names from plugin %s have been imported. Note that the multilingual content of posts, pages and other objects has not been altered during this operation. There is no additional operation needed to import content, since its format is compatible with %s.', 'qtranslate' ), $nm, 'qTranslate&#8209;KQ' ) . ' ' . sprintf( __( 'It might be a good idea to review %smigration instructions%s, if you have not yet done so.', 'qtranslate' ), '<a href="https://github.com/qtranslate/qtranslate-xt/wiki/Migration-Guide" target="_blank">', '</a>' ) );
+    qtranxf_add_warning( sprintf( __( '%sImportant%s: Before you start making edits to post and pages, please, make sure that both, your front site and admin back-end, work under this configuration. It may help to review "%s" and see if any of conflicting plugins mentioned there are used here. While the current content, coming from %s, is compatible with this plugin, the newly modified posts and pages will be saved with a new square-bracket-only encoding, which has a number of advantages comparing to former %s encoding. However, the new encoding is not straightforwardly compatible with %s and you will need an additional step available under "%s" option if you ever decide to go back to %s. Even with this additional conversion step, the 3rd-party plugins custom-stored data will not be auto-converted, but manual editing will still work. That is why it is advisable to create a test-copy of your site before making any further changes. In case you encounter a problem, please give us a chance to improve %s, send the login information to the test-copy of your site to %s along with a detailed step-by-step description of what is not working, and continue using your main site with %s meanwhile. It would also help, if you share a success story as well, either on %sthe forum%s, or via the same e-mail as mentioned above. Thank you very much for trying %s.', 'qtranslate' ), '<strong>', '</strong>', '<a href="https://github.com/KayronQuantor/qtranslate-kq/issues" target="_blank">' . 'Known Issues' . '</a>', $nm, 'qTranslate', $nm, '<a href="https://github.com/qtranslate/qtranslate-xt/wiki/Migration-Guide#convert-database" target="_blank"><strong>' . __( 'Convert Database', 'qtranslate' ) . '</strong></a>', $nm, 'qTranslate&#8209;KQ', '[no mail support]', $nm, '<a href="https://github.com/KayronQuantor/qtranslate-kq/issues">', '</a>', 'qTranslate&#8209;KQ' ) . '<br/>' . __( 'This is a one-time message, which you will not see again, unless the same import is repeated.', 'qtranslate' ) );
 }
 
 function qtranxf_migrate_export( string $plugin_name, string $name_to ): void {
@@ -171,7 +176,7 @@ function qtranxf_add_row_migrate( string $nm, string $plugin, ?array $args = nul
 function qtranxf_admin_section_import_export( string $request_uri ): void {
     global $q_config;
 
-    QTX_Admin_Settings::open_section( 'import' );
+    QTKQ_Admin_Settings::open_section( 'import' );
     ?>
     <table class="form-table qtranxs-form-table" id="qtranxs_import_config">
         <tr id="qtranslate-convert-database">
@@ -229,7 +234,7 @@ function qtranxf_admin_section_import_export( string $request_uri ): void {
             'text' => sprintf( __( 'Use plugin %s to import data.', 'qtranslate' ), '<a href="https://wordpress.org/plugins/w2q-wpml-to-qtranslate/" target="_blank">W2Q: WPML to qTranslate</a>' )
         ) ) ?>
         <?php do_action( 'qtranslate_add_row_migrate' ) ?>
-        <?php if ( QTX_Module_Loader::is_module_active( 'slugs' ) ): ?>
+        <?php if ( QTKQ_Module_Loader::is_module_active( 'slugs' ) ): ?>
             <tr id="qtranslate-import-slugs">
                 <th scope="row"><?php _e( 'Migrate QTS slugs', 'qtranslate' ) ?></th>
                 <td>
@@ -286,7 +291,7 @@ function qtranxf_admin_section_import_export( string $request_uri ): void {
         </tr>
     </table>
     <?php
-    QTX_Admin_Settings::close_section( 'import' );
+    QTKQ_Admin_Settings::close_section( 'import' );
 }
 
 add_action( 'qtranslate_configuration', 'qtranxf_admin_section_import_export', 9 );

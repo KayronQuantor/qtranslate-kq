@@ -1,17 +1,18 @@
+/*! Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. */
 /* executed for
  /wp-admin/nav-menus.php
 */
 'use strict';
 const $ = jQuery;
 
-$(document).on('qtxLoadAdmin:nav-menus', (event, qtx) => {
+$(document).on('qtkqLoadAdmin:nav-menus', (event, qtkq) => {
     const addMenuItemHooks = function (li) {
-        qtx.addContentHooksByClass('edit-menu-item-title', li);
-        qtx.addContentHooksByClass('edit-menu-item-attr-title', li);
-        qtx.addContentHooksByClass('[edit-menu-item-description', li); // must use '[:]' separator style
+        qtkq.addContentHooksByClass('edit-menu-item-title', li);
+        qtkq.addContentHooksByClass('edit-menu-item-attr-title', li);
+        qtkq.addContentHooksByClass('[edit-menu-item-description', li); // must use '[:]' separator style
 
-        qtx.addDisplayHooksByClass('menu-item-title', li);
-        qtx.addDisplayHooksByTagInClass('link-to-original', 'A', li);
+        qtkq.addDisplayHooksByClass('menu-item-title', li);
+        qtkq.addDisplayHooksByTagInClass('link-to-original', 'A', li);
     };
 
     const onAddMenuItem = function (menuMarkup) {
@@ -52,5 +53,5 @@ $(document).on('qtxLoadAdmin:nav-menus', (event, qtx) => {
     };
     onLanguageSwitchAfter();
 
-    qtx.addLanguageSwitchAfterListener(onLanguageSwitchAfter);
+    qtkq.addLanguageSwitchAfterListener(onLanguageSwitchAfter);
 });

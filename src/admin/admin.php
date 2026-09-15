@@ -1,4 +1,9 @@
 <?php
+
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -43,6 +48,7 @@ function qtranxf_collect_translations( &$qfields, &$request, $edit_lang ): void 
     if ( isset( $qfields['qtranslate-separator'] ) ) {
         $sep = $qfields['qtranslate-separator'];
         unset( $qfields['qtranslate-separator'] );
+
         if ( ! qtranxf_isMultilingual( $request ) ) {
             // convert to ML value
             $qfields[ $edit_lang ] = $request;
@@ -82,14 +88,53 @@ function qtranxf_decode_json_name_value( $value ): ?array {
  * @see qtranxf_collect_translations
  */
 function qtranxf_collect_translations_posted() {
+
+/*
+	// DEBUG
+	error_log('=== SAVE WIDGET DEBUG ===');
+	error_log(print_r($_REQUEST, true));
+	// END DEBUG
+*/
+
+/*	// FIX - WYKLUCZ widget qTranslate (title) z przetwarzania	// STARA WERSJA - NIE DZIA£A
+	if (isset($_POST['widget-qtranslate'])) {
+		return;
+	}
+*/
+
+/*
+  // NIE DOTYKAJ widgetów — bo psuje TITLE	// a to nie pozwala w pe³ni edytowaæ title...
+    if (isset($_POST['action']) && $_POST['action'] === 'save-widget') {
+        return;
+    }
+*/
+
+	// Obs³uga widgetów: NIE blokujemy collect_translations,
+	// ale pozwalamy dzia³aæ tylko jeœli s¹ qtranslate-fields
+
+	if (isset($_POST['action']) && $_POST['action'] === 'save-widget') {
+		if (empty($_REQUEST['qtranslate-fields'])) {
+			return;
+		}
+	}
+
     if ( isset( $_REQUEST['qtranslate-fields'] ) ) {
+
         $edit_lang = qtranxf_get_edit_language();
-        foreach ( $_REQUEST['qtranslate-fields'] as $name => &$qfields ) {
-            if ( ! isset( $_REQUEST[ $name ] ) ) {
-                unset( $_REQUEST['qtranslate-fields'][ $name ] );
-                continue;
-            }
-            qtranxf_collect_translations( $qfields, $_REQUEST[ $name ], $edit_lang );
+		foreach ( $_REQUEST['qtranslate-fields'] as $name => &$qfields ) {
+
+			if ( ! isset( $_REQUEST[ $name ] ) ) {
+				unset( $_REQUEST['qtranslate-fields'][ $name ] );
+				continue;
+			}
+
+/*
+			// KLUCZOWY FIX (parsera): pomijamy struktury nie-skalarnie
+			if ( is_array( $_REQUEST[ $name ] ) ) {
+				continue;
+			}
+*/
+			qtranxf_collect_translations( $qfields, $_REQUEST[ $name ], $edit_lang );
             if ( isset( $_POST[ $name ] ) ) {
                 $_POST[ $name ] = $_REQUEST[ $name ];
             }
@@ -125,7 +170,7 @@ function qtranxf_load_admin_page_config() {
 }
 
 /**
- * @return bool true when the current page is the configuration page of QT-XT.
+ * @return bool true when the current page is the configuration page of QT-KQ.
  * @since 3.4.7
  */
 function qtranxf_admin_is_config_page(): bool {
@@ -133,7 +178,7 @@ function qtranxf_admin_is_config_page(): bool {
 
     return ( $pagenow == 'options-general.php' )
            && isset( $q_config['url_info']['query'] )
-           && ( strpos( $q_config['url_info']['query'], 'page=qtranslate-xt' ) !== false );
+           && ( strpos( $q_config['url_info']['query'], 'page=qtranslate-kq' ) !== false );
 }
 
 function qtranxf_admin_init() {
@@ -150,12 +195,12 @@ function qtranxf_admin_init() {
 
         // Check for deprecated and invalid options.
         if ( isset( $q_config['use_strftime'] ) ) {
-            if ( $q_config['use_strftime'] == QTX_STRFTIME_OVERRIDE || $q_config['use_strftime'] == QTX_DATE_OVERRIDE ) {
+            if ( $q_config['use_strftime'] == QTKQ_STRFTIME_OVERRIDE || $q_config['use_strftime'] == QTKQ_DATE_OVERRIDE ) {
                 $warning = sprintf( __( 'The value set for option "%s" is deprecated, it will not be supported in the future. Go to the <a href="%s">%s</a> to update it.', 'qtranslate' ),
-                    __( 'Date / Time Conversion', 'qtranslate' ), admin_url( 'options-general.php?page=qtranslate-xt#advanced' ), __( 'advanced settings', 'qtranslate' ) );
+                    __( 'Date / Time Conversion', 'qtranslate' ), admin_url( 'options-general.php?page=qtranslate-kq#advanced' ), __( 'advanced settings', 'qtranslate' ) );
                 qtranxf_add_warning( $warning );
             }
-            if ( $q_config['use_strftime'] != QTX_DATE_WP && ! class_exists( 'IntlDateFormatter' ) ) {
+            if ( $q_config['use_strftime'] != QTKQ_DATE_WP && ! class_exists( 'IntlDateFormatter' ) ) {
                 $warning = sprintf( __( 'The value set for option "%s" cannot be used.', 'qtranslate' ), __( 'Date / Time Conversion', 'qtranslate' ) ) . ' ';
                 $warning .= sprintf( __( 'Class not found: <a href="%s">%s</a> likely due to missing PHP extension: <a href="%s">%s</a>.', 'qtranslate' ),
                     'https://www.php.net/manual/en/class.intldateformatter.php', '`IntlDateFormatter`',
@@ -303,7 +348,7 @@ function qtranxf_get_admin_page_config_post_type( $post_type ) {
             unset( $page_config['js-conf'] );
         }
 
-        $page_config['js'][] = array( 'handle' => 'qtranslate-admin-main', 'src' => './dist/main.js' );
+        $page_config['js'][] = array( 'handle' => 'qtranslate-admin-main', 'src' => './dist/main.js', 'deps' => array( 'jquery' ) );
 
         if ( isset( $page_config['js-exec'] ) ) {
             foreach ( $page_config['js-exec'] as $key => $js ) {
@@ -383,13 +428,13 @@ function qtranxf_admin_footer() {
     foreach ( $keys as $key ) {
         $config[ $key ] = $q_config[ $key ];
     }
-    $config['lsb_style_subitem']      = ( $q_config['lsb_style'] == QTX_LSB_STYLE_SIMPLE_BUTTONS ) ? 'button' : '';
-    $config['lsb_style_active_class'] = ( $q_config['lsb_style'] == QTX_LSB_STYLE_TABS_IN_BLOCK ) ? 'wp-ui-highlight' : 'active';
-    $config['lsb_style_wrap_class']   = ( $q_config['lsb_style'] == QTX_LSB_STYLE_TABS_IN_BLOCK ) ? 'wp-ui-primary' : '';
+    $config['lsb_style_subitem']      = ( $q_config['lsb_style'] == QTKQ_LSB_STYLE_SIMPLE_BUTTONS ) ? 'button' : '';
+    $config['lsb_style_active_class'] = ( $q_config['lsb_style'] == QTKQ_LSB_STYLE_TABS_IN_BLOCK ) ? 'wp-ui-highlight' : 'active';
+    $config['lsb_style_wrap_class']   = ( $q_config['lsb_style'] == QTKQ_LSB_STYLE_TABS_IN_BLOCK ) ? 'wp-ui-primary' : '';
 
     $config['custom_fields']        = apply_filters( 'qtranslate_custom_fields', $q_config['custom_fields'] );
     $config['custom_field_classes'] = apply_filters( 'qtranslate_custom_field_classes', $q_config['custom_field_classes'] );
-    if ( $q_config['url_mode'] == QTX_URL_DOMAINS ) {
+    if ( $q_config['url_mode'] == QTKQ_URL_DOMAINS ) {
         $config['domains'] = $q_config['domains'];
     }
     $homeinfo                = qtranxf_get_home_info();
@@ -414,14 +459,14 @@ function qtranxf_admin_footer() {
         $lang_cfg['admin_name']   = qtranxf_getLanguageName( $lang );
     }
 
-    // For Gutenberg, enforce the editor mode to QTX_EDITOR_MODE_SINGLE
+    // For Gutenberg, enforce the editor mode to QTKQ_EDITOR_MODE_SINGLE
     $current_screen = get_current_screen();
     if ( method_exists( $current_screen, 'is_block_editor' ) && $current_screen->is_block_editor() ) {
         $config['LSB'] = false;
         $config['RAW'] = false;
     } else {
-        $config['LSB'] = $q_config['editor_mode'] == QTX_EDITOR_MODE_LSB;
-        $config['RAW'] = $q_config['editor_mode'] == QTX_EDITOR_MODE_RAW;
+        $config['LSB'] = $q_config['editor_mode'] == QTKQ_EDITOR_MODE_LSB;
+        $config['RAW'] = $q_config['editor_mode'] == QTKQ_EDITOR_MODE_RAW;
     }
 
     if ( empty( $q_config['hide_lsb_copy_content'] ) ) {
@@ -435,10 +480,10 @@ function qtranxf_admin_footer() {
         $config['hide_lsb_copy_content'] = true;
     }
 
-    $config['lang_code_format'] = QTX_LANG_CODE_FORMAT;
+    $config['lang_code_format'] = QTKQ_LANG_CODE_FORMAT;
 
     $config = apply_filters_deprecated( 'qtranslate_admin_page_config', array( $config ), '3.14.0', '',
-        'No clear use case, create a request on https://github.com/qtranslate/qtranslate-xt/issues if needed.' );
+        'No clear use case, create a request on https://github.com/KayronQuantor/qtranslate-kq/issues if needed.' );
 
     qtranxf_enqueue_scripts( $page_config['js'] );
     ?>
@@ -488,12 +533,12 @@ function qtranxf_add_admin_lang_icons() {
 function qtranxf_add_admin_highlight_css() {
     global $q_config;
 
-    if ( $q_config['highlight_mode'] == QTX_HIGHLIGHT_MODE_NONE || get_the_author_meta( 'qtranslate_highlight_disabled', get_current_user_id() ) ) {
+    if ( $q_config['highlight_mode'] == QTKQ_HIGHLIGHT_MODE_NONE || get_the_author_meta( 'qtranslate_highlight_disabled', get_current_user_id() ) ) {
         return;
     }
     $highlight_mode = $q_config['highlight_mode'];
     switch ( $highlight_mode ) {
-        case QTX_HIGHLIGHT_MODE_CUSTOM_CSS:
+        case QTKQ_HIGHLIGHT_MODE_CUSTOM_CSS:
             $css = $q_config['highlight_mode_custom_css'];
             break;
         default:
@@ -520,16 +565,16 @@ function qtranxf_add_admin_highlight_css() {
 function qtranxf_get_admin_highlight_css( int $highlight_mode ): string {
     $css = 'input.qtranxs-translatable, textarea.qtranxs-translatable, div.qtranxs-translatable, span.qtranxs-translatable {' . PHP_EOL;
     switch ( $highlight_mode ) {
-        case QTX_HIGHLIGHT_MODE_BORDER_LEFT:
+        case QTKQ_HIGHLIGHT_MODE_BORDER_LEFT:
             $css .= 'border-left: 3px solid #UserColor2 !important;' . PHP_EOL;
             break;
-        case QTX_HIGHLIGHT_MODE_BORDER:
+        case QTKQ_HIGHLIGHT_MODE_BORDER:
             $css .= 'border: 1px solid #UserColor2 !important;' . PHP_EOL;
             break;
-        case QTX_HIGHLIGHT_MODE_LEFT_SHADOW:
+        case QTKQ_HIGHLIGHT_MODE_LEFT_SHADOW:
             $css .= 'box-shadow: -3px 0 #UserColor2 !important;' . PHP_EOL;
             break;
-        case QTX_HIGHLIGHT_MODE_OUTLINE:
+        case QTKQ_HIGHLIGHT_MODE_OUTLINE:
             $css .= 'outline: 2px solid #UserColor2 !important;' . PHP_EOL;
             break;
         default:
@@ -542,15 +587,15 @@ function qtranxf_get_admin_highlight_css( int $highlight_mode ): string {
 
 function qtranxf_admin_enqueue_scripts() {
     global $q_config;
-    wp_register_style( 'qtranslate-admin', plugins_url( 'css/admin.css', QTRANSLATE_FILE ), array(), QTX_VERSION );
+    wp_register_style( 'qtranslate-admin', plugins_url( 'css/admin.css', QTRANSLATE_FILE ), array(), QTKQ_VERSION );
     wp_enqueue_style( 'qtranslate-admin' );
-    wp_register_style( 'qtranslate-admin-lsb', plugins_url( 'css/lsb/' . $q_config['lsb_style'], QTRANSLATE_FILE ), array(), QTX_VERSION );
+    wp_register_style( 'qtranslate-admin-lsb', plugins_url( 'css/lsb/' . $q_config['lsb_style'], QTRANSLATE_FILE ), array(), QTKQ_VERSION );
     wp_enqueue_style( 'qtranslate-admin-lsb' );
     qtranxf_add_admin_lang_icons();
     qtranxf_add_admin_highlight_css();
 
     if ( qtranxf_admin_is_config_page() ) {
-        wp_enqueue_script( 'qtranslate-admin-options', plugins_url( 'dist/options.js', QTRANSLATE_FILE ), array(), QTX_VERSION );
+        wp_enqueue_script( 'qtranslate-admin-options', plugins_url( 'dist/options.js', QTRANSLATE_FILE ), array( 'jquery' ), QTKQ_VERSION );
     }
 }
 
@@ -573,7 +618,7 @@ function qtranxf_customize_allowed_urls( $urls ) {
 /** @since 3.4 */
 function qtranxf_settings_page() {
     require_once QTRANSLATE_DIR . '/src/admin/admin_settings.php';
-    $admin_settings = new QTX_Admin_Settings();
+    $admin_settings = new QTKQ_Admin_Settings();
     $admin_settings->display();
 }
 
@@ -605,7 +650,7 @@ function qtranxf_admin_menu() {
         }
     }
 
-    add_options_page( __( 'Language Management', 'qtranslate' ), __( 'Languages', 'qtranslate' ), 'manage_options', 'qtranslate-xt', 'qtranxf_settings_page' );
+    add_options_page( __( 'Language Management', 'qtranslate' ), __( 'Languages', 'qtranslate' ), 'manage_options', 'qtranslate-kq', 'qtranxf_settings_page' );
 }
 
 /* Add a metabox in admin menu page */
@@ -680,7 +725,7 @@ function qtranxf_add_nav_menu_metabox() {
 
 function qtranxf_add_language_menu( $wp_admin_bar ) {
     global $q_config;
-    if ( ! is_admin() || ! is_admin_bar_showing() ) {
+    if ( /* ! is_admin() || */ ! is_admin_bar_showing() ) {
         return;
     }
 
@@ -715,7 +760,7 @@ function qtranxf_add_language_menu( $wp_admin_bar ) {
 
 function qtranxf_links( $links, $file, $plugin_data, $context ) {
     // translators: expected in WordPress default textdomain
-    $settings_link = '<a href="options-general.php?page=qtranslate-xt">' . qtranxf_translate_wp( 'Settings' ) . '</a>';
+    $settings_link = '<a href="options-general.php?page=qtranslate-kq">' . qtranxf_translate_wp( 'Settings' ) . '</a>';
     array_unshift( $links, $settings_link ); // before other links
 
     return $links;
@@ -730,11 +775,11 @@ function qtranxf_admin_notices_config() {
     }
 
     $screen = get_current_screen();
-    if ( isset( $screen->id ) && $screen->id == 'settings_page_qtranslate-xt' ) {
+    if ( isset( $screen->id ) && $screen->id == 'settings_page_qtranslate-kq' ) {
         $qtitle = '';
     } else {
-        $qlink  = admin_url( 'options-general.php?page=qtranslate-xt' );
-        $qtitle = '<a href="' . $qlink . '">qTranslate&#8209;XT</a>:&nbsp;';
+        $qlink  = admin_url( 'options-general.php?page=qtranslate-kq' );
+        $qtitle = '<a href="' . $qlink . '">qTranslate&#8209;KQ</a>:&nbsp;';
     }
     $fmt = '<div class="notice notice-%1$s is-dismissible" id="qtranxs-%2$s-%1$s"><p>' . $qtitle . '%3$s</p></div>' . PHP_EOL;
 
@@ -775,9 +820,9 @@ function qtranxf_admin_notices_config() {
 function qtranxf_admin_home_url( $url, $path, $orig_scheme, $blog_id ) {
     global $q_config;
 
-    // TODO clarify why don't we use QTX_COOKIE_NAME_ADMIN instead?
-    if ( ! $q_config['disable_client_cookies'] && isset( $_COOKIE[ QTX_COOKIE_NAME_FRONT ] ) ) {
-        $lang = $_COOKIE[ QTX_COOKIE_NAME_FRONT ];
+    // TODO clarify why don't we use QTKQ_COOKIE_NAME_ADMIN instead?
+    if ( ! $q_config['disable_client_cookies'] && isset( $_COOKIE[ QTKQ_COOKIE_NAME_FRONT ] ) ) {
+        $lang = $_COOKIE[ QTKQ_COOKIE_NAME_FRONT ];
     } else {
         $lang = $q_config['default_language'];
     }
@@ -786,7 +831,7 @@ function qtranxf_admin_home_url( $url, $path, $orig_scheme, $blog_id ) {
 
 function qtranxf_admin_footer_text( $text ) {
     if ( qtranxf_admin_is_config_page() ) {
-        $msg  = sprintf( __( 'Thank you for using plugin %s!', 'qtranslate' ), '<strong>qTranslate&#8209;XT</strong>' );
+        $msg  = sprintf( __( 'Thank you for using plugin %s!', 'qtranslate' ), '<strong>qTranslate&#8209;KQ</strong>' );
         $text = '<span id="footer-thankyou">' . $msg . '</span>';
     }
 
@@ -795,7 +840,7 @@ function qtranxf_admin_footer_text( $text ) {
 
 function qtranxf_admin_footer_update( $text ) {
     if ( qtranxf_admin_is_config_page() ) {
-        $text        = sprintf( __( 'Plugin Version %s', 'qtranslate' ), QTX_VERSION );
+        $text        = sprintf( __( 'Plugin Version %s', 'qtranslate' ), QTKQ_VERSION );
         $current     = get_site_transient( 'update_plugins' );
         $plugin_file = plugin_basename( QTRANSLATE_FILE );
         if ( isset( $current->response[ $plugin_file ] ) ) {
@@ -815,8 +860,8 @@ function qtranxf_admin_footer_update( $text ) {
 }
 
 /**
- * Initialize qTranslate qtx in JS to set the content hooks just before the call to tinymce.init.
- * This anticipated qtx init sequence runs before the usual ready/load events, but still in the footer so the content is
+ * Initialize qTranslate qtkq in JS to set the content hooks just before the call to tinymce.init.
+ * This anticipated qtkq init sequence runs before the usual ready/load events, but still in the footer so the content is
  * supposed to be available for a proper initialization of qTranslate.
  */
 function qtranxf_admin_tiny_mce_init( $mce_settings ) {
@@ -824,7 +869,7 @@ function qtranxf_admin_tiny_mce_init( $mce_settings ) {
         ?>
         <script>
             if (window.qTranslateConfig !== undefined && window.qTranslateConfig.js !== undefined)
-                window.qTranslateConfig.js.get_qtx();
+                window.qTranslateConfig.js.get_qtkq();
         </script>
     <?php
     endif;
@@ -836,17 +881,19 @@ function qtranxf_admin_load() {
     $basename = plugin_basename( QTRANSLATE_FILE );
     add_filter( 'plugin_action_links_' . $basename, 'qtranxf_links', 10, 4 );
     // should be executed after all plugins loaded their *-admin.php
-    add_action( 'qtranslate_init_language', 'qtranxf_load_admin_page_config', 20 );
+
+	add_action( 'qtranslate_init_language', 'qtranxf_load_admin_page_config', 20 );
 
     global $q_config, $pagenow;
-    if ( $q_config['url_mode'] != QTX_URL_QUERY // otherwise '?' may interfere with WP code
+    if ( $q_config['url_mode'] != QTKQ_URL_QUERY // otherwise '?' may interfere with WP code
          && $pagenow == 'customize.php'
     ) {
         add_filter( 'home_url', 'qtranxf_admin_home_url', 5, 4 );
     }
 
     // Caution:  we are being called in 'plugins_loaded' from core with a higher priority, but we add a later hook
-    add_action( 'plugins_loaded', 'qtranxf_collect_translations_posted', 5 );
+    // add_action( 'plugins_loaded', 'qtranxf_collect_translations_posted', 5 );
+	add_action( 'init', 'qtranxf_collect_translations_posted', 1 );
     add_action( 'admin_init', 'qtranxf_admin_init', 2 );
     add_action( 'admin_enqueue_scripts', 'qtranxf_admin_enqueue_scripts' );
     add_action( 'admin_footer', 'qtranxf_admin_footer', 999 );

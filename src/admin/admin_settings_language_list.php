@@ -1,14 +1,18 @@
 <?php
 
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 /**
- * Class QTX_Admin_Settings_Language_List
+ * Class QTKQ_Admin_Settings_Language_List
  *
  * Display the list of available languages in the admin options page
  */
-class QTX_Admin_Settings_Language_List extends WP_List_Table {
+class QTKQ_Admin_Settings_Language_List extends WP_List_Table {
 
     /**
-     * @var string URI to the admin options page of qTranslate-XT
+     * @var string URI to the admin options page of qTranslate-KQ
      */
     private $options_uri;
 

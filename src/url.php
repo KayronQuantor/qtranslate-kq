@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 /**
  * Encode URL $url with language $lang.
  *
@@ -18,6 +22,19 @@ function qtranxf_convertURL( string $url = '', string $lang = '', bool $forceadm
     if ( empty( $lang ) ) {
         $lang = $q_config['language'];
     }
+
+	// FIX: ignore static assets (css, js, images, etc.)
+	$parsed = qtranxf_parseURL($url);
+	if (isset($parsed['path']) && qtranxf_ignored_file_type($parsed['path'])) {
+		return $url;
+	}
+
+	// ? FIX 2: ignore qTranslate internal CSS loader (no extension case)
+	if (strpos($url, '/wp-content/plugins/qtranslate-kq/css/') !== false) {
+		return $url;
+	}
+
+
     if ( ! $q_config['url_info']['doing_front_end'] && ! $forceadmin ) {
         return $url;
     }
@@ -75,9 +92,9 @@ function qtranxf_url_del_language( array &$urlinfo ): void {
 
     $url_mode = $q_config['url_mode'];
     switch ( $url_mode ) {
-        case QTX_URL_PATH:
+        case QTKQ_URL_PATH:
             // might already have language information
-            $lang_code = QTX_LANG_CODE_FORMAT;
+            $lang_code = QTKQ_LANG_CODE_FORMAT;
             if ( ! empty( $urlinfo['wp-path'] ) && preg_match( "!^/($lang_code)(/|$)!i", $urlinfo['wp-path'], $match ) ) {
                 if ( qtranxf_isEnabled( $match[1] ) ) {
                     // found language information, remove it
@@ -86,19 +103,19 @@ function qtranxf_url_del_language( array &$urlinfo ): void {
             }
             break;
 
-        case QTX_URL_DOMAIN:
+        case QTKQ_URL_DOMAIN:
             // remove language information
             $homeinfo        = qtranxf_get_home_info();
             $urlinfo['host'] = $homeinfo['host'];
             break;
 
-        case QTX_URL_DOMAINS:
+        case QTKQ_URL_DOMAINS:
             if ( isset( $q_config['domains'][ $q_config['default_language'] ] ) ) {
                 $urlinfo['host'] = $q_config['domains'][ $q_config['default_language'] ];
             }
             break;
 
-        case QTX_URL_QUERY:
+        case QTKQ_URL_QUERY:
             break;
 
         default:
@@ -113,21 +130,21 @@ function qtranxf_url_set_language( array $urlinfo, $lang, bool $showLanguage ): 
     if ( $showLanguage ) {
         $url_mode = $q_config['url_mode'];
         switch ( $url_mode ) {
-            case QTX_URL_PATH:
+            case QTKQ_URL_PATH:
                 $urlinfo['wp-path'] = '/' . $lang . $urlinfo['wp-path'];
                 break;
 
-            case QTX_URL_DOMAIN:
+            case QTKQ_URL_DOMAIN:
                 $urlinfo['host'] = $lang . '.' . $urlinfo['host'];
                 break;
 
-            case QTX_URL_DOMAINS:
+            case QTKQ_URL_DOMAINS:
                 if ( isset( $q_config['domains'][ $lang ] ) ) {
                     $urlinfo['host'] = $q_config['domains'][ $lang ];
                 }
                 break;
 
-            case QTX_URL_QUERY:
+            case QTKQ_URL_QUERY:
                 qtranxf_add_query_arg( $urlinfo['query'], 'lang=' . $lang );
                 break;
         }
@@ -507,12 +524,12 @@ function qtranxf_external_host_ex( string $host, array $homeinfo ): bool {
     global $q_config;
 
     switch ( $q_config['url_mode'] ) {
-        case QTX_URL_QUERY:
-        case QTX_URL_PATH:
+        case QTKQ_URL_QUERY:
+        case QTKQ_URL_PATH:
             return $homeinfo['host'] != $host;
-        case QTX_URL_DOMAIN:
+        case QTKQ_URL_DOMAIN:
             return ! qtranxf_endsWith( $host, $homeinfo['host'] );
-        case QTX_URL_DOMAINS:
+        case QTKQ_URL_DOMAINS:
             return ( $homeinfo['host'] != $host && isset( $q_config['domains'] ) && ! in_array( $host, $q_config['domains'] ) );
         default:
             return true;

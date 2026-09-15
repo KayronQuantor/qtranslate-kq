@@ -1,11 +1,15 @@
 <?php
 
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 /**
  * Static definition of a built-in module.
  *
  * This provides only the basic structure, not the module logic or states.
  */
-class QTX_Admin_Module {
+class QTKQ_Admin_Module {
     /**
      * @var string Internal id.
      */
@@ -42,7 +46,7 @@ class QTX_Admin_Module {
      *
      * @param array[] $fields
      *
-     * @see QTX_Admin_Module
+     * @see QTKQ_Admin_Module
      */
     function __construct( array $fields ) {
         $this->id           = $fields['id'];
@@ -137,7 +141,7 @@ class QTX_Admin_Module {
     /**
      * Retrieve the module definitions.
      *
-     * @return QTX_Admin_Module[] ordered by name
+     * @return QTKQ_Admin_Module[] ordered by name
      */
     public static function get_modules(): array {
         static $modules;
@@ -146,7 +150,7 @@ class QTX_Admin_Module {
         }
         $modules = [];
         foreach ( self::get_builtin_setup() as $setup ) {
-            $modules[] = new QTX_Admin_Module( $setup );
+            $modules[] = new QTKQ_Admin_Module( $setup );
         }
 
         return $modules;

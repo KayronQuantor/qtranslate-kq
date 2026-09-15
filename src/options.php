@@ -1,4 +1,10 @@
-<?php // encoding: utf-8
+<?php
+
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
+ // encoding: utf-8
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -8,87 +14,87 @@ require_once QTRANSLATE_DIR . '/src/default_language_config.php';
 /**
  * Option types for front/admin settings.
  */
-const QTX_STRING      = 1;
-const QTX_BOOLEAN     = 2;
-const QTX_INTEGER     = 3;
-const QTX_URL         = 4;
-const QTX_LANGUAGE    = 5;
-const QTX_ARRAY       = 6;
-const QTX_BOOLEAN_SET = 7;
-const QTX_TEXT        = 8;  // multi-line string
+const QTKQ_STRING      = 1;
+const QTKQ_BOOLEAN     = 2;
+const QTKQ_INTEGER     = 3;
+const QTKQ_URL         = 4;
+const QTKQ_LANGUAGE    = 5;
+const QTKQ_ARRAY       = 6;
+const QTKQ_BOOLEAN_SET = 7;
+const QTKQ_TEXT        = 8;  // multi-line string
 
 /**
  * URL modes defining how the languages are set for HTTP.
  */
-const QTX_URL_QUERY   = 1;  // Query string: domain.com?lang=en
-const QTX_URL_PATH    = 2;  // Pre-path: domain.com/en (default)
-const QTX_URL_DOMAIN  = 3;  // Pre-domain: en.domain.com
-const QTX_URL_DOMAINS = 4;  // Domain per language
+const QTKQ_URL_QUERY   = 1;  // Query string: domain.com?lang=en
+const QTKQ_URL_PATH    = 2;  // Pre-path: domain.com/en (default)
+const QTKQ_URL_DOMAIN  = 3;  // Pre-domain: en.domain.com
+const QTKQ_URL_DOMAINS = 4;  // Domain per language
 
 /**
  * Date/time conversion, see "use_strftime" option.
  */
-const QTX_DATE_WP           = 0;  // Use WordPress options and translation, disable all date / time hooks.
-const QTX_STRFTIME_OVERRIDE = 1;  // TODO: deprecate strftime format
-const QTX_DATE_OVERRIDE     = 2;  // deprecated
-const QTX_DATE              = 3;  // default format at first activation - not consistent with default date/time values
-const QTX_STRFTIME          = 4;  // deprecated
+const QTKQ_DATE_WP           = 0;  // Use WordPress options and translation, disable all date / time hooks.
+const QTKQ_STRFTIME_OVERRIDE = 1;  // TODO: deprecate strftime format
+const QTKQ_DATE_OVERRIDE     = 2;  // deprecated
+const QTKQ_DATE              = 3;  // default format at first activation - not consistent with default date/time values
+const QTKQ_STRFTIME          = 4;  // deprecated
 
 /**
  * Translation of WordPress / qTranslate options.
  */
-const QTX_FILTER_OPTIONS_ALL     = 0;
-const QTX_FILTER_OPTIONS_LIST    = 1;
-const QTX_FILTER_OPTIONS_DEFAULT = 'blogname blogdescription widget_%';
+const QTKQ_FILTER_OPTIONS_ALL     = 0;
+const QTKQ_FILTER_OPTIONS_LIST    = 1;
+const QTKQ_FILTER_OPTIONS_DEFAULT = 'blogname blogdescription widget_%';
 
 /**
  * Editor mode to handle the ML translations.
  */
-const QTX_EDITOR_MODE_LSB    = 0;  // Language Switching Buttons
-const QTX_EDITOR_MODE_RAW    = 1;  // ML not translated
-const QTX_EDITOR_MODE_SINGLE = 2;  // ML translated for current admin language
+const QTKQ_EDITOR_MODE_LSB    = 0;  // Language Switching Buttons
+const QTKQ_EDITOR_MODE_RAW    = 1;  // ML not translated
+const QTKQ_EDITOR_MODE_SINGLE = 2;  // ML translated for current admin language
 
 /**
  * CSS style for the Language Switching Buttons (LSB).
  */
-const QTX_LSB_STYLE_SIMPLE_BUTTONS = 'simple-buttons.css';
-const QTX_LSB_STYLE_SIMPLE_TABS    = 'simple-tabs.css';
-const QTX_LSB_STYLE_TABS_IN_BLOCK  = 'tabs-in-block.css';
-const QTX_LSB_STYLE_CUSTOM         = 'custom';
+const QTKQ_LSB_STYLE_SIMPLE_BUTTONS = 'simple-buttons.css';
+const QTKQ_LSB_STYLE_SIMPLE_TABS    = 'simple-tabs.css';
+const QTKQ_LSB_STYLE_TABS_IN_BLOCK  = 'tabs-in-block.css';
+const QTKQ_LSB_STYLE_CUSTOM         = 'custom';
 
 /**
  * How the translatable fields are highlighted (CSS styles).
  */
-const QTX_HIGHLIGHT_MODE_NONE        = 0;
-const QTX_HIGHLIGHT_MODE_BORDER_LEFT = 1;
-const QTX_HIGHLIGHT_MODE_BORDER      = 2;
-const QTX_HIGHLIGHT_MODE_LEFT_SHADOW = 3;
-const QTX_HIGHLIGHT_MODE_OUTLINE     = 4;
-const QTX_HIGHLIGHT_MODE_CUSTOM_CSS  = 9;
+const QTKQ_HIGHLIGHT_MODE_NONE        = 0;
+const QTKQ_HIGHLIGHT_MODE_BORDER_LEFT = 1;
+const QTKQ_HIGHLIGHT_MODE_BORDER      = 2;
+const QTKQ_HIGHLIGHT_MODE_LEFT_SHADOW = 3;
+const QTKQ_HIGHLIGHT_MODE_OUTLINE     = 4;
+const QTKQ_HIGHLIGHT_MODE_CUSTOM_CSS  = 9;
 
 /**
  * Cookies settings.
  */
-const QTX_COOKIE_NAME_FRONT = 'qtrans_front_language';
-const QTX_COOKIE_NAME_ADMIN = 'qtrans_admin_language';
-const QTX_COOKIE_SAMESITE   = 'Lax';
+const QTKQ_COOKIE_NAME_FRONT = 'qtrans_front_language';
+const QTKQ_COOKIE_NAME_ADMIN = 'qtrans_admin_language';
+const QTKQ_COOKIE_SAMESITE   = 'Lax';
 
 /**
  * File extensions excluded for the translations of URL links, assumed to be language-independent.
  */
-const QTX_IGNORE_FILE_TYPES = 'gif,jpg,jpeg,png,svg,pdf,swf,tif,rar,zip,7z,mpg,divx,mpeg,avi,css,js,mp3,mp4,apk';
+const QTKQ_IGNORE_FILE_TYPES = 'gif,jpg,jpeg,png,svg,pdf,swf,tif,rar,zip,7z,mpg,divx,mpeg,avi,css,js,mp3,mp4,apk';
 
 /**
  * Language code format: ISO 639-1 (2 alpha), 639-2 or 639-3 (3 alpha).
  */
-const QTX_LANG_CODE_FORMAT = '[a-z]{2,3}';
+const QTKQ_LANG_CODE_FORMAT = '[a-z]{2,3}';
 
 /**
  * Module option names.
  */
-const QTX_OPTIONS_MODULES_STATE = 'qtranslate_modules_state';
-const QTX_OPTIONS_MODULE_ACF    = 'qtranslate_module_acf';
-const QTX_OPTIONS_MODULE_SLUGS  = 'qtranslate_module_slugs';
+const QTKQ_OPTIONS_MODULES_STATE = 'qtranslate_modules_state';
+const QTKQ_OPTIONS_MODULE_ACF    = 'qtranslate_module_acf';
+const QTKQ_OPTIONS_MODULE_SLUGS  = 'qtranslate_module_slugs';
 
 /**
  * @global array $q_config Global configuration, interpreted from settings and i18n configuration loaded from JSON.
@@ -112,9 +118,9 @@ function qtranxf_set_default_options( ?array &$ops ): void {
     $ops['front'] = array();
 
     $ops['front']['int'] = array(
-        'url_mode'            => QTX_URL_PATH,  // sets default url mode
-        'use_strftime'        => QTX_DATE,  // strftime usage (backward compatibility)
-        'filter_options_mode' => QTX_FILTER_OPTIONS_ALL,
+        'url_mode'            => QTKQ_URL_PATH,  // sets default url mode
+        'use_strftime'        => QTKQ_DATE,  // strftime usage (backward compatibility)
+        'filter_options_mode' => QTKQ_FILTER_OPTIONS_ALL,
         'language_name_case'  => 0  //Camel Case
     );
 
@@ -152,8 +158,8 @@ function qtranxf_set_default_options( ?array &$ops ): void {
         'qtrans_compatibility'   => false,  // enables compatibility with former qtrans_* functions
         'disable_client_cookies' => false,  // bool
         'flag_location'          => null,   // string
-        'filter_options'         => QTX_FILTER_OPTIONS_DEFAULT, // array
-        'ignore_file_types'      => QTX_IGNORE_FILE_TYPES,  // array
+        'filter_options'         => QTKQ_FILTER_OPTIONS_DEFAULT, // array
+        'ignore_file_types'      => QTKQ_IGNORE_FILE_TYPES,  // array
         'domains'                => null,   // array
     );
 
@@ -328,7 +334,17 @@ function qtranxf_load_option_func( string $name, string $opn = null, $func = nul
     if ( ! $opn ) {
         $opn = 'qtranslate_' . $name;
     }
+
+/*
+	//  KLUCZOWA POPRAWKA — NIE PRZETWARZAJ W£ASNEGO WIDGETU
+    if ( strpos( $opn, 'widget_qtranslate' ) === 0 ) {
+        $q_config[ $name ] = get_option( $opn );
+        return;
+    }
+*/
+
     $val = get_option( $opn );
+
     if ( $val === false ) {
         if ( ! $func ) {
             $func = 'qtranxf_default_' . $name;
@@ -435,26 +451,26 @@ function qtranxf_load_config(): void {
 
     qtranxf_load_option_array( 'term_name', array() );
 
-    if ( $q_config['filter_options_mode'] == QTX_FILTER_OPTIONS_LIST ) {
-        qtranxf_load_option_array( 'filter_options', QTX_FILTER_OPTIONS_DEFAULT );
+    if ( $q_config['filter_options_mode'] == QTKQ_FILTER_OPTIONS_LIST ) {
+        qtranxf_load_option_array( 'filter_options', QTKQ_FILTER_OPTIONS_DEFAULT );
     }
 
     $url_mode = $q_config['url_mode'];
     // check for invalid permalink/url mode combinations
     if ( qtranxf_is_permalink_structure_query() ) {
         switch ( $url_mode ) {
-            case QTX_URL_QUERY:
-            case QTX_URL_DOMAIN:
-            case QTX_URL_DOMAINS:
+            case QTKQ_URL_QUERY:
+            case QTKQ_URL_DOMAIN:
+            case QTKQ_URL_DOMAINS:
                 break;
             default:
-                $q_config['url_mode'] = $url_mode = QTX_URL_QUERY;
+                $q_config['url_mode'] = $url_mode = QTKQ_URL_QUERY;
                 break;
         }
     }
 
     switch ( $url_mode ) {
-        case QTX_URL_DOMAINS:
+        case QTKQ_URL_DOMAINS:
             $q_config['domains'] = array();
             qtranxf_load_option_array( 'domains' );
             //qtranxf_dbg_echo('domains loaded: ',$q_config['domains']);
@@ -468,19 +484,19 @@ function qtranxf_load_config(): void {
             $q_config['disable_client_cookies'] = true;
             $q_config['hide_default_language']  = false;
             break;
-        case QTX_URL_QUERY:
-        case QTX_URL_PATH:
+        case QTKQ_URL_QUERY:
+        case QTKQ_URL_PATH:
             $q_config['disable_client_cookies'] = false;
             qtranxf_load_option_bool( 'disable_client_cookies' );
             break;
-        case QTX_URL_DOMAIN:
+        case QTKQ_URL_DOMAIN:
         default:
             $q_config['disable_client_cookies'] = true;
             break;
     }
 
     $ignore_file_types = get_option( 'qtranslate_ignore_file_types' );
-    $val               = explode( ',', QTX_IGNORE_FILE_TYPES );
+    $val               = explode( ',', QTKQ_IGNORE_FILE_TYPES );
     if ( ! empty( $ignore_file_types ) ) {
         $vals = preg_split( '/[\s,]+/', strtolower( $ignore_file_types ), -1, PREG_SPLIT_NO_EMPTY );
         foreach ( $vals as $v ) {
@@ -508,3 +524,15 @@ function qtranxf_load_config(): void {
     do_action( 'qtranslate_load_config' );
     do_action_deprecated( 'qtranslate_loadConfig', array(), '3.10.0', 'qtranslate_load_config' );
 }
+
+/*
+// Zabezpieczenie przed rekursywnoœci¹ powoduj¹c¹ wyciek pamiêci
+add_filter('pre_update_option_widget_qtranslate', function($value){
+    static $guard = false;
+    if ($guard) {
+        return $value;
+    }
+    $guard = true;
+    return $value;
+});
+*/

@@ -15,7 +15,7 @@
       },
       "js-exec": {
         "aqpb-post": {
-          "src": "./i18n-config/plugins/imaginem-builder-r2/qtx-admin.min.js"
+          "src": "./i18n-config/plugins/imaginem-builder-r2/qtkq-admin.min.js"
         }
       }
     }

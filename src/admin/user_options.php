@@ -1,4 +1,9 @@
 <?php
+
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -8,7 +13,7 @@ add_action( 'edit_user_profile', 'qtranxf_show_extra_profile_fields' );
 
 function qtranxf_show_extra_profile_fields( WP_User $user ): void {
     global $q_config;
-    if ( $q_config['highlight_mode'] != QTX_HIGHLIGHT_MODE_NONE ) { ?>
+    if ( $q_config['highlight_mode'] != QTKQ_HIGHLIGHT_MODE_NONE ) { ?>
         <h3><?php _e( 'Translation options', 'qtranslate' ) ?></h3>
         <table class="form-table qtranxs-form-table" id="qtranxs_user_config">
             <tr>
@@ -20,7 +25,7 @@ function qtranxf_show_extra_profile_fields( WP_User $user ): void {
                     <input type="checkbox" value="1" name="qtranslate_highlight_enabled"
                            id="qtranslate_highlight_enabled" <?php checked( ! get_user_meta( $user->ID, 'qtranslate_highlight_disabled', true ) ) ?> />
                     <span
-                        class="description"><?php printf( __( 'The way the translatable fields are highlighted is configured with global option %s.', 'qtranslate' ), '"<a href="' . admin_url( '/options-general.php?page=qtranslate-xt#option_lsb_style' ) . '">' . __( 'Highlight Style', 'qtranslate' ) . '</a>"' ) ?></span>
+                        class="description"><?php printf( __( 'The way the translatable fields are highlighted is configured with global option %s.', 'qtranslate' ), '"<a href="' . admin_url( '/options-general.php?page=qtranslate-kq#option_lsb_style' ) . '">' . __( 'Highlight Style', 'qtranslate' ) . '</a>"' ) ?></span>
                 </td>
             </tr>
         </table>
@@ -38,7 +43,7 @@ function qtranxf_save_extra_profile_fields( int $user_id ): void {
         return;
     }
 
-    if ( $q_config['highlight_mode'] != QTX_HIGHLIGHT_MODE_NONE ) {
+    if ( $q_config['highlight_mode'] != QTKQ_HIGHLIGHT_MODE_NONE ) {
         $enabled = isset( $_POST['qtranslate_highlight_enabled'] );
         if ( $enabled ) {
             delete_user_meta( $user_id, 'qtranslate_highlight_disabled' );

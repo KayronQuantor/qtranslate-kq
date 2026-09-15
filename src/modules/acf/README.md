@@ -1,18 +1,20 @@
 # Module: ACF
 
+<!-- Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. -->
+
 ## Description
 
 Enables multilingual framework for plugin [ACF](https://wordpress.org/plugins/advanced-custom-fields/) and [ACF PRO](http://www.advancedcustomfields.com/pro/).
 
 This module was converted from the legacy plugin [ACF qTranslate](https://github.com/funkjedi/acf-qtranslate).
 
-This plugin provides qTranslate-XT compatible ACF5 field types for Text, Text Area, WYSIWYG, Image and File. When adding a field to a field group these new field types will be listed under the qTranslate category in the Field Type dropdown.
+This plugin provides qTranslate-KQ compatible ACF5 field types for Text, Text Area, WYSIWYG, Image and File. When adding a field to a field group these new field types will be listed under the qTranslate category in the Field Type dropdown.
 
 Contributors: funkjedi, asedano
 
 ## Disclaimer
 
-This module should be considered as *work in progress* before proceeding with the transition of qTranslate-XT.
+This module should be considered as *work in progress* before proceeding with the transition of qTranslate-KQ.
 We don't claim ownership of this component and we'll figure out how to involve the contributors properly.
 
 ## Field Types
@@ -82,7 +84,7 @@ Note: the following versions correspond to the legacy plugin and not this repo.
 ### 1.7.11
 * Core: Enable support for ACF included within theme
 * Bug Fix: Fixed do_action support when removing repeater rows
-* Bug Fix: Removing qTranslateConfig.qtx.addContentHooksTinyMCE calls
+* Bug Fix: Removing qTranslateConfig.qtkq.addContentHooksTinyMCE calls
 
 ### 1.7.10
 * Bug Fix: (HeikoMamerow) ACF5 File compatibility fix

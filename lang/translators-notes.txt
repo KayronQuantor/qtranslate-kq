@@ -15,7 +15,7 @@ Translators may also use Transifex:
 
 Subfolder 'language-names' contains translations of other language names, which are in used in "Not Available Message".
 You may wish to modify the translations of foreign language names to fit the grammar rules of your language in "Not Available Message".
-Please contact us to [report](https://github.com/qtranslate/qtranslate-xt/issues) which modifications should be made.
+Please contact us to [report](https://github.com/KayronQuantor/qtranslate-kq/issues) which modifications should be made.
 
 For developers, to integrate Transifex: https://docs.transifex.com/client/
 ------------------------------------------------------------------------------------------------------------------------

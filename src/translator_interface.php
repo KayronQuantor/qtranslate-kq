@@ -1,14 +1,18 @@
 <?php
 
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 /**
  * Flags used in translate_text.
  */
-const QTX_TRANSLATOR_SHOW_DEFAULT   = 1;
-const QTX_TRANSLATOR_SHOW_AVAILABLE = 2;
-const QTX_TRANSLATOR_SHOW_EMPTY     = 4;
+const QTKQ_TRANSLATOR_SHOW_DEFAULT   = 1;
+const QTKQ_TRANSLATOR_SHOW_AVAILABLE = 2;
+const QTKQ_TRANSLATOR_SHOW_EMPTY     = 4;
 
 /**
- * Interface QTX_Translator_Interface
+ * Interface QTKQ_Translator_Interface
  *
  * Designed as interface for other plugin integration. The documentation is available at
  * https://github.com/qtranslate/qtranslate-xt/wiki/Integration-Guide
@@ -40,9 +44,9 @@ const QTX_TRANSLATOR_SHOW_EMPTY     = 4;
  *
  * @since 3.4
  */
-interface QTX_Translator_Interface {
+interface QTKQ_Translator_Interface {
     /**
-     * Get QTX_Translator_Interface global object.
+     * Get QTKQ_Translator_Interface global object.
      */
     public static function get_translator();
 
@@ -67,9 +71,9 @@ interface QTX_Translator_Interface {
      * @param mixed $text - a string, an array or an object possibly containing multilingual values.
      * @param string|null $lang (optional) - a two-letter language code of the language to be extracted from $text. If omitted or null, then the currently active language is assumed.
      * @param int $flags (optional) - what to return if text for language $lang is not available. Possible choices are:
-     *     QTX_TRANSLATOR_SHOW_DEFAULT - show the value for default language
-     *     QTX_TRANSLATOR_SHOW_AVAILABLE - return a list of available languages with language-encoded links to the current page.
-     *     QTX_TRANSLATOR_SHOW_EMPTY - return empty string.
+     *     QTKQ_TRANSLATOR_SHOW_DEFAULT - show the value for default language
+     *     QTKQ_TRANSLATOR_SHOW_AVAILABLE - return a list of available languages with language-encoded links to the current page.
+     *     QTKQ_TRANSLATOR_SHOW_EMPTY - return empty string.
      */
     public function translate_text( $text, ?string $lang = null, int $flags = 0 ): string;
 

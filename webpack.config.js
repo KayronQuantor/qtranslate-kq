@@ -1,4 +1,5 @@
-// Webpack configuration for qTranslate-XT
+/*! Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. */
+// Webpack configuration for qTranslate-KQ
 
 module.exports = {
     entry: {

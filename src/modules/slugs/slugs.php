@@ -1,9 +1,13 @@
 <?php
 
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 /**
  * Main class for translation of slugs, setting up hooks for front-side.
  */
-class QTX_Module_Slugs {
+class QTKQ_Module_Slugs {
     /**
      * Stores options slugs from database.
      * @var array
@@ -32,7 +36,7 @@ class QTX_Module_Slugs {
      * Initialise the Class with all hooks.
      */
     function init() {
-        $this->options_buffer      = get_option( QTX_OPTIONS_MODULE_SLUGS, array() );
+        $this->options_buffer      = get_option( QTKQ_OPTIONS_MODULE_SLUGS, array() );
         $this->permalink_structure = get_option( 'permalink_structure' );
 
         if ( ! is_admin() ) {
@@ -117,7 +121,7 @@ class QTX_Module_Slugs {
      * @return string the slug or empty if not found
      */
     public function get_slug( $id, $lang ) {
-        $slugArray = get_post_meta( $id, QTX_SLUGS_META_PREFIX . $lang );
+        $slugArray = get_post_meta( $id, QTKQ_SLUGS_META_PREFIX . $lang );
 
         return ! empty( $slugArray ) ? $slugArray[0] : "";
     }
@@ -185,7 +189,7 @@ class QTX_Module_Slugs {
         // FIXME: why we do this :
         $base_args = isset( $base_query['query'] ) ? wp_parse_args( $base_query['query'] ) : array();
 
-        if ( empty( $this->permalink_structure ) || $q_config['url_mode'] == QTX_URL_QUERY ) {
+        if ( empty( $this->permalink_structure ) || $q_config['url_mode'] == QTKQ_URL_QUERY ) {
             $base_args['lang'] = $this->get_temp_lang();
 
         }
@@ -248,7 +252,7 @@ class QTX_Module_Slugs {
             $req_uri = trim( $req_uri, '/' );
             $req_uri = preg_replace( "|^$home_path|", '', $req_uri );
             $req_uri = trim( $req_uri, '/' );
-            if ( $GLOBALS['q_config']['url_mode'] == QTX_URL_PATH ) {
+            if ( $GLOBALS['q_config']['url_mode'] == QTKQ_URL_PATH ) {
                 $req_uri = preg_replace( "/^{$GLOBALS['q_config']['language']}(\/|$)/", '', $req_uri );
             }
             $pathinfo = trim( $pathinfo, '/' );
@@ -607,7 +611,7 @@ class QTX_Module_Slugs {
         $permastruct = $wp_rewrite->get_extra_permastruct( $post->post_type );
         $post_link   = $this->get_extra_permastruct( $permastruct, $post->post_type );
 
-        $slug = get_post_meta( $post->ID, QTX_SLUGS_META_PREFIX . $this->get_temp_lang(), true );
+        $slug = get_post_meta( $post->ID, QTKQ_SLUGS_META_PREFIX . $this->get_temp_lang(), true );
         if ( ! $slug ) {
             $slug = $post->post_name;
         }
@@ -685,7 +689,7 @@ class QTX_Module_Slugs {
                 if ( $cats ) {
                     usort( $cats, '_usort_terms_by_ID' ); // order by ID
 
-                    $category = get_metadata( 'term', $cats[0]->term_id, QTX_SLUGS_META_PREFIX . $this->get_temp_lang(), true );
+                    $category = get_metadata( 'term', $cats[0]->term_id, QTKQ_SLUGS_META_PREFIX . $this->get_temp_lang(), true );
                     if ( ! $category ) {
                         $category = $cats[0]->slug;
                     }
@@ -699,7 +703,7 @@ class QTX_Module_Slugs {
                 if ( empty( $category ) ) {
                     $default_category = get_category( get_option( 'default_category' ) );
 
-                    $default_category_slug = get_metadata( 'term', $default_category->term_id, QTX_SLUGS_META_PREFIX . $this->get_temp_lang(), true );
+                    $default_category_slug = get_metadata( 'term', $default_category->term_id, QTKQ_SLUGS_META_PREFIX . $this->get_temp_lang(), true );
                     if ( ! $default_category_slug ) {
                         $default_category_slug = $default_category->slug;
                     }
@@ -716,7 +720,7 @@ class QTX_Module_Slugs {
 
             $date = explode( " ", date( 'Y m d H i s', $unixtime ) );
 
-            $post_slug = get_post_meta( $post->ID, QTX_SLUGS_META_PREFIX . $this->get_temp_lang(), true );
+            $post_slug = get_post_meta( $post->ID, QTKQ_SLUGS_META_PREFIX . $this->get_temp_lang(), true );
             if ( ! $post_slug ) {
                 $post_slug = $post->post_name;
             }
@@ -736,7 +740,7 @@ class QTX_Module_Slugs {
                     $post_slug,
                 );
             $permalink      = home_url( str_replace( $rewritecode, $rewritereplace, $permalink ) );
-            if ( $q_config['url_mode'] != QTX_URL_QUERY ) {
+            if ( $q_config['url_mode'] != QTKQ_URL_QUERY ) {
                 $permalink = user_trailingslashit( $permalink, 'single' );
             }
         } else { // if they're not using the fancy permalink option
@@ -776,7 +780,7 @@ class QTX_Module_Slugs {
             $link = trim( $link, '/' ); // hack
             $link = home_url( "/$link/" ); // hack
 
-            if ( $q_config['url_mode'] != QTX_URL_QUERY ) {
+            if ( $q_config['url_mode'] != QTKQ_URL_QUERY ) {
                 $link = user_trailingslashit( $link, 'page' );
             }
 
@@ -826,7 +830,7 @@ class QTX_Module_Slugs {
         $permastruct = $wp_rewrite->get_extra_permastruct( $taxonomy );
         $termlink    = $this->get_extra_permastruct( $permastruct, $taxonomy );
 
-        $slug = get_metadata( 'term', $term->term_id, QTX_SLUGS_META_PREFIX . $this->get_temp_lang(), true );
+        $slug = get_metadata( 'term', $term->term_id, QTKQ_SLUGS_META_PREFIX . $this->get_temp_lang(), true );
         if ( ! $slug ) {
             $slug = $term->slug;
         }
@@ -849,7 +853,7 @@ class QTX_Module_Slugs {
                 foreach ( $ancestors as $ancestor ) {
                     $ancestor_term = get_term( $ancestor, $taxonomy );
 
-                    $ancestor_slug = get_metadata( 'term', $ancestor_term->term_id, QTX_SLUGS_META_PREFIX . $this->get_temp_lang(), true );
+                    $ancestor_slug = get_metadata( 'term', $ancestor_term->term_id, QTKQ_SLUGS_META_PREFIX . $this->get_temp_lang(), true );
                     if ( ! $ancestor_slug ) {
                         $ancestor_slug = $ancestor_term->slug;
                     }
@@ -992,7 +996,7 @@ class QTX_Module_Slugs {
         },
             $parts );
         $in_string     = "'" . implode( "','", $parts ) . "'";
-        $meta_key      = QTX_SLUGS_META_PREFIX . $this->get_temp_lang();
+        $meta_key      = QTKQ_SLUGS_META_PREFIX . $this->get_temp_lang();
         $post_type_sql = $post_type;
         $wpdb->escape_by_ref( $post_type_sql );
 
@@ -1106,7 +1110,7 @@ class QTX_Module_Slugs {
         }
 
         if ( $nicename ) {
-            $name = get_metadata( 'term', $parent->term_id, QTX_SLUGS_META_PREFIX . $this->get_temp_lang(), true );
+            $name = get_metadata( 'term', $parent->term_id, QTKQ_SLUGS_META_PREFIX . $this->get_temp_lang(), true );
             if ( ! $name ) {
                 $name = $parent->slug;
             }
@@ -1142,7 +1146,7 @@ class QTX_Module_Slugs {
             $page = get_post( $page );
         }
 
-        $uri = get_post_meta( $page->ID, QTX_SLUGS_META_PREFIX . $this->get_temp_lang(), true );
+        $uri = get_post_meta( $page->ID, QTKQ_SLUGS_META_PREFIX . $this->get_temp_lang(), true );
         if ( ! $uri ) {
             $uri = $page->post_name;
         }
@@ -1155,7 +1159,7 @@ class QTX_Module_Slugs {
         while ( $page->post_parent != 0 ) {
             $page = get_post( $page->post_parent );
 
-            $page_name = get_post_meta( $page->ID, QTX_SLUGS_META_PREFIX . $this->get_temp_lang(), true );
+            $page_name = get_post_meta( $page->ID, QTKQ_SLUGS_META_PREFIX . $this->get_temp_lang(), true );
             if ( ! $page_name ) {
                 $page_name = $page->post_name;
             }
@@ -1185,7 +1189,7 @@ class QTX_Module_Slugs {
         $original_field = $field;
 
         if ( 'slug' == $field ) {
-            $field = 'm.meta_key = \'' . QTX_SLUGS_META_PREFIX . $this->get_temp_lang() . '\' AND m.meta_value';
+            $field = 'm.meta_key = \'' . QTKQ_SLUGS_META_PREFIX . $this->get_temp_lang() . '\' AND m.meta_value';
             $value = sanitize_title( $value );
             if ( empty( $value ) ) {
                 return false;

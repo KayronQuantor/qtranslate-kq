@@ -93,7 +93,7 @@
       },
       "js-exec": {
         "ta-pluton-panel": {
-          "src": "./i18n-config/themes/ta-pluton/qtx-admin.js"
+          "src": "./i18n-config/themes/ta-pluton/qtkq-admin.js"
         }
       }
     }

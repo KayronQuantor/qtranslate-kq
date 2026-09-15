@@ -1,4 +1,9 @@
 <?php
+
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 /**
  * Module: Advanced Custom Fields (ACF)
  *
@@ -16,11 +21,11 @@ function qtranxf_acf_init(): void {
     if ( ! $acf_loaded && function_exists( 'acf' ) ) {
         if ( version_compare( acf()->settings['version'], '5.6.0' ) >= 0 ) {
             require_once __DIR__ . '/extended.php';
-            new QTX_Module_Acf_Extended();
+            new QTKQ_Module_Acf_Extended();
 
             if ( is_admin() ) {
                 require_once __DIR__ . '/admin.php';
-                new QTX_Module_Acf_Admin();
+                new QTKQ_Module_Acf_Admin();
             }
         }
         $acf_loaded = true;

@@ -1,3 +1,4 @@
+<!-- Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. -->
 ---
 name: Feature request
 about: Suggest an idea for this project
@@ -17,7 +18,7 @@ A clear and concise description of what you want to happen.
 A clear and concise description of any alternative solutions or features you've considered.
 
 **Debug info [if applicable]**
-Go to `<YOUR_SITE>/wp-admin/options-general.php?page=qtranslate-xt#troubleshooting`.
+Go to `<YOUR_SITE>/wp-admin/options-general.php?page=qtranslate-kq#troubleshooting`.
 Press `Collect information` button and copy/paste the output below.
 ```
 Versions [Can be useful]...

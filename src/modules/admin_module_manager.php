@@ -1,19 +1,23 @@
 <?php
 
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 require_once QTRANSLATE_DIR . '/src/modules/admin_module.php';
 require_once QTRANSLATE_DIR . '/src/modules/module_state.php';
 
 /**
  * Module admin management, taking care of the state updates and notices.
  */
-class QTX_Admin_Module_Manager {
+class QTKQ_Admin_Module_Manager {
     /**
      * Register hooks for modules and related plugins
      */
     public static function register_hooks(): void {
-        add_action( 'admin_notices', 'QTX_Admin_Module_Manager::admin_notices' );
-        add_action( 'activated_plugin', 'QTX_Admin_Module_Manager::register_plugin_activated' );
-        add_action( 'deactivated_plugin', 'QTX_Admin_Module_Manager::register_plugin_deactivated' );
+        add_action( 'admin_notices', 'QTKQ_Admin_Module_Manager::admin_notices' );
+        add_action( 'activated_plugin', 'QTKQ_Admin_Module_Manager::register_plugin_activated' );
+        add_action( 'deactivated_plugin', 'QTKQ_Admin_Module_Manager::register_plugin_deactivated' );
     }
 
     /**
@@ -24,7 +28,7 @@ class QTX_Admin_Module_Manager {
      * AND
      * - if the `admin_enabled_modules` admin option is checked for that module.
      *
-     * Update the QTX_OPTIONS_MODULES_STATE option, telling which module should be loaded.
+     * Update the QTKQ_OPTIONS_MODULES_STATE option, telling which module should be loaded.
      * Note each module can enable hooks both for admin and front requests.
      *
      * @param callable $func_is_active callback to evaluate if a plugin is active
@@ -34,36 +38,36 @@ class QTX_Admin_Module_Manager {
 
         $option_modules = array();
         require_once ABSPATH . 'wp-admin/includes/plugin.php';
-        foreach ( QTX_Admin_Module::get_modules() as $module ) {
+        foreach ( QTKQ_Admin_Module::get_modules() as $module ) {
             $state = self::can_module_be_activated( $module, $func_is_active );
-            if ( $state == QTX_MODULE_STATE_ACTIVE ) {
+            if ( $state == QTKQ_MODULE_STATE_ACTIVE ) {
                 // The admin options matter only if the module can be activated, otherwise the hard conditions prevail.
                 if ( isset ( $q_config['admin_enabled_modules'][ $module->id ] ) && ! $q_config['admin_enabled_modules'][ $module->id ] ) {
-                    $state = QTX_MODULE_STATE_INACTIVE;
+                    $state = QTKQ_MODULE_STATE_INACTIVE;
                 }
             }
             $option_modules[ $module->id ] = $state;
         }
 
-        $old_option_modules = get_option( QTX_OPTIONS_MODULES_STATE );
-        update_option( QTX_OPTIONS_MODULES_STATE, $option_modules );
+        $old_option_modules = get_option( QTKQ_OPTIONS_MODULES_STATE );
+        update_option( QTKQ_OPTIONS_MODULES_STATE, $option_modules );
 
         // Trigger info notices and potential loading only if changed.
         if ( $old_option_modules != $option_modules ) {
             set_transient( 'qtranslate_notice_modules', true, 5 );
-            QTX_Module_Loader::load_active_modules();
+            QTKQ_Module_Loader::load_active_modules();
         }
     }
 
     /**
      * Check if the module has a related plugin active, if any.
      *
-     * @param QTX_Admin_Module $module
+     * @param QTKQ_Admin_Module $module
      * @param callable $func_is_active
      *
      * @return bool true if the integration plugin is active OR if the module does not have any.
      */
-    public static function is_module_plugin_active( QTX_Admin_Module $module, $func_is_active = 'is_plugin_active' ): bool {
+    public static function is_module_plugin_active( QTKQ_Admin_Module $module, $func_is_active = 'is_plugin_active' ): bool {
         if ( empty( $module->plugins ) ) {
             return true; // Attention: should not be interpreted as "having a plugin".
         }
@@ -86,19 +90,19 @@ class QTX_Admin_Module_Manager {
      *
      * ATTENTION: the admin checkboxes are ignored in this check! This evaluates the "potential" state.
      *
-     * @param QTX_Admin_Module $module
+     * @param QTKQ_Admin_Module $module
      * @param callable $func_is_active callback to evaluate if a plugin is active
      *
      * @return integer module state
      */
-    public static function can_module_be_activated( QTX_Admin_Module $module, $func_is_active = 'is_plugin_active' ): int {
-        $state = QTX_MODULE_STATE_INACTIVE;
+    public static function can_module_be_activated( QTKQ_Admin_Module $module, $func_is_active = 'is_plugin_active' ): int {
+        $state = QTKQ_MODULE_STATE_INACTIVE;
 
         if ( self::is_module_plugin_active( $module, $func_is_active ) ) {
             if ( isset( $module->incompatible ) && call_user_func( $func_is_active, $module->incompatible ) ) {
-                $state = QTX_MODULE_STATE_BLOCKED;
+                $state = QTKQ_MODULE_STATE_BLOCKED;
             } else {
-                $state = QTX_MODULE_STATE_ACTIVE;
+                $state = QTKQ_MODULE_STATE_ACTIVE;
             }
         }
 
@@ -132,41 +136,41 @@ class QTX_Admin_Module_Manager {
     }
 
     public static function admin_notices(): void {
-        $options_modules = get_option( QTX_OPTIONS_MODULES_STATE, array() );
+        $options_modules = get_option( QTKQ_OPTIONS_MODULES_STATE, array() );
         if ( empty( $options_modules ) ) {
-            $msg   = '<p>' . sprintf( __( 'Modules state undefined in %s. Please deactivate it and reactivate it again from the plugins page.', 'qtranslate' ), 'qTranslate&#8209;XT' ) . '</p>';
-            $nonce = wp_create_nonce( 'deactivate-plugin_qtranslate-xt/qtranslate.php' );
-            $msg   .= '<p><a class="button" href="' . admin_url( 'plugins.php?action=deactivate&plugin=' . urlencode( 'qtranslate-xt/qtranslate.php' ) . '&plugin_status=all&paged=1&s&_wpnonce=' . $nonce ) . '"><strong>' . sprintf( __( 'Deactivate %s', 'qtranslate' ), 'qTranslate&#8209;XT' ) . '</strong></a></p>';
+            $msg   = '<p>' . sprintf( __( 'Modules state undefined in %s. Please deactivate it and reactivate it again from the plugins page.', 'qtranslate' ), 'qTranslate&#8209;KQ' ) . '</p>';
+            $nonce = wp_create_nonce( 'deactivate-plugin_qtranslate-kq/qtranslate.php' );
+            $msg   .= '<p><a class="button" href="' . admin_url( 'plugins.php?action=deactivate&plugin=' . urlencode( 'qtranslate-kq/qtranslate.php' ) . '&plugin_status=all&paged=1&s&_wpnonce=' . $nonce ) . '"><strong>' . sprintf( __( 'Deactivate %s', 'qtranslate' ), 'qTranslate&#8209;KQ' ) . '</strong></a></p>';
             echo '<div class="notice notice-warning is-dismissible">' . $msg . '</div>';
 
             return;
         }
 
         $active_modules = array();
-        $modules        = QTX_Admin_Module::get_modules();
+        $modules        = QTKQ_Admin_Module::get_modules();
         foreach ( $modules as $module ) {
             if ( ! array_key_exists( $module->id, $options_modules ) ) {
                 continue;
             }
 
             switch ( $options_modules[ $module->id ] ) {
-                case QTX_MODULE_STATE_BLOCKED:
+                case QTKQ_MODULE_STATE_BLOCKED:
                     $incompatible_plugin = $module->incompatible;
                     $plugin_data         = get_plugin_data( WP_PLUGIN_DIR . '/' . $incompatible_plugin, false, true );
                     $plugin_name         = $plugin_data['Name'];
                     $url_deactivate      = esc_url( wp_nonce_url( admin_url( 'plugins.php?action=deactivate&plugin=' . urlencode( $incompatible_plugin ) ), 'deactivate-plugin_' . $incompatible_plugin ) );
-                    $msg                 = '<p>' . sprintf( __( 'The plugin "%s" is incompatible with the module "%s" of %s. Please disable it.', 'qtranslate' ), $plugin_name, $module->name, 'qTranslate&#8209;XT' ) . '</p>';
+                    $msg                 = '<p>' . sprintf( __( 'The plugin "%s" is incompatible with the module "%s" of %s. Please disable it.', 'qtranslate' ), $plugin_name, $module->name, 'qTranslate&#8209;KQ' ) . '</p>';
                     $msg                 .= '<p><a class="button" href="' . $url_deactivate . '"><strong>' . sprintf( __( 'Deactivate plugin %s', 'qtranslate' ), $plugin_name ) . '</strong></a>';
                     echo '<div class="notice notice-warning is-dismissible">' . $msg . '</div>';
                     break;
-                case QTX_MODULE_STATE_ACTIVE:
+                case QTKQ_MODULE_STATE_ACTIVE:
                     $active_modules[] = $module->name;
                     break;
             }
         }
         if ( ! empty( $active_modules ) && get_transient( 'qtranslate_notice_modules' ) ) {
             $msg_modules = '<ul><li>' . implode( '</li><li>', $active_modules ) . '</li></ul>';
-            $msg_infos   = '<p>' . sprintf( __( 'The following modules are now active in %s:', 'qtranslate' ), 'qTranslate&#8209;XT' ) . $msg_modules . '</p>';
+            $msg_infos   = '<p>' . sprintf( __( 'The following modules are now active in %s:', 'qtranslate' ), 'qTranslate&#8209;KQ' ) . $msg_modules . '</p>';
             echo '<div class="notice notice-info is-dismissible">' . $msg_infos . '</div>';
             delete_transient( 'qtranslate_notice_modules' );
         }

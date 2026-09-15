@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 function qtranxf_getLanguage(): string {
     global $q_config;
 
@@ -66,7 +70,7 @@ function qtranxf_getLanguageName( string $lang = '' ): string {
             // module 'mbstring' may not be installed by default: https://wordpress.org/support/topic/qtranslate_utilsphp-on-line-504
             $n = mb_convert_case( $n, MB_CASE_TITLE );
         } else {
-            $msg = 'qTranslate-XT: Enable PHP module "mbstring" to get names of languages printed in "Camel Case" or disable option \'Show language names in "Camel Case"\' on admin page ' . admin_url( 'options-general.php?page=qtranslate-xt#general' ) . '. You may find more information at https://php.net/manual/en/mbstring.installation.php, or search for PHP installation options on control panel of your server provider.';
+            $msg = 'qTranslate-KQ: Enable PHP module "mbstring" to get names of languages printed in "Camel Case" or disable option \'Show language names in "Camel Case"\' on admin page ' . admin_url( 'options-general.php?page=qtranslate-kq#general' ) . '. You may find more information at https://php.net/manual/en/mbstring.installation.php, or search for PHP installation options on control panel of your server provider.';
             error_log( $msg );
         }
     }

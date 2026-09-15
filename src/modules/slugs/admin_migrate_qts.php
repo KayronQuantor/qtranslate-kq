@@ -1,10 +1,15 @@
 <?php
+
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 /**
  * Legacy meta and options from QTS plugin.
  */
-const QTX_SLUGS_LEGACY_QTS_META_PREFIX    = '_qts_slug_';
-const QTX_SLUGS_LEGACY_QTS_OPTIONS_PREFIX = '_qts_';
-const QTX_SLUGS_LEGACY_QTS_OPTIONS_NAME   = 'qts_options';
+const QTKQ_SLUGS_LEGACY_QTS_META_PREFIX    = '_qts_slug_';
+const QTKQ_SLUGS_LEGACY_QTS_OPTIONS_PREFIX = '_qts_';
+const QTKQ_SLUGS_LEGACY_QTS_OPTIONS_NAME   = 'qts_options';
 
 /**
  * Check if slugs meta should be migrated from the legacy QTS postmeta and termmeta.
@@ -15,7 +20,7 @@ function qtranxf_slugs_check_migrate_qts(): string {
     global $wpdb;
 
     /**
-     * Generic function that counts the slugs meta, legacy (QTS) or new (QTX).
+     * Generic function that counts the slugs meta, legacy (QTS) or new (QTKQ).
      *
      * @param string $table name of the meta table (postmeta, termmeta)
      * @param string $prefix prefix for the meta key
@@ -32,14 +37,14 @@ function qtranxf_slugs_check_migrate_qts(): string {
     };
 
     $msg = [];
-    $count_slugs( $wpdb->postmeta, QTX_SLUGS_LEGACY_QTS_META_PREFIX, $msg );
-    $count_slugs( $wpdb->termmeta, QTX_SLUGS_LEGACY_QTS_META_PREFIX, $msg );
+    $count_slugs( $wpdb->postmeta, QTKQ_SLUGS_LEGACY_QTS_META_PREFIX, $msg );
+    $count_slugs( $wpdb->termmeta, QTKQ_SLUGS_LEGACY_QTS_META_PREFIX, $msg );
 
     return empty ( $msg ) ? '' : implode( '<br>', $msg );
 }
 
 /**
- * Migrate slugs meta by migrating the legacy QTS postmeta and termmeta to QTX.
+ * Migrate slugs meta by migrating the legacy QTS postmeta and termmeta to QTKQ.
  * Attention: current slugs meta are deleted if QTS slugs are found.
  *
  * @param bool $db_commit true to commit changes, false for dry-run mode.
@@ -50,7 +55,7 @@ function qtranxf_slugs_migrate_qts_meta( bool $db_commit ): string {
     global $wpdb;
 
     /**
-     * Generic function that migrates QTS meta to QTX meta.
+     * Generic function that migrates QTS meta to QTKQ meta.
      *
      * @param string $table name of the meta table (postmeta, termmeta)
      * @param string $colid column name of the parent id (post_id, term_id)
@@ -60,8 +65,8 @@ function qtranxf_slugs_migrate_qts_meta( bool $db_commit ): string {
      * @return void
      */
     $migrate_meta = function ( string $table, string $colid, bool $db_commit, array &$msg ) use ( $wpdb ): void {
-        $new_prefix = QTX_SLUGS_META_PREFIX;
-        $old_prefix = QTX_SLUGS_LEGACY_QTS_META_PREFIX;
+        $new_prefix = QTKQ_SLUGS_META_PREFIX;
+        $old_prefix = QTKQ_SLUGS_LEGACY_QTS_META_PREFIX;
         // Escape '_' against LIKE wildcards.
         $old_esc = str_replace( '_', '\_', $old_prefix );
         $new_esc = str_replace( '_', '\_', $new_prefix );
@@ -96,7 +101,7 @@ function qtranxf_slugs_migrate_qts_meta( bool $db_commit ): string {
 }
 
 /**
- * Migrate legacy QTS options to QTX.
+ * Migrate legacy QTS options to QTKQ.
  * Attention: current slugs options are deleted if QTS options are found.
  *
  * @param bool $db_commit true to commit changes, false for dry-run mode.
@@ -106,15 +111,15 @@ function qtranxf_slugs_migrate_qts_meta( bool $db_commit ): string {
 function qtranxf_slugs_migrate_qts_options( bool $db_commit ): string {
     $msg = [];
 
-    $qts_options = get_option( QTX_SLUGS_LEGACY_QTS_OPTIONS_NAME );
+    $qts_options = get_option( QTKQ_SLUGS_LEGACY_QTS_OPTIONS_NAME );
     if ( ! $qts_options ) {
         return __( "No options to migrate.", 'qtranslate' );
     }
 
-    $old_options = get_option( QTX_OPTIONS_MODULE_SLUGS );
+    $old_options = get_option( QTKQ_OPTIONS_MODULE_SLUGS );
     if ( $old_options ) {
         if ( $db_commit ) {
-            delete_option( QTX_OPTIONS_MODULE_SLUGS );
+            delete_option( QTKQ_OPTIONS_MODULE_SLUGS );
         }
         $msg[] = sprintf( __( "Deleted %d types from options.", 'qtranslate' ), count( $old_options ) );
     }
@@ -122,12 +127,12 @@ function qtranxf_slugs_migrate_qts_options( bool $db_commit ): string {
     $new_options = [];
     // Drop the legacy prefix.
     foreach ( $qts_options as $type => $slugs ) {
-        $type                 = str_replace( QTX_SLUGS_LEGACY_QTS_OPTIONS_PREFIX, '', $type );
+        $type                 = str_replace( QTKQ_SLUGS_LEGACY_QTS_OPTIONS_PREFIX, '', $type );
         $new_options[ $type ] = $slugs;
     }
     if ( $db_commit ) {
-        update_option( QTX_OPTIONS_MODULE_SLUGS, $new_options, false );
-        delete_option( QTX_SLUGS_LEGACY_QTS_OPTIONS_NAME );
+        update_option( QTKQ_OPTIONS_MODULE_SLUGS, $new_options, false );
+        delete_option( QTKQ_SLUGS_LEGACY_QTS_OPTIONS_NAME );
 
         global $qtranslate_slugs;
         if ( $qtranslate_slugs->options_buffer != $new_options ) {

@@ -1,4 +1,9 @@
 <?php
+
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 /**
  * Built-in module for WooCommerce
  */
@@ -23,7 +28,7 @@ add_action( 'qtranslate_init_language', 'qtranxf_wc_init_language' );
  * This way mini-cart will be shown on all tabs with the same language, which user set the most recently.
  * This makes better sense comparing to showing mini-cart in the language of last change of cart.
  *
- * @param array $url_info qtx variable.
+ * @param array $url_info qtkq variable.
  *
  * @return array possibly modified $url_info.
  */
@@ -61,7 +66,7 @@ function qtranxf_wc_deliver_webhook_async( $webhook_id, $arg ): void {
     remove_filter( 'the_posts', 'qtranxf_postsFilter', 5 );
     remove_action( 'pre_get_posts', 'qtranxf_pre_get_posts', 99 );
 
-    /* Raw ML format is not applicable to terms, as default lang only is stored in obj->name and translations are in qtx options.
+    /* Raw ML format is not applicable to terms, as default lang only is stored in obj->name and translations are in qtkq options.
      * Hence qtranxf_wc_get_term_raw_ML filter is added to mimic a raw ML format to be sent through webhook.
      */
     add_filter( 'get_term', 'qtranxf_wc_get_term_raw_ML' );

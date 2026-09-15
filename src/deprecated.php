@@ -1,9 +1,13 @@
 <?php
 
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 /**
  * @deprecated Legacy hook for `init` action, to be removed in next major release.
- * Might be wrongly used by 3rd-party plugins (for example, alo_easymail) to test qTranslate-XT presence.
- * Recommended usage: is_plugin_active( 'qtranslate-xt/qtranslate.php' )
+ * Might be wrongly used by 3rd-party plugins (for example, alo_easymail) to test qTranslate-KQ presence.
+ * Recommended usage: is_plugin_active( 'qtranslate-kq/qtranslate.php' )
  * @since 3.4
  */
 function qtranxf_init() {
@@ -144,7 +148,7 @@ function qtranxf_reloadConfig() {
     qtranxf_reload_config();
 }
 
-function qtranxf_updateSetting( $var, $type = QTX_STRING, $def = null ) {
+function qtranxf_updateSetting( $var, $type = QTKQ_STRING, $def = null ) {
     _deprecated_function( __FUNCTION__, '3.10.0', 'qtranxf_update_setting' );
     qtranxf_update_setting( $var, $type, $def );
 }
@@ -165,7 +169,7 @@ function qtranxf_updateSettings() {
 }
 
 /**
- * [Legacy] Converter of a format given in DateTime format, transformed to the extended "QTX-strftime" format.
+ * [Legacy] Converter of a format given in DateTime format, transformed to the extended "QTKQ-strftime" format.
  *
  * @param string $format in DateTime format.
  *
@@ -179,7 +183,7 @@ function qtranxf_convertDateFormatToStrftimeFormat( $format ) {
 }
 
 /**
- * [Legacy] Converter of a format/default pair to "QTX-strftime" format, applying 'use_strftime' configuration.
+ * [Legacy] Converter of a format/default pair to "QTKQ-strftime" format, applying 'use_strftime' configuration.
  *
  * @param string $format ATTENTION - always given in date PHP format.
  * @param string $default_format , following the strftime configuration.
@@ -194,7 +198,7 @@ function qtranxf_convertFormat( $format, $default_format ) {
 }
 
 /**
- * [Legacy] Converter of a date format to "QTX-strftime" format, applying qTranslate 'use_strftime' configuration.
+ * [Legacy] Converter of a date format to "QTKQ-strftime" format, applying qTranslate 'use_strftime' configuration.
  *
  * @param string $format
  *
@@ -209,7 +213,7 @@ function qtranxf_convertDateFormat( $format ) {
 }
 
 /**
- * [Legacy] Converter of a time format to "QTX-strftime" format, applying qTranslate 'use_strftime' configuration.
+ * [Legacy] Converter of a time format to "QTKQ-strftime" format, applying qTranslate 'use_strftime' configuration.
  *
  * @param string $format
  *
@@ -224,7 +228,7 @@ function qtranxf_convertTimeFormat( $format ) {
 }
 
 /**
- * [Legacy] Extension of PHP "QTX-strftime", valid up to PHP 8.0.
+ * [Legacy] Extension of PHP "QTKQ-strftime", valid up to PHP 8.0.
  *
  * @param string $format extended strftime with additional features such as %q
  * @param int $date timestamp

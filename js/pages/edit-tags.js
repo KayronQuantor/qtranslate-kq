@@ -1,12 +1,13 @@
+/*! Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. */
 /* executed for 
  /wp-admin/edit-tags.php (without action=edit)
 */
 'use strict';
 const $ = jQuery;
 
-$(document).on('qtxLoadAdmin:edit-tags', (event, qtx) => {
+$(document).on('qtkqLoadAdmin:edit-tags', (event, qtkq) => {
     const addDisplayHook = function (i, e) {
-        qtx.addDisplayHook(e);
+        qtkq.addDisplayHook(e);
     };
 
     const updateRow = function (row) {
@@ -15,27 +16,22 @@ $(document).on('qtxLoadAdmin:edit-tags', (event, qtx) => {
         $row.find('td.name span.inline').css('display', 'none');
     };
 
-    const $theList = $('#the-list');
-    let nbRows = $('#the-list > tr').length;
-
-    const onRowAdd = function () {
-        const $rows = $theList.children();
-        if (nbRows === $rows.length)
-            return false;
-        const ok = nbRows > $rows.length;
-        nbRows = $rows.length;
-        if (ok)
-            return false;
-        for (let i = 0; i < $rows.length; ++i) {
-            const row = $rows[i];
-            updateRow(row);
-        }
-        return false;
-    };
-
-    $theList.each(function (i, e) {
-        $(e).bind("DOMSubtreeModified", onRowAdd);
-    });
+    const theList = document.getElementById('the-list');
+    if (theList) {
+        const observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                mutation.addedNodes.forEach(function (node) {
+                    if (node.nodeType === Node.ELEMENT_NODE && node.matches('tr')) {
+                        updateRow(node);
+                    }
+                    if (node.querySelectorAll) {
+                        node.querySelectorAll('tr').forEach(updateRow);
+                    }
+                });
+            });
+        });
+        observer.observe(theList, {childList: true});
+    }
 
     // remove "Quick Edit" links for now
     $('#the-list > tr > td.name span.inline').css('display', 'none');

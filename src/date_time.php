@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 /**
  * Locale-formatted strftime using \IntlDateFormatter (PHP 8.1 compatible)
  * This provides a cross-platform alternative to strftime() for when it will be removed from PHP.
@@ -196,7 +200,7 @@ function qxtranxf_intl_strftime( string $format, $timestamp = null, ?string $loc
 }
 
 /**
- * Converter of a format given in DateTime format, transformed to the extended "QTX-strftime" format.
+ * Converter of a format given in DateTime format, transformed to the extended "QTKQ-strftime" format.
  *
  * @param string $format in DateTime format. Format characters can be quoted with backslashes.
  *
@@ -269,7 +273,7 @@ function qtranxf_convert_date_format_to_strftime_format( string $format ): strin
 }
 
 /**
- * Converter of a format/default pair to "QTX-strftime" format, applying 'use_strftime' configuration.
+ * Converter of a format/default pair to "QTKQ-strftime" format, applying 'use_strftime' configuration.
  *
  * @param string $format ATTENTION - always given in date PHP format.
  * @param string $default_format language format following the 'use_strftime' configuration.
@@ -291,16 +295,16 @@ function qtranxf_convert_to_strftime_format_using_config( string $format, string
     // The user format is always given in date format, but not the language format which depends on use_strftime settings.
     // The language format may contain escape backslash characters that must be unquoted in any case.
     switch ( $q_config['use_strftime'] ) {
-        case QTX_DATE:
+        case QTKQ_DATE:
             // Convert both.
             return qtranxf_convert_date_format_to_strftime_format( ! empty( $format ) ? $format : $default_format );
-        case QTX_DATE_OVERRIDE:
+        case QTKQ_DATE_OVERRIDE:
             return qtranxf_convert_date_format_to_strftime_format( $default_format );
-        case QTX_STRFTIME:
+        case QTKQ_STRFTIME:
             return ( ! empty( $format ) ? qtranxf_convert_date_format_to_strftime_format( $format ) : stripslashes( $default_format ) );
-        case QTX_STRFTIME_OVERRIDE:
+        case QTKQ_STRFTIME_OVERRIDE:
             return stripslashes( $default_format );
-        case QTX_DATE_WP:
+        case QTKQ_DATE_WP:
         default:
             return '';
     }
@@ -437,7 +441,7 @@ function qtranxf_timeFromCommentForCurrentLanguage( $old_date, string $format, b
 function qtranxf_add_date_time_filters(): void {
     global $q_config;
 
-    if ( $q_config['use_strftime'] != QTX_DATE_WP && class_exists( 'IntlDateFormatter' ) ) {
+    if ( $q_config['use_strftime'] != QTKQ_DATE_WP && class_exists( 'IntlDateFormatter' ) ) {
         add_filter( 'get_the_date', 'qtranxf_dateFromPostForCurrentLanguage', 0, 3 );
         add_filter( 'get_the_time', 'qtranxf_timeFromPostForCurrentLanguage', 0, 3 );
         add_filter( 'get_the_modified_date', 'qtranxf_dateModifiedFromPostForCurrentLanguage', 0, 3 );

@@ -1,13 +1,17 @@
 <?php
 
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 /**
  * Allows the integration with ACF by setting up the `qTranslate` extended fields.
  */
-class QTX_Module_Acf_Extended {
+class QTKQ_Module_Acf_Extended {
     /**
      * @var string ACF category ID for the qTranslate extended fields.
      */
-    const ACF_CATEGORY_QTX = 'qTranslate-XT';
+    const ACF_CATEGORY_QTKQ = 'qTranslate-KQ';
 
     /**
      * Constructor
@@ -30,13 +34,13 @@ class QTX_Module_Acf_Extended {
         require_once __DIR__ . '/fields/url.php';
         require_once __DIR__ . '/fields/wysiwyg.php';
 
-        acf()->fields->register_field_type( new QTX_Module_Acf_Field_File() );
-        acf()->fields->register_field_type( new QTX_Module_Acf_Field_Image() );
-        acf()->fields->register_field_type( new QTX_Module_Acf_Field_Post_Object() );
-        acf()->fields->register_field_type( new QTX_Module_Acf_Field_Text() );
-        acf()->fields->register_field_type( new QTX_Module_Acf_Field_Textarea() );
-        acf()->fields->register_field_type( new QTX_Module_Acf_Field_Url() );
-        acf()->fields->register_field_type( new QTX_Module_Acf_Field_Wysiwyg() );
+        acf()->fields->register_field_type( new QTKQ_Module_Acf_Field_File() );
+        acf()->fields->register_field_type( new QTKQ_Module_Acf_Field_Image() );
+        acf()->fields->register_field_type( new QTKQ_Module_Acf_Field_Post_Object() );
+        acf()->fields->register_field_type( new QTKQ_Module_Acf_Field_Text() );
+        acf()->fields->register_field_type( new QTKQ_Module_Acf_Field_Textarea() );
+        acf()->fields->register_field_type( new QTKQ_Module_Acf_Field_Url() );
+        acf()->fields->register_field_type( new QTKQ_Module_Acf_Field_Wysiwyg() );
     }
 
     /**

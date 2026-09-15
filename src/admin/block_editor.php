@@ -1,4 +1,9 @@
 <?php
+
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 /**
  * Admin handler for the block editor (Gutenberg)
  * @author: herrvigg
@@ -9,12 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class QTX_Admin_Block_Editor
+ * Class QTKQ_Admin_Block_Editor
  *
  * Manages the block editor (Gutenberg) with the related REST API.
  * Limitation: only the single language mode is supported.
  */
-class QTX_Admin_Block_Editor {
+class QTKQ_Admin_Block_Editor {
     /**
      * Constructor.
      */
@@ -29,7 +34,7 @@ class QTX_Admin_Block_Editor {
     public function rest_api_init(): void {
         global $q_config;
 
-        // Filter to allow qTranslate-XT to manage the block editor (single language mode)
+        // Filter to allow qTranslate-KQ to manage the block editor (single language mode)
         $admin_block_editor = apply_filters( 'qtranslate_admin_block_editor', true );
         if ( ! $admin_block_editor ) {
             return;
@@ -50,7 +55,7 @@ class QTX_Admin_Block_Editor {
     /**
      * Prepare the REST request for a post being edited
      *
-     * Set the raw content and the 'qtx_editor_lang' field for the current language.
+     * Set the raw content and the 'qtkq_editor_lang' field for the current language.
      *
      * @param WP_REST_Response $response
      * @param WP_Post $post
@@ -94,7 +99,7 @@ class QTX_Admin_Block_Editor {
             return $response;
         }
 
-        $editor_lang = $request->get_param( 'qtx_editor_lang' );
+        $editor_lang = $request->get_param( 'qtkq_editor_lang' );
         if ( ! isset( $editor_lang ) ) {
             return $response;
         }
@@ -138,7 +143,7 @@ class QTX_Admin_Block_Editor {
     }
 
     /**
-     * Restore the raw content of the post just updated and set the 'qtx_editor_lang', as for the prepare step
+     * Restore the raw content of the post just updated and set the 'qtkq_editor_lang', as for the prepare step
      *
      * @param WP_REST_Response|WP_HTTP_Response|WP_Error|mixed $response
      * @param array $handler
@@ -152,7 +157,7 @@ class QTX_Admin_Block_Editor {
             return $response;
         }
 
-        $editor_lang = $request->get_param( 'qtx_editor_lang' );
+        $editor_lang = $request->get_param( 'qtkq_editor_lang' );
         if ( ! isset( $editor_lang ) ) {
             return $response;
         }
@@ -169,24 +174,24 @@ class QTX_Admin_Block_Editor {
         $post_type          = qtranxf_post_type();
         $post_type_excluded = isset( $q_config['post_type_excluded'] ) && isset( $post_type ) && in_array( $post_type, $q_config['post_type_excluded'] );
 
-        // Filter to allow qTranslate-XT to manage the block editor (single language mode)
+        // Filter to allow qTranslate-KQ to manage the block editor (single language mode)
         $admin_block_editor = apply_filters( 'qtranslate_admin_block_editor', ! $post_type_excluded );
         if ( ! $admin_block_editor ) {
             return;
         }
 
         wp_register_script(
-            'qtx-block-editor',
+            'qtkq-block-editor',
             plugins_url( 'dist/block-editor.js', QTRANSLATE_FILE ),
-            array(),
-            QTX_VERSION,
+            array( 'wp-api-fetch', 'wp-data' ),
+            QTKQ_VERSION,
             true
         );
-        wp_enqueue_script( 'qtx-block-editor' );
+        wp_enqueue_script( 'qtkq-block-editor' );
     }
 
     /**
-     * Replace the multi-language raw content with only the current language used for edition and set 'qtx_editor_lang'
+     * Replace the multi-language raw content with only the current language used for edition and set 'qtkq_editor_lang'
      *
      * @param WP_HTTP_Response|WP_REST_Response $response
      * @param string $editor_lang
@@ -204,11 +209,11 @@ class QTX_Admin_Block_Editor {
         if ( isset( $response_data['excerpt']['raw'] ) ) {
             $response_data['excerpt']['raw'] = qtranxf_use( $editor_lang, $response_data['excerpt']['raw'], false, true );
         }
-        $response_data['qtx_editor_lang'] = $editor_lang;
+        $response_data['qtkq_editor_lang'] = $editor_lang;
         $response->set_data( $response_data );
         return $response;
     }
 
 }
 
-new QTX_Admin_Block_Editor();
+new QTKQ_Admin_Block_Editor();

@@ -1,7 +1,7 @@
 {
-  "name": "qtranslate-xt",
-  "version": "1.0.0",
-  "description": "qTranslate-XT (eXTended)",
+  "name": "qtranslate-kq",
+  "version": "4.1.1",
+  "description": "qTranslate-KQ (eXTended)",
   "main": "dist/main.js",
   "private": true,
   "scripts": {
@@ -12,15 +12,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/qtranslate/qtranslate-xt.git"
+    "url": "git+https://github.com/KayronQuantor/qtranslate-kq.git"
   },
   "keywords": [],
   "author": "HerrVigg",
-  "license": "GPLv2-or-later",
+  "license": "GPL-2.0-or-later",
   "bugs": {
-    "url": "https://github.com/qtranslate/qtranslate-xt/issues"
+    "url": "https://github.com/KayronQuantor/qtranslate-kq/issues"
   },
-  "homepage": "https://github.com/qtranslate/qtranslate-xt#readme",
+  "homepage": "https://github.com/KayronQuantor/qtranslate-kq#readme",
   "devDependencies": {
     "@babel/cli": "^7.23.0",
     "@babel/core": "^7.23.2",

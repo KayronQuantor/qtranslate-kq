@@ -1,13 +1,17 @@
 <?php
 
-class QTX_Module_Acf_Field_Post_Object extends acf_field_post_object {
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
+class QTKQ_Module_Acf_Field_Post_Object extends acf_field_post_object {
     /**
      *  Setup the field type data
      */
     function initialize() {
         parent::initialize();
         $this->name     = 'qtranslate_post_object';
-        $this->category = QTX_Module_Acf_Extended::ACF_CATEGORY_QTX;
+        $this->category = QTKQ_Module_Acf_Extended::ACF_CATEGORY_QTKQ;
         $this->label    .= ' [' . $this->category . ']';
 
         // Re-create the hooks with the new field name.
@@ -25,7 +29,7 @@ class QTX_Module_Acf_Field_Post_Object extends acf_field_post_object {
     function render_field( $field ) {
         global $q_config;
         $languages       = qtranxf_getSortedLanguages( true );
-        $decoded         = QTX_Module_Acf_Extended::decode_language_values( $field['value'] );
+        $decoded         = QTKQ_Module_Acf_Extended::decode_language_values( $field['value'] );
         $values          = array_map( 'maybe_unserialize', $decoded );
         $currentLanguage = qtranxf_getLanguage();
 
@@ -100,7 +104,7 @@ class QTX_Module_Acf_Field_Post_Object extends acf_field_post_object {
             $value = maybe_serialize( $value );
         }
 
-        return QTX_Module_Acf_Extended::encode_language_values( $values );
+        return QTKQ_Module_Acf_Extended::encode_language_values( $values );
     }
 
     /**
@@ -116,7 +120,7 @@ class QTX_Module_Acf_Field_Post_Object extends acf_field_post_object {
      */
     function validate_value( $valid, $value, $field, $input ) {
         if ( is_array( $value ) ) {
-            $valid = QTX_Module_Acf_Extended::validate_language_values( $this, $valid, $value, $field, $input );
+            $valid = QTKQ_Module_Acf_Extended::validate_language_values( $this, $valid, $value, $field, $input );
         }
 
         return $valid;

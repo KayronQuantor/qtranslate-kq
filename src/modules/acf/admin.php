@@ -1,9 +1,13 @@
 <?php
 
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 /**
  * Handle the admin sections and settings.
  */
-class QTX_Module_Acf_Admin {
+class QTKQ_Module_Acf_Admin {
     /**
      * Constructor
      */
@@ -91,20 +95,20 @@ class QTX_Module_Acf_Admin {
      * @return array
      */
     public function get_field_types( array $groups ): array {
-        if ( ! isset ( $groups[ QTX_Module_Acf_Extended::ACF_CATEGORY_QTX ] ) ) {
+        if ( ! isset ( $groups[ QTKQ_Module_Acf_Extended::ACF_CATEGORY_QTKQ ] ) ) {
             return $groups;
         }
         $default   = self::qtranslate_fields_default();
         $settings  = self::get_module_setting( 'qtranslate_fields', $default );
-        $group_qtx = &$groups[ QTX_Module_Acf_Extended::ACF_CATEGORY_QTX ];
-        foreach ( $group_qtx as $field_id => $field_object ) {
+        $group_qtkq = &$groups[ QTKQ_Module_Acf_Extended::ACF_CATEGORY_QTKQ ];
+        foreach ( $group_qtkq as $field_id => $field_object ) {
             assert( isset( $settings[ $field_id ] ) );
             if ( ! $settings[ $field_id ] ) {
-                unset( $group_qtx[ $field_id ] );
+                unset( $group_qtkq[ $field_id ] );
             }
         }
-        if ( empty( $group_qtx ) ) {
-            unset( $groups[ QTX_Module_Acf_Extended::ACF_CATEGORY_QTX ] );
+        if ( empty( $group_qtkq ) ) {
+            unset( $groups[ QTKQ_Module_Acf_Extended::ACF_CATEGORY_QTKQ ] );
         }
         return $groups;
     }
@@ -114,15 +118,15 @@ class QTX_Module_Acf_Admin {
      */
     public function admin_enqueue_scripts(): void {
         wp_enqueue_style( 'qtranslate-acf', plugins_url( 'css/modules/acf.css', QTRANSLATE_FILE ),
-            array( 'acf-input' ), QTX_VERSION );
+            array( 'acf-input' ), QTKQ_VERSION );
 
         wp_enqueue_script( 'qtranslate-acf', plugins_url( 'dist/modules/acf.js', QTRANSLATE_FILE ), array(
             'acf-input',
             'underscore',
             'qtranslate-admin-main'
-        ), QTX_VERSION );
+        ), QTKQ_VERSION );
 
-        wp_localize_script( 'qtranslate-acf', 'qTranslateModuleAcf', get_option( QTX_OPTIONS_MODULE_ACF, self::default_options() ) );
+        wp_localize_script( 'qtranslate-acf', 'qTranslateModuleAcf', get_option( QTKQ_OPTIONS_MODULE_ACF, self::default_options() ) );
     }
 
     /**
@@ -263,7 +267,7 @@ class QTX_Module_Acf_Admin {
      * @return mixed
      */
     protected static function get_module_setting( string $name, $default = null ) {
-        $options  = get_option( QTX_OPTIONS_MODULE_ACF ); // Global key for all ACF settings, ignore default.
+        $options  = get_option( QTKQ_OPTIONS_MODULE_ACF ); // Global key for all ACF settings, ignore default.
         $settings = $options[ $name ] ?? $default;
         // If new sub-keys are added to array settings, ensure the default values complete missing entries in storage.
         return is_array( $default ) ? array_merge( $default, $settings ) : $settings;
@@ -273,7 +277,7 @@ class QTX_Module_Acf_Admin {
      * Register settings and validation hooks.
      */
     public function admin_init(): void {
-        register_setting( 'settings-qtranslate-acf', QTX_OPTIONS_MODULE_ACF );
+        register_setting( 'settings-qtranslate-acf', QTKQ_OPTIONS_MODULE_ACF );
 
         // Standard fields (ACF builtin fields)
         add_settings_section(
@@ -297,7 +301,7 @@ class QTX_Module_Acf_Admin {
             'section-acf-standard'
         );
 
-        // Extended fields (overridden "qTranslate-XT" fields)
+        // Extended fields (overridden "qTranslate-KQ" fields)
         add_settings_section(
             'section-acf-extended',
             __( 'Extended qTranslate fields', 'qtranslate' ),
@@ -402,10 +406,10 @@ class QTX_Module_Acf_Admin {
     }
 
     public function display_settings(): void {
-        QTX_Admin_Settings::open_section( 'acf' );
+        QTKQ_Admin_Settings::open_section( 'acf' );
         wp_nonce_field( 'acf', 'nonce_acf', false );
         do_settings_sections( 'settings-qtranslate-acf' );
-        QTX_Admin_Settings::close_section( 'acf' );
+        QTKQ_Admin_Settings::close_section( 'acf' );
     }
 
     public function update_settings(): void {
@@ -413,7 +417,7 @@ class QTX_Module_Acf_Admin {
         if ( ! isset( $_POST['nonce_acf'] ) || ! wp_verify_nonce( $_POST['nonce_acf'], 'acf' ) ) {
             return;
         }
-        $post_acf = $_POST[ QTX_OPTIONS_MODULE_ACF ] ?? [];
+        $post_acf = $_POST[ QTKQ_OPTIONS_MODULE_ACF ] ?? [];
         // Unchecked boxes are not part of the POST data. We want to store explicit values for two reasons:
         // 1) the settings falls back to default when all values are unchecked (not set in POST)
         // 2) if new options come in later, we have no way to tell it's undefined or unchecked after user update.
@@ -427,7 +431,7 @@ class QTX_Module_Acf_Admin {
         array_walk( $options['group_sub_fields'], $set_bool, $post_acf['group_sub_fields'] ?? [] );
         array_walk( $options['qtranslate_fields'], $set_bool, $post_acf['qtranslate_fields'] ?? [] );
         $options['show_language_tabs'] = isset( $post_acf['show_language_tabs'] ) && $post_acf['show_language_tabs'];
-        update_option( QTX_OPTIONS_MODULE_ACF, $options, false );
+        update_option( QTKQ_OPTIONS_MODULE_ACF, $options, false );
     }
 
     /**
@@ -444,7 +448,7 @@ class QTX_Module_Acf_Admin {
             } ?>
             <label>
                 <input type="checkbox"
-                       name="<?php echo QTX_OPTIONS_MODULE_ACF ?>[standard_fields][<?php echo $id ?>]" <?php checked( $settings[ $id ] ); ?>
+                       name="<?php echo QTKQ_OPTIONS_MODULE_ACF ?>[standard_fields][<?php echo $id ?>]" <?php checked( $settings[ $id ] ); ?>
                        value="1"/><?php echo $acf_type->label ?>
             </label>
             <br/>
@@ -462,7 +466,7 @@ class QTX_Module_Acf_Admin {
         foreach ( $fields as $id ): ?>
             <label>
                 <input type="checkbox"
-                       name="<?php echo QTX_OPTIONS_MODULE_ACF ?>[group_sub_fields][<?php echo $id ?>]" <?php checked( $settings[ $id ] ); ?>
+                       name="<?php echo QTKQ_OPTIONS_MODULE_ACF ?>[group_sub_fields][<?php echo $id ?>]" <?php checked( $settings[ $id ] ); ?>
                        value="1"/><?php echo $labels[ $id ] ?>
             </label>
             <br/>
@@ -484,7 +488,7 @@ class QTX_Module_Acf_Admin {
             ?>
             <label>
                 <input type="checkbox"
-                       name="<?php echo QTX_OPTIONS_MODULE_ACF ?>[qtranslate_fields][<?php echo $id ?>]" <?php checked( $settings[ $id ] ); ?>
+                       name="<?php echo QTKQ_OPTIONS_MODULE_ACF ?>[qtranslate_fields][<?php echo $id ?>]" <?php checked( $settings[ $id ] ); ?>
                        value="1"/><?php echo $acf_type->label ?>
             </label>
             <br/>
@@ -497,7 +501,7 @@ class QTX_Module_Acf_Admin {
     public function render_setting_show_language_tabs(): void {
         ?>
         <input type="checkbox"
-               name="<?php echo QTX_OPTIONS_MODULE_ACF ?>[show_language_tabs]" <?php checked( self::get_module_setting( 'show_language_tabs', false ) ); ?>
+               name="<?php echo QTKQ_OPTIONS_MODULE_ACF ?>[show_language_tabs]" <?php checked( self::get_module_setting( 'show_language_tabs', false ) ); ?>
                value="1">
         <?php
     }
@@ -586,12 +590,12 @@ class QTX_Module_Acf_Admin {
                 $filter['post_id'] = acf_get_valid_post_id( 'options' );
             }
         } elseif ( $pagenow === 'edit-tags.php' && isset( $_GET['taxonomy'] ) ) {
-            $filter['taxonomy'] = filter_var( $_GET['taxonomy'], FILTER_SANITIZE_STRING );
+            $filter['taxonomy'] = sanitize_key( wp_unslash( $_GET['taxonomy'] ) );
         } elseif ( $pagenow === 'profile.php' ) {
             $filter['user_id']   = get_current_user_id();
             $filter['user_form'] = 'edit';
         } elseif ( $pagenow === 'user-edit.php' && isset( $_GET['user_id'] ) ) {
-            $filter['user_id']   = filter_var( $_GET['user_id'], FILTER_SANITIZE_NUMBER_INT );
+            $filter['user_id']   = absint( $_GET['user_id'] );
             $filter['user_form'] = 'edit';
         } elseif ( $pagenow === 'user-new.php' ) {
             $filter['user_id']   = 'new';

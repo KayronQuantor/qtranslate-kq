@@ -1,5 +1,10 @@
 <?php
-const QTX_SLUGS_META_PREFIX = 'qtranslate_slug_';   // The language code is appended.
+
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
+const QTKQ_SLUGS_META_PREFIX = 'qtranslate_slug_';   // The language code is appended.
 
 require_once __DIR__ . '/slugs.php';
 require_once __DIR__ . '/utils.php';
@@ -11,5 +16,5 @@ if ( is_admin() ) {
 add_filter( 'qtranslate_convert_url', 'qtranxf_slugs_convert_url', 10, 2 );
 
 global $qtranslate_slugs;
-$qtranslate_slugs = new QTX_Module_Slugs();
+$qtranslate_slugs = new QTKQ_Module_Slugs();
 $qtranslate_slugs->init();

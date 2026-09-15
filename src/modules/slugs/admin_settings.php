@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 add_action( 'qtranslate_update_settings', 'qtranxf_slugs_update_settings' );
 add_action( 'qtranslate_configuration', 'qtranxf_slugs_show_settings_page' );
 
@@ -49,7 +53,7 @@ function qtranxf_slugs_show_form_field( array $args = array() ): void {
     $choices = $args['choices'];
     $class   = $args['class'];
 
-    $options = $qtranslate_slugs->options_buffer ?: get_option( QTX_OPTIONS_MODULE_SLUGS, array() );
+    $options = $qtranslate_slugs->options_buffer ?: get_option( QTKQ_OPTIONS_MODULE_SLUGS, array() );
 
     // pass the standard value if the option is not yet set in the database
     if ( ! isset( $options[ $id ] ) && $type != 'checkbox' ) {
@@ -68,7 +72,7 @@ function qtranxf_slugs_show_form_field( array $args = array() ): void {
         case 'text':
             $options[ $id ] = stripslashes( $options[ $id ] );
             $options[ $id ] = esc_attr( $options[ $id ] );
-            echo "<input class='regular-text$field_class' type='text' name='" . QTX_OPTIONS_MODULE_SLUGS . "[$id]' value='$options[$id]' />";
+            echo "<input class='regular-text$field_class' type='text' name='" . QTKQ_OPTIONS_MODULE_SLUGS . "[$id]' value='$options[$id]' />";
             echo ( $desc != '' ) ? "<br /><p class='qtranxs-notes'>$desc</p>" : "";
             break;
 
@@ -93,7 +97,7 @@ function qtranxf_slugs_show_form_field( array $args = array() ): void {
                 $name    = $q_config['language_name'][ $lang ];
                 $item_id = "$id|{$item[1]}";
                 echo "<li><img class='qtranxs-lang-flag' src='{$flag_location}{$flag}' alt='$name' title='$name' />" . PHP_EOL;
-                echo "<input class='$field_class' type='text' name='" . QTX_OPTIONS_MODULE_SLUGS . "[$item_id]' value='" . urldecode( $value ) . "' title='{$item[0]}' /></li>" . PHP_EOL;
+                echo "<input class='$field_class' type='text' name='" . QTKQ_OPTIONS_MODULE_SLUGS . "[$item_id]' value='" . urldecode( $value ) . "' title='{$item[0]}' /></li>" . PHP_EOL;
             }
             echo "</ul>";
             echo ( $desc != '' ) ? "<p class='qtranxs-notes'>$desc</p>" : "";
@@ -102,12 +106,12 @@ function qtranxf_slugs_show_form_field( array $args = array() ): void {
         case 'textarea':
             $options[ $id ] = stripslashes( $options[ $id ] );
             $options[ $id ] = esc_html( $options[ $id ] );
-            echo "<textarea class='textarea$field_class' type='text' name='" . QTX_OPTIONS_MODULE_SLUGS . "[$id]' rows='5' cols='30'>$options[$id]</textarea>";
+            echo "<textarea class='textarea$field_class' type='text' name='" . QTKQ_OPTIONS_MODULE_SLUGS . "[$id]' rows='5' cols='30'>$options[$id]</textarea>";
             echo ( $desc != '' ) ? "<br /><p class='qtranxs-notes'>$desc</p>" : "";
             break;
 
         case 'select':
-            echo "<select class='select$field_class' name='" . QTX_OPTIONS_MODULE_SLUGS . "[$id]'>";
+            echo "<select class='select$field_class' name='" . QTKQ_OPTIONS_MODULE_SLUGS . "[$id]'>";
             foreach ( $choices as $item ) {
                 $value = esc_attr( $item );
                 $item  = esc_html( $item );
@@ -120,7 +124,7 @@ function qtranxf_slugs_show_form_field( array $args = array() ): void {
             break;
 
         case 'select2':
-            echo "<select class='select$field_class' name='" . QTX_OPTIONS_MODULE_SLUGS . "[$id]'>";
+            echo "<select class='select$field_class' name='" . QTKQ_OPTIONS_MODULE_SLUGS . "[$id]'>";
             foreach ( $choices as $item ) {
 
                 $item    = explode( "|", $item );
@@ -134,7 +138,7 @@ function qtranxf_slugs_show_form_field( array $args = array() ): void {
             break;
 
         case 'checkbox':
-            echo "<input class='checkbox$field_class' type='checkbox' name='" . QTX_OPTIONS_MODULE_SLUGS . "[$id]' value='1' " . checked( $options[ $id ], 1, false ) . " />";
+            echo "<input class='checkbox$field_class' type='checkbox' name='" . QTKQ_OPTIONS_MODULE_SLUGS . "[$id]' value='1' " . checked( $options[ $id ], 1, false ) . " />";
             echo ( $desc != '' ) ? "<br /><p class='qtranxs-notes'>$desc</p>" : "";
             break;
 
@@ -152,7 +156,7 @@ function qtranxf_slugs_show_form_field( array $args = array() ): void {
                     }
                 }
 
-                echo "<input class='checkbox$field_class' type='checkbox' name='" . QTX_OPTIONS_MODULE_SLUGS . "[$id|$item[1]]' value='1' $checked /> $item[0] <br/>";
+                echo "<input class='checkbox$field_class' type='checkbox' name='" . QTKQ_OPTIONS_MODULE_SLUGS . "[$id|$item[1]]' value='1' $checked /> $item[0] <br/>";
             }
             echo ( $desc != '' ) ? "<br /><p class='qtranxs-notes'>$desc</p>" : "";
             break;
@@ -170,7 +174,7 @@ function qtranxf_slugs_show_form_field( array $args = array() ): void {
                     $checked = 'checked="checked"';
                 }
 
-                echo "<label for='qtx_slugs_$id'><input class='radio$field_class' type='radio' id='qtx_slugs_$id' name='" . QTX_OPTIONS_MODULE_SLUGS . "[$id]' value='$item_value' $checked /> <strong>$item_key</strong>";
+                echo "<label for='qtkq_slugs_$id'><input class='radio$field_class' type='radio' id='qtkq_slugs_$id' name='" . QTKQ_OPTIONS_MODULE_SLUGS . "[$id]' value='$item_value' $checked /> <strong>$item_key</strong>";
                 if ( isset( $desc[ $index ] ) && ! empty( $desc[ $index ] ) ) {
                     echo ": " . $desc[ $index ];
                 }
@@ -195,7 +199,7 @@ function qtranxf_slugs_show_settings_page(): void {
     if ( empty( $settings_output['qts_page_sections'] ) ) {
         return;
     }
-    QTX_Admin_Settings::open_section( 'slugs' );
+    QTKQ_Admin_Settings::open_section( 'slugs' );
     ?>
     <p class="heading"><?php _e( 'If you activated previously the <a href="options-permalink.php">pretty permalinks</a>, in this section you can translate the <abbr title="en inglés, Universal Resource Locator">URLs</abbr> <strong>bases</strong> for <a href="https://developer.wordpress.org/reference/functions/register_post_type/#parameters">public</a> post_types, categories, tags and taxonomies.', 'qtranslate' ); ?> </p>
 
@@ -209,7 +213,7 @@ function qtranxf_slugs_show_settings_page(): void {
             }
         }
     }
-    QTX_Admin_Settings::close_section( 'slugs' );
+    QTKQ_Admin_Settings::close_section( 'slugs' );
 }
 
 /**
@@ -355,14 +359,14 @@ function qtranxf_slugs_validate_options( array $input ): array {
 function qtranxf_slugs_update_settings(): void {
     global $qtranslate_slugs;
 
-    $qts_settings = isset( $_POST[ QTX_OPTIONS_MODULE_SLUGS ] ) ? qtranxf_slugs_validate_options( $_POST[ QTX_OPTIONS_MODULE_SLUGS ] ) : array();
+    $qts_settings = isset( $_POST[ QTKQ_OPTIONS_MODULE_SLUGS ] ) ? qtranxf_slugs_validate_options( $_POST[ QTKQ_OPTIONS_MODULE_SLUGS ] ) : array();
     if ( empty( $qts_settings ) ) {
         return;
     }
     if ( $qtranslate_slugs->options_buffer == $qts_settings ) {
         return;
     }
-    update_option( QTX_OPTIONS_MODULE_SLUGS, $qts_settings, false );
+    update_option( QTKQ_OPTIONS_MODULE_SLUGS, $qts_settings, false );
     $qtranslate_slugs->options_buffer = $qts_settings;
     flush_rewrite_rules();
 }

@@ -1,5 +1,7 @@
 # Module: Events Made Easy
 
+<!-- Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. -->
+
 ## Description
 
 Enables multilingual framework for plugin [Events Made Easy](https://wordpress.org/plugins/events-made-easy/).
@@ -10,7 +12,7 @@ Contributors: johnclause, liedekef
 
 ## Disclaimer
 
-This module should be considered as *work in progress* before proceeding with the transition of qTranslate-XT.
+This module should be considered as *work in progress* before proceeding with the transition of qTranslate-KQ.
 We don't claim ownership of this component and we'll figure how to involve the contributors properly.
 
 ## Changelog

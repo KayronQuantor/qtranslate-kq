@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 function qtranxf_detect_language( array &$url_info ) {
     global $q_config;
 
@@ -87,11 +91,51 @@ function qtranxf_detect_language( array &$url_info ) {
     // REST and GraphQL API calls should be deterministic (stateless), no special language detection e.g. based on cookie
     $url_info['set_cookie'] = ! ( qtranxf_is_ajax_request() || qtranxf_is_rest_request_expected() || qtranxf_is_graphql_request_expected() );
 
+
+	// === CUSTOM LANGUAGE PRIORITY OVERRIDE (START) ===
+
+	if (!is_admin()) {
+
+		$allowed = ['pl', 'en'];
+		$default = isset($q_config['default_language']) ? $q_config['default_language'] : 'en';
+
+		// 1. URL
+		if (!empty($_GET['lang'])) {
+			$lang = strtolower($_GET['lang']);
+			if (in_array($lang, $allowed)) {
+				$url_info['language'] = $lang;
+			}
+		}
+
+		// 2. COOKIE
+		elseif (!empty($url_info['lang_cookie_front'])) {
+			$lang = strtolower($url_info['lang_cookie_front']);
+			if (in_array($lang, $allowed)) {
+				$url_info['language'] = $lang;
+			}
+		}
+
+		// 3. BROWSER (z qTranslate, NIE z $_SERVER)
+		elseif (!empty($url_info['lang_browser'])) {
+			$lang = strtolower($url_info['lang_browser']);
+			if (in_array($lang, $allowed)) {
+				$url_info['language'] = $lang;
+			}
+		}
+
+		// 4. DEFAULT
+		if (empty($url_info['language']) || !in_array($url_info['language'], $allowed)) {
+			$url_info['language'] = $default;
+		}
+	}
+
+	// === CUSTOM LANGUAGE PRIORITY OVERRIDE (END) ===
+
     /**
      * Hook for possible other methods
      * Set $url_info['language'] with the result
      */
-    $url_info = apply_filters( 'qtranslate_detect_language', $url_info );
+	$url_info = apply_filters( 'qtranslate_detect_language', $url_info );
 
     $lang = $url_info['language'];
     if ( $url_info['set_cookie'] ) {
@@ -143,14 +187,14 @@ function qtranxf_parse_language_info( array &$url_info, bool $link = false ) {
         return false;   // url is not from this WP installation
     }
 
-    $lang_code  = QTX_LANG_CODE_FORMAT;
+    $lang_code  = QTKQ_LANG_CODE_FORMAT;
     $doredirect = false;
 
     // parse URL lang
     if ( ! is_admin() || $link ) {
         $url_mode = $q_config['url_mode'];
         switch ( $url_mode ) {
-            case QTX_URL_PATH:
+            case QTKQ_URL_PATH:
                 if ( ! empty( $url_info['wp-path'] ) && preg_match( "!^/($lang_code)(/|$)!i", $url_info['wp-path'], $match ) ) {
                     $lang = qtranxf_resolveLangCase( $match[1], $doredirect );
                     if ( $lang ) {
@@ -161,7 +205,7 @@ function qtranxf_parse_language_info( array &$url_info, bool $link = false ) {
                 }
                 break;
 
-            case QTX_URL_DOMAIN:
+            case QTKQ_URL_DOMAIN:
                 if ( ! empty( $url_info['host'] ) ) {
                     if ( preg_match( "#^($lang_code)\.#i", $url_info['host'], $match ) ) {
                         $lang = qtranxf_resolveLangCase( $match[1], $doredirect );
@@ -174,7 +218,7 @@ function qtranxf_parse_language_info( array &$url_info, bool $link = false ) {
                 }
                 break;
 
-            case QTX_URL_DOMAINS:
+            case QTKQ_URL_DOMAINS:
                 if ( ! empty( $url_info['host'] ) ) {
                     // TODO should 'enabled_languages' be defined as host->lang for domains?
                     foreach ( $q_config['enabled_languages'] as $lang ) {
@@ -195,7 +239,7 @@ function qtranxf_parse_language_info( array &$url_info, bool $link = false ) {
 
             default:
                 // TODO why don't we parse query lang here as 'lang_url'?!
-                assert( $url_mode == QTX_URL_QUERY );
+                assert( $url_mode == QTKQ_URL_QUERY );
                 /**
                  * Hook for possible other methods
                  * Set, if applicable:
@@ -231,7 +275,7 @@ function qtranxf_parse_language_info( array &$url_info, bool $link = false ) {
     if ( qtranxf_is_rest_request_expected() ) {
         if ( isset( $url_info['lang_url'] ) ) {
             $parsed_lang = $url_info['lang_url'];
-        } elseif ( $query_lang && ( $q_config['url_mode'] == QTX_URL_QUERY || $link ) ) {
+        } elseif ( $query_lang && ( $q_config['url_mode'] == QTKQ_URL_QUERY || $link ) ) {
             // consider query lang for query mode or fallback for referrer links (from REST)
             $parsed_lang = $query_lang;
         }
@@ -250,7 +294,7 @@ function qtranxf_parse_language_info( array &$url_info, bool $link = false ) {
             $parsed_lang = $query_lang;
             // TODO can we avoid removing query args?
             qtranxf_del_query_arg( $url_info['query'], 'lang' );
-            if ( $q_config['url_mode'] != QTX_URL_QUERY && ! is_admin() ) {
+            if ( $q_config['url_mode'] != QTKQ_URL_QUERY && ! is_admin() ) {
                 // force lang switch from query var
                 $doredirect = true;
             }
@@ -305,9 +349,9 @@ function qtranxf_detect_language_front( array &$url_info ): string {
     global $q_config;
 
     $lang = null;
-    if ( ! $q_config['disable_client_cookies'] && isset( $_COOKIE[ QTX_COOKIE_NAME_FRONT ] ) ) {
+    if ( ! $q_config['disable_client_cookies'] && isset( $_COOKIE[ QTKQ_COOKIE_NAME_FRONT ] ) ) {
         $cs                            = null;
-        $lang                          = qtranxf_resolveLangCase( $_COOKIE[ QTX_COOKIE_NAME_FRONT ], $cs );
+        $lang                          = qtranxf_resolveLangCase( $_COOKIE[ QTKQ_COOKIE_NAME_FRONT ], $cs );
         $url_info['lang_cookie_front'] = $lang;
     }
 
@@ -344,16 +388,20 @@ function qtranxf_setcookie_language( string $lang, string $cookie_name, string $
 
     // SameSite only available with options API from PHP 7.3.0
     if ( version_compare( PHP_VERSION, '7.3.0' ) >= 0 ) {
-        setcookie( $cookie_name, $lang, [
-            'expires'  => strtotime( '+1year' ),
-            'path'     => $cookie_path,
-            'secure'   => $q_config['use_secure_cookie'],
-            'httponly' => true,
-            'samesite' => QTX_COOKIE_SAMESITE
-        ] );
+        if ( ! headers_sent() ) {
+			setcookie( $cookie_name, $lang, [
+				'expires'  => strtotime( '+1year' ),
+				'path'     => $cookie_path,
+				'secure'   => $q_config['use_secure_cookie'],
+				'httponly' => true,
+				'samesite' => QTKQ_COOKIE_SAMESITE
+			] );
+		}
     } else {
         // only meant for server-side, set 'httponly' flag
-        setcookie( $cookie_name, $lang, strtotime( '+1year' ), $cookie_path, null, $q_config['use_secure_cookie'], true );
+		if ( ! headers_sent() ) {
+			setcookie( $cookie_name, $lang, strtotime( '+1year' ), $cookie_path, null, $q_config['use_secure_cookie'], true );
+		}
     }
 }
 
@@ -362,9 +410,9 @@ function qtranxf_set_language_cookie( string $lang ): void {
 
     assert( ! qtranxf_is_rest_request_expected() );
     if ( is_admin() ) {
-        qtranxf_setcookie_language( $lang, QTX_COOKIE_NAME_ADMIN, ADMIN_COOKIE_PATH );
+        qtranxf_setcookie_language( $lang, QTKQ_COOKIE_NAME_ADMIN, ADMIN_COOKIE_PATH );
     } elseif ( ! $q_config['disable_client_cookies'] ) {
-        qtranxf_setcookie_language( $lang, QTX_COOKIE_NAME_FRONT, COOKIEPATH );
+        qtranxf_setcookie_language( $lang, QTKQ_COOKIE_NAME_FRONT, COOKIEPATH );
     }
 }
 
@@ -455,13 +503,15 @@ function qtranxf_check_url_maybe_redirect( &$url_info ) {
          */
         $target = apply_filters( 'qtranslate_language_detect_redirect', $url_lang, $url_orig, $url_info );
         if ( $target !== false && $target != $url_orig ) {
-            wp_redirect( $target );
-            nocache_headers(); // prevent browser from caching redirection
-            exit();
+			if ( ! headers_sent() ) {
+				wp_redirect( $target );
+				nocache_headers();
+				exit();
+			}
         } else {
             // neutral path
             $url_info['doredirect'] .= ' - cancelled, because it goes to the same target - neutral URL';
-            if ( $pagenow == 'index.php' && $q_config['url_mode'] == QTX_URL_PATH ) {
+            if ( $pagenow == 'index.php' && $q_config['url_mode'] == QTKQ_URL_PATH ) {
                 $_SERVER['REQUEST_URI'] = trailingslashit( $url_info['path-base'] ) . $lang . $url_info['wp-path']; // should not hurt?
             }
         }

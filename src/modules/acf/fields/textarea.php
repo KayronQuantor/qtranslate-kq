@@ -1,13 +1,17 @@
 <?php
 
-class QTX_Module_Acf_Field_Textarea extends acf_field_textarea {
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
+class QTKQ_Module_Acf_Field_Textarea extends acf_field_textarea {
     /**
      * Setup the field type data
      */
     function initialize() {
         parent::initialize();
         $this->name     = 'qtranslate_textarea';
-        $this->category = QTX_Module_Acf_Extended::ACF_CATEGORY_QTX;
+        $this->category = QTKQ_Module_Acf_Extended::ACF_CATEGORY_QTKQ;
         $this->label    .= ' [' . $this->category . ']' . ' - ' . __( 'Deprecated', 'qtranslate' );
     }
 
@@ -19,7 +23,7 @@ class QTX_Module_Acf_Field_Textarea extends acf_field_textarea {
     function render_field( $field ) {
         global $q_config;
         $languages       = qtranxf_getSortedLanguages( true );
-        $values          = QTX_Module_Acf_Extended::decode_language_values( $field['value'] );
+        $values          = QTKQ_Module_Acf_Extended::decode_language_values( $field['value'] );
         $currentLanguage = qtranxf_getLanguage();
 
         if ( empty( $field['rows'] ) ) {
@@ -76,7 +80,7 @@ class QTX_Module_Acf_Field_Textarea extends acf_field_textarea {
      * @see acf_field_textarea::render_field
      */
     function update_value( $values, $post_id, $field ) {
-        return QTX_Module_Acf_Extended::encode_language_values( $values );
+        return QTKQ_Module_Acf_Extended::encode_language_values( $values );
     }
 
     /**
@@ -92,7 +96,7 @@ class QTX_Module_Acf_Field_Textarea extends acf_field_textarea {
      */
     function validate_value( $valid, $value, $field, $input ) {
         if ( is_array( $value ) ) {
-            $valid = QTX_Module_Acf_Extended::validate_language_values( $this, $valid, $value, $field, $input );
+            $valid = QTKQ_Module_Acf_Extended::validate_language_values( $this, $valid, $value, $field, $input );
         }
 
         return $valid;

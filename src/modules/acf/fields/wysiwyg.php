@@ -1,13 +1,17 @@
 <?php
 
-class QTX_Module_Acf_Field_Wysiwyg extends acf_field_wysiwyg {
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
+class QTKQ_Module_Acf_Field_Wysiwyg extends acf_field_wysiwyg {
     /**
      * Setup the field type data
      */
     function initialize() {
         parent::initialize();
         $this->name     = 'qtranslate_wysiwyg';
-        $this->category = QTX_Module_Acf_Extended::ACF_CATEGORY_QTX;
+        $this->category = QTKQ_Module_Acf_Extended::ACF_CATEGORY_QTKQ;
         $this->label    .= ' [' . $this->category . ']' . ' - ' . __( 'Deprecated', 'qtranslate' );
     }
 
@@ -59,7 +63,7 @@ class QTX_Module_Acf_Field_Wysiwyg extends acf_field_wysiwyg {
         global $q_config;
 
         $languages       = qtranxf_getSortedLanguages( true );
-        $values          = QTX_Module_Acf_Extended::decode_language_values( $field['value'] );
+        $values          = QTKQ_Module_Acf_Extended::decode_language_values( $field['value'] );
         $currentLanguage = qtranxf_getLanguage();
 
         echo '<div class="multi-language-field multi-language-field-wysiwyg">';
@@ -105,7 +109,7 @@ class QTX_Module_Acf_Field_Wysiwyg extends acf_field_wysiwyg {
                     <?php endif; ?>
                 </div>
                 <div id="wp-<?php echo $id; ?>-editor-container" class="wp-editor-container">
-                    <textarea id="<?php echo $id; ?>" class="qtx-wp-editor-area qtranxs-translatable"
+                    <textarea id="<?php echo $id; ?>" class="qtkq-wp-editor-area qtranxs-translatable"
                               name="<?php echo $name; ?>"
                               <?php if ( $height ): ?>style="height:<?php echo $height; ?>px;"<?php endif; ?>><?php echo $value; ?></textarea>
                 </div>
@@ -126,7 +130,7 @@ class QTX_Module_Acf_Field_Wysiwyg extends acf_field_wysiwyg {
      * @return    string - the modified value
      */
     function update_value( $values, $post_id, $field ) {
-        return QTX_Module_Acf_Extended::encode_language_values( $values );
+        return QTKQ_Module_Acf_Extended::encode_language_values( $values );
     }
 
     /**
@@ -142,7 +146,7 @@ class QTX_Module_Acf_Field_Wysiwyg extends acf_field_wysiwyg {
      */
     function validate_value( $valid, $value, $field, $input ) {
         if ( is_array( $value ) ) {
-            $valid = QTX_Module_Acf_Extended::validate_language_values( $this, $valid, $value, $field, $input );
+            $valid = QTKQ_Module_Acf_Extended::validate_language_values( $this, $valid, $value, $field, $input );
         }
 
         return $valid;

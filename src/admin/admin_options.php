@@ -1,4 +1,9 @@
 <?php
+
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -11,8 +16,8 @@ function qtranxf_admin_set_default_options( ?array &$options ): void {
     $options['admin'] = array();
 
     $options['admin']['int'] = array(
-        'editor_mode'    => QTX_EDITOR_MODE_LSB,
-        'highlight_mode' => QTX_HIGHLIGHT_MODE_BORDER_LEFT,
+        'editor_mode'    => QTKQ_EDITOR_MODE_LSB,
+        'highlight_mode' => QTKQ_HIGHLIGHT_MODE_BORDER_LEFT,
     );
 
     $options['admin']['bool'] = array(
@@ -22,7 +27,7 @@ function qtranxf_admin_set_default_options( ?array &$options ): void {
 
     // single line options
     $options['admin']['str'] = array(
-        'lsb_style' => QTX_LSB_STYLE_SIMPLE_BUTTONS
+        'lsb_style' => QTKQ_LSB_STYLE_SIMPLE_BUTTONS
     );
 
     // multi-line options
@@ -41,7 +46,7 @@ function qtranxf_admin_set_default_options( ?array &$options ): void {
 
     // Boolean set defining the default enabled options for each module, hard values not depending on any state.
     $options['admin']['admin_enabled_modules'] = array();
-    foreach ( QTX_Admin_Module::get_modules() as $module ) {
+    foreach ( QTKQ_Admin_Module::get_modules() as $module ) {
         $options['admin']['admin_enabled_modules'][ $module->id ] = $module->is_default_enabled();
     }
 

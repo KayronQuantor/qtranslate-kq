@@ -1,3 +1,4 @@
+/*! Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. */
 /* executed for
  /wp-admin/post.php
  /wp-admin/post-new.php
@@ -6,16 +7,16 @@
 const $ = jQuery;
 
 const UrlMode = Object.freeze({
-   QTX_URL_QUERY: 1,
-   QTX_URL_PATH: 2,
-   QTX_URL_DOMAIN: 3,
-   QTX_URL_DOMAINS: 4,
+   QTKQ_URL_QUERY: 1,
+   QTKQ_URL_PATH: 2,
+   QTKQ_URL_DOMAIN: 3,
+   QTKQ_URL_DOMAINS: 4,
 });
 
-$(document).on('qtxLoadAdmin:post', (event, qtx) => {
+$(document).on('qtkqLoadAdmin:post', (event, qtkq) => {
     const convertURL = function (url, lang) {
         switch (qTranslateConfig.url_mode) {
-            case UrlMode.QTX_URL_QUERY:
+            case UrlMode.QTKQ_URL_QUERY:
                 if (url.search) {
                     url.search += '&lang=' + lang;
                 } else {
@@ -23,7 +24,7 @@ $(document).on('qtxLoadAdmin:post', (event, qtx) => {
                 }
                 break;
 
-            case UrlMode.QTX_URL_PATH:
+            case UrlMode.QTKQ_URL_PATH:
                 const homepath = qTranslateConfig.home_url_path;
                 let path = url.pathname;
                 if (path[0] !== '/')
@@ -33,11 +34,11 @@ $(document).on('qtxLoadAdmin:post', (event, qtx) => {
                     url.pathname = qTranslateConfig.homeinfo_path + lang + path.substring(i + homepath.length - 1);
                 break;
 
-            case UrlMode.QTX_URL_DOMAIN:
+            case UrlMode.QTKQ_URL_DOMAIN:
                 url.host = lang + '.' + url.host;
                 break;
 
-            case UrlMode.QTX_URL_DOMAINS:
+            case UrlMode.QTKQ_URL_DOMAINS:
                 url.host = qTranslateConfig.domains[lang];
                 break;
         }
@@ -71,7 +72,7 @@ $(document).on('qtxLoadAdmin:post', (event, qtx) => {
             btnPreviewAction.children[0].href = langUrl.href;
         }
 
-        if (qTranslateConfig.url_mode !== UrlMode.QTX_URL_QUERY) {
+        if (qTranslateConfig.url_mode !== UrlMode.QTKQ_URL_QUERY) {
             if (!slugSamplePermalink) {
                 const slugEl = document.getElementById('sample-permalink');
                 if (slugEl && slugEl.offsetHeight > 0 && slugEl.childNodes.length) {
@@ -85,7 +86,7 @@ $(document).on('qtxLoadAdmin:post', (event, qtx) => {
                 slugSamplePermalink.nodeValue = langUrl.href;
             }
         } else {
-            // QTX_URL_QUERY
+            // QTKQ_URL_QUERY
             if (!permalink_query_field) {
                 $('#sample-permalink').append('<span id="sample-permalink-lang-query"></span>');
                 permalink_query_field = $('#sample-permalink-lang-query');
@@ -113,13 +114,13 @@ $(document).on('qtxLoadAdmin:post', (event, qtx) => {
         }
     };
 
-    qtx.addCustomContentHooks(); // handles values of option 'Custom Fields'
-    setSlugLanguage(qtx.getActiveLanguage());
+    qtkq.addCustomContentHooks(); // handles values of option 'Custom Fields'
+    setSlugLanguage(qtkq.getActiveLanguage());
 
-    qtx.addLanguageSwitchAfterListener(setSlugLanguage);
+    qtkq.addLanguageSwitchAfterListener(setSlugLanguage);
 
     if (labelTitle && fieldTitle) {
-        qtx.addLanguageSwitchAfterListener(hide_title_prompt_text);
+        qtkq.addLanguageSwitchAfterListener(hide_title_prompt_text);
     }
 
     function parseQuery(queryString) {
@@ -133,7 +134,7 @@ $(document).on('qtxLoadAdmin:post', (event, qtx) => {
     }
 
     // language menu bar handler
-    for (const lang in qtx.getLanguages()) {
+    for (const lang in qtkq.getLanguages()) {
         $('#wp-admin-bar-' + lang + ' a').on('click', function (e) {
             e.preventDefault();
             const params = parseQuery(window.location.search);

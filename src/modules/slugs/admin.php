@@ -1,4 +1,9 @@
 <?php
+
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -40,7 +45,7 @@ function qtranxf_slugs_taxonomies_hooks(): void {
         }
     }
 
-    if ( QTX_Module_Loader::is_module_active( 'woo-commerce' ) ) {
+    if ( QTKQ_Module_Loader::is_module_active( 'woo-commerce' ) ) {
         add_action( 'woocommerce_after_add_attribute_fields', 'qtranxf_slugs_show_add_taxonomy_slugs_option_link' );
         add_action( 'woocommerce_after_edit_attribute_fields', 'qtranxf_slugs_show_edit_taxonomy_slugs_option_link' );
     }
@@ -71,11 +76,11 @@ function qtranxf_slugs_multi_activate(): void {
 function qtranxf_slugs_uninstall(): void {
     global $q_config, $wpdb;
 
-    delete_option( QTX_OPTIONS_MODULE_SLUGS );
+    delete_option( QTKQ_OPTIONS_MODULE_SLUGS );
 
     $meta_keys = array();
     foreach ( $q_config['enabled_languages'] as $lang ) {
-        $meta_keys[] = QTX_SLUGS_META_PREFIX . $lang;
+        $meta_keys[] = QTKQ_SLUGS_META_PREFIX . $lang;
     }
     $meta_keys = "'" . implode( "','", $meta_keys ) . "'";
     $wpdb->query( "DELETE from $wpdb->postmeta WHERE meta_key IN ($meta_keys)" );
@@ -134,7 +139,7 @@ function qtranxf_slugs_draw_meta_box( $post ): void {
     echo '<input type="hidden" name="qts_nonce" id="qts_nonce" value="' . wp_create_nonce( 'qts_nonce' ) . '" />' . PHP_EOL;
     $flag_location = qtranxf_flag_location();
     foreach ( $q_config['enabled_languages'] as $lang ):
-        $slug  = get_post_meta( $post->ID, QTX_SLUGS_META_PREFIX . $lang, true );
+        $slug  = get_post_meta( $post->ID, QTKQ_SLUGS_META_PREFIX . $lang, true );
         $value = ( $slug ) ? htmlspecialchars( $slug, ENT_QUOTES ) : '';
         $name  = $q_config['language_name'][ $lang ];
         $title = sprintf( __( 'Slug' ) . ' (%s)', $name );
@@ -157,7 +162,7 @@ function qtranxf_slugs_draw_meta_box( $post ): void {
  */
 function qtranxf_slugs_sanitize_post_slug( string $slug, WP_Post $post, string $lang ): string {
     $post_title = trim( qtranxf_use( $lang, $post->post_title ) );
-    $post_name  = get_post_meta( $post->ID, QTX_SLUGS_META_PREFIX . $lang, true );
+    $post_name  = get_post_meta( $post->ID, QTKQ_SLUGS_META_PREFIX . $lang, true );
     if ( ! $post_name ) {
         $post_name = $post->post_name;
     }
@@ -238,7 +243,7 @@ function qtranxf_slugs_wp_unique_post_slug( string $slug, int $post_ID, string $
         // TODO: update unique_slug :: missing hieararchical from current wp func ( 4.3.1 )
         // Post slugs must be unique across all posts.
         $check_sql       = "SELECT $wpdb->postmeta.meta_value FROM $wpdb->posts,$wpdb->postmeta WHERE $wpdb->posts.ID = $wpdb->postmeta.post_id AND $wpdb->postmeta.meta_key = '%s' AND $wpdb->postmeta.meta_value = '%s' AND $wpdb->posts.post_type = %s AND $wpdb->posts.ID != %d LIMIT 1";
-        $post_name_check = $wpdb->get_var( $wpdb->prepare( $check_sql, QTX_SLUGS_META_PREFIX . $lang, $slug, $post_type, $post_ID ) );
+        $post_name_check = $wpdb->get_var( $wpdb->prepare( $check_sql, QTKQ_SLUGS_META_PREFIX . $lang, $slug, $post_type, $post_ID ) );
 
         // TODO: update unique_slug :: missing check for conflict with dates archive from current wp func ( 4.3.1 )
         if ( $post_name_check || in_array( $slug, $feeds ) || apply_filters( 'wp_unique_post_slug_is_bad_flat_slug', false, $slug, $post_type ) ) {
@@ -246,7 +251,7 @@ function qtranxf_slugs_wp_unique_post_slug( string $slug, int $post_ID, string $
             do {
                 // TODO: update unique_slug :: same as above: differs from current wp func ( 4.3.1 )
                 $alt_post_name   = substr( $slug, 0, 200 - ( strlen( $suffix ) + 1 ) ) . "-$suffix";
-                $post_name_check = $wpdb->get_var( $wpdb->prepare( $check_sql, QTX_SLUGS_META_PREFIX . $lang, $alt_post_name, $post_type, $post_ID ) );
+                $post_name_check = $wpdb->get_var( $wpdb->prepare( $check_sql, QTKQ_SLUGS_META_PREFIX . $lang, $alt_post_name, $post_type, $post_ID ) );
                 $suffix++;
             } while ( $post_name_check );
             $slug = $alt_post_name;
@@ -285,8 +290,8 @@ function qtranxf_slugs_save_postdata( int $post_id, ?WP_Post $post = null ): voi
             $slug = qtranxf_slugs_sanitize_post_slug( $slug, $post, $lang );
             $slug = qtranxf_slugs_unique_post_slug( $slug, $post, $lang );
 
-            delete_post_meta( $post_id, QTX_SLUGS_META_PREFIX . $lang );
-            update_post_meta( $post_id, QTX_SLUGS_META_PREFIX . $lang, $slug );
+            delete_post_meta( $post_id, QTKQ_SLUGS_META_PREFIX . $lang );
+            update_post_meta( $post_id, QTKQ_SLUGS_META_PREFIX . $lang, $slug );
         }
     }
 }
@@ -327,7 +332,7 @@ function qtranxf_slugs_sanitize_term_slug( $slug, $term, $lang ) {
 function qtranxf_slugs_unique_term_slug( string $slug, $term, string $lang ): string {
     global $wpdb;
 
-    $query       = $wpdb->prepare( "SELECT term_id FROM $wpdb->termmeta WHERE meta_key = '%s' AND meta_value = '%s' AND term_id != %d ", QTX_SLUGS_META_PREFIX . $lang, $slug, $term->term_id );
+    $query       = $wpdb->prepare( "SELECT term_id FROM $wpdb->termmeta WHERE meta_key = '%s' AND meta_value = '%s' AND term_id != %d ", QTKQ_SLUGS_META_PREFIX . $lang, $slug, $term->term_id );
     $exists_slug = $wpdb->get_results( $query );
 
     if ( empty( $exists_slug ) ) {
@@ -335,7 +340,7 @@ function qtranxf_slugs_unique_term_slug( string $slug, $term, string $lang ): st
     }
 
     // If we didn't get a unique slug, try appending a number to make it unique.
-    $query = $wpdb->prepare( "SELECT meta_value FROM $wpdb->termmeta WHERE meta_key = '%s' AND meta_value = '%s' AND term_id != %d", QTX_SLUGS_META_PREFIX . $lang, $slug, $term->term_id );
+    $query = $wpdb->prepare( "SELECT meta_value FROM $wpdb->termmeta WHERE meta_key = '%s' AND meta_value = '%s' AND term_id != %d", QTKQ_SLUGS_META_PREFIX . $lang, $slug, $term->term_id );
 
     if ( $wpdb->get_var( $query ) ) {
         $num = 2;
@@ -345,7 +350,7 @@ function qtranxf_slugs_unique_term_slug( string $slug, $term, string $lang ): st
             $slug_check = $wpdb->get_var(
                 $wpdb->prepare(
                     "SELECT meta_value FROM $wpdb->termmeta WHERE meta_key = '%s' AND meta_value = '%s'",
-                    QTX_SLUGS_META_PREFIX . $lang,
+                    QTKQ_SLUGS_META_PREFIX . $lang,
                     $alt_slug ) );
         } while ( $slug_check );
         $slug = $alt_slug;
@@ -380,8 +385,8 @@ function qtranxf_slugs_save_term( int $term_id, int $tt_id, $taxonomy ): void {
         $slug = qtranxf_slugs_sanitize_term_slug( $slug, $term, $lang );
         $slug = qtranxf_slugs_unique_term_slug( $slug, $term, $lang );
 
-        delete_metadata( 'term', $term_id, QTX_SLUGS_META_PREFIX . $lang );
-        update_metadata( 'term', $term_id, QTX_SLUGS_META_PREFIX . $lang, $slug );
+        delete_metadata( 'term', $term_id, QTKQ_SLUGS_META_PREFIX . $lang );
+        update_metadata( 'term', $term_id, QTKQ_SLUGS_META_PREFIX . $lang, $slug );
     }
 }
 
@@ -398,7 +403,7 @@ function qtranxf_slugs_show_list_term_fields( $term ): void {
     $flag_location = qtranxf_flag_location(); ?>
     <ul class="qtranxs-slugs-list qtranxs-slugs-terms"><?php
         foreach ( $q_config['enabled_languages'] as $lang ) {
-            $slug  = is_object( $term ) ? get_metadata( 'term', $term->term_id, QTX_SLUGS_META_PREFIX . $lang, true ) : '';
+            $slug  = is_object( $term ) ? get_metadata( 'term', $term->term_id, QTKQ_SLUGS_META_PREFIX . $lang, true ) : '';
             $value = $slug ? htmlspecialchars( $slug, ENT_QUOTES ) : '';
             $flag  = $q_config['flag'][ $lang ];
             $name  = $q_config['language_name'][ $lang ];
@@ -446,8 +451,8 @@ function qtranxf_slugs_show_add_taxonomy_slugs_option_link(): void {
     <div class="form-field term-slug-wrap">
         <label><?php _e( 'Slugs per language', 'qtranslate' ) ?></label>
         <?php
-        //TODO: link destination should not be hardcoded here, but currently $options_uri property is private in QTX_Admin_Settings class (base options page) and module id is hardcoded independently from module definitions in QTX_Admin_Module class (module href).
-        echo sprintf( "<p>" . __( 'Multilanguage slugs can be set up in <a href="%s">slugs module settings</a> once the new item is added.', 'qtranslate' ) . "</p>", admin_url( 'options-general.php?page=qtranslate-xt#slugs' ) );
+        //TODO: link destination should not be hardcoded here, but currently $options_uri property is private in QTKQ_Admin_Settings class (base options page) and module id is hardcoded independently from module definitions in QTKQ_Admin_Module class (module href).
+        echo sprintf( "<p>" . __( 'Multilanguage slugs can be set up in <a href="%s">slugs module settings</a> once the new item is added.', 'qtranslate' ) . "</p>", admin_url( 'options-general.php?page=qtranslate-kq#slugs' ) );
         ?>
     </div>
     <?php
@@ -463,8 +468,8 @@ function qtranxf_slugs_show_edit_taxonomy_slugs_option_link(): void {
         <th><?php _e( 'Slugs per language', 'qtranslate' ) ?></th>
         <td>
             <?php
-            //TODO: link destination should not be hardcoded here, but currently $options_uri property is private in QTX_Admin_Settings class (base options page) and module id is hardcoded independently from module definitions in QTX_Admin_Module class (module href).
-            echo sprintf( "<p>" . __( 'Multilanguage slugs can be set up in <a href="%s">slugs module settings</a>', 'qtranslate' ) . "</p>", admin_url( 'options-general.php?page=qtranslate-xt#slugs' ) );
+            //TODO: link destination should not be hardcoded here, but currently $options_uri property is private in QTKQ_Admin_Settings class (base options page) and module id is hardcoded independently from module definitions in QTKQ_Admin_Module class (module href).
+            echo sprintf( "<p>" . __( 'Multilanguage slugs can be set up in <a href="%s">slugs module settings</a>', 'qtranslate' ) . "</p>", admin_url( 'options-general.php?page=qtranslate-kq#slugs' ) );
             ?>
         </td>
     </tr>
@@ -541,7 +546,7 @@ function qtranxf_slugs_taxonomy_custom_column( $str, string $column_name, int $t
     global $q_config;
 
     if ( $column_name === 'qts-slug' ) {
-        echo get_metadata( 'term', $term_id, QTX_SLUGS_META_PREFIX . $q_config['language'], true );
+        echo get_metadata( 'term', $term_id, QTKQ_SLUGS_META_PREFIX . $q_config['language'], true );
     }
 
     return false;
@@ -624,7 +629,7 @@ function qtranxf_slugs_get_terms( array $terms, $taxonomy ): array {
 }
 
 function qtranxf_slugs_ma_module_updated(): void {
-    if ( QTX_Module_Loader::is_module_active( 'slugs' ) ) {
+    if ( QTKQ_Module_Loader::is_module_active( 'slugs' ) ) {
         qtranxf_slugs_multi_activate();
     } else {
         qtranxf_slugs_deactivate();

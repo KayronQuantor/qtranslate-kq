@@ -1,15 +1,15 @@
 {
-  "name": "qtranslate/qtranslate-xt",
-  "description": "qTranslate-XT (eXTended): Adds user-friendly multilingual content support, stored in single post.",
+  "name": "qtranslate/qtranslate-kq",
+  "description": "qTranslate-KQ (eXTended): Adds user-friendly multilingual content support, stored in single post.",
   "type": "wordpress-plugin",
   "keywords": [
     "wordpress",
     "wordpress-plugin",
     "qtranslate-x",
-    "qtranslate-xt",
+    "qtranslate-kq",
     "i18n"
   ],
-  "homepage": "https://github.com/qtranslate/qtranslate-xt",
+  "homepage": "https://github.com/KayronQuantor/qtranslate-kq",
   "license": "GPL-2.0-or-later",
   "authors": [
     {
@@ -40,9 +40,9 @@
     }
   ],
   "support": {
-    "issues": "https://github.com/qtranslate/qtranslate-xt/issues",
+    "issues": "https://github.com/KayronQuantor/qtranslate-kq/issues",
     "wiki": "https://github.com/qtranslate/qtranslate-xt/wiki",
-    "source": "https://github.com/qtranslate/qtranslate-xt"
+    "source": "https://github.com/KayronQuantor/qtranslate-kq"
   },
   "require": {
     "composer/installers": ">=1.0",
@@ -50,6 +50,6 @@
     "ext-intl": "*"
   },
   "extra": {
-    "installer-name": "qtranslate-xt"
+    "installer-name": "qtranslate-kq"
   }
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 function qtranxf_convert_database( string $action ): string {
     switch ( $action ) {
         case 'b_only':
@@ -64,7 +68,7 @@ function qtranxf_convert_to_b( $text ) {
     $text        = '';
     $lang        = false;
     $lang_closed = true;
-    $lang_code   = QTX_LANG_CODE_FORMAT;
+    $lang_code   = QTKQ_LANG_CODE_FORMAT;
 
     foreach ( $blocks as $block ) {
         if ( preg_match( "#^<!--:($lang_code)-->$#ism", $block, $matches ) ) {
@@ -424,7 +428,7 @@ function qtranxf_extract_languages( $text, array $lang2keep ): string {
     $s                = '';
     $current_language = false;
     $eol              = false;
-    $lang_code        = QTX_LANG_CODE_FORMAT;
+    $lang_code        = QTKQ_LANG_CODE_FORMAT;
 
     foreach ( $blocks as $block ) {
         // detect c-tags

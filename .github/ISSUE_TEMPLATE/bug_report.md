@@ -1,3 +1,4 @@
+<!-- Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. -->
 ---
 name: Bug report
 about: Help us to understand and reproduce the issue
@@ -24,7 +25,7 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Debug info**
-Go to `<YOUR_SITE>/wp-admin/options-general.php?page=qtranslate-xt#troubleshooting`.
+Go to `<YOUR_SITE>/wp-admin/options-general.php?page=qtranslate-kq#troubleshooting`.
 Press `Collect information` button and copy/paste the output below.
 ```
 Versions [REQUIRED!] ...

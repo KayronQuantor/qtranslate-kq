@@ -1,24 +1,31 @@
 <?php
+
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 /**
- * Plugin Name: qTranslate-XT
- * Plugin URI: https://github.com/qtranslate/qtranslate-xt/
- * Description: Adds user-friendly multilingual content support, stored in single post.
- * Version: 3.15.3
+ * Plugin Name: qTranslate-KQ
+ * Plugin URI: https://github.com/KayronQuantor/qtranslate-kq
+ * Description: Performance-refactored version of qTranslate-XT. Maintained for legacy multilingual sites using qTranslate format.
+ * Version: 4.1.1
  * Requires at least: 5.0
- * Requires PHP: 7.1
- * Author: qTranslate Community
+ * Requires PHP: 7.4
+ * Tested up to: 6.5
+ * Author: qTranslate Community + Contributors
  * Author URI: https://github.com/qtranslate/
- * Tags: multilingual, multi, language, admin, tinymce, Polyglot, bilingual, widget, switcher, professional, human, translation, service, qTranslate, zTranslate, mqTranslate, qTranslate Plus, WPML
+ * Tags: multilingual, translation, qtranslate, legacy, performance
  * Text Domain: qtranslate
  * Domain Path: /lang/
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.txt
- * Author e-mail: herrvigg@gmail.com
  * Original Author: John Clause and Qian Qin (https://www.qianqin.de mail@qianqin.de)
- * GitHub Plugin URI: https://github.com/qtranslate/qtranslate-xt/
- */
-/* Unused keywords (as described in https://codex.wordpress.org/Writing_a_Plugin):
- * Network: Optional. Whether the plugin can only be activated network wide. Example: true
+ *
+ * Fork notice:
+ * This version contains performance optimizations, refactoring and compatibility fixes
+ * beyond the original qTranslate-XT project.
+ * qTranslate-KQ fork modifications are explicitly documented as of 2026-09-15.
+ * See MODIFICATIONS.md for dated modification notices and the affected-file list.
  */
 /*
 	Copyright 2019-2023 qTranslate Community
@@ -46,6 +53,11 @@
  * to find out which functions are safe to use in the 3rd-party integration.
  * Avoid accessing internal variables directly, as they are subject to be re-designed at any time.
 */
+
+/*
+	Plugin has been updateg and adapted for WordPress 6.x and PHP 8 in Marth 2026.
+*/
+
 if ( ! function_exists( 'add_filter' ) ) {
     header( 'Status: 403 Forbidden' );
     header( 'HTTP/1.1 403 Forbidden' );
@@ -55,17 +67,53 @@ if ( ! function_exists( 'add_filter' ) ) {
  * The constants defined below are designed as interface for other plugin integration.
  * @see https://github.com/qtranslate/qtranslate-xt/wiki/Integration-Guide/
  */
-const QTX_VERSION = '3.15.3';
+const QTKQ_VERSION = '4.1.1';
 
 if ( ! defined( 'QTRANSLATE_FILE' ) ) {
     define( 'QTRANSLATE_FILE', __FILE__ );
     define( 'QTRANSLATE_DIR', __DIR__ );
 }
 
+require_once QTRANSLATE_DIR . '/src/admin/activation_hook.php';
 require_once QTRANSLATE_DIR . '/src/init.php';
-add_action( 'plugins_loaded', 'qtranxf_init_language', 2 ); // User is not authenticated yet, high priority needed.
 
-if ( is_admin() || defined( 'WP_CLI' ) ) {
-    require_once QTRANSLATE_DIR . '/src/admin/activation_hook.php';
-    qtranxf_register_activation_hooks();
-}
+// separated lifecycle
+add_action( 'plugins_loaded', 'qtranxf_init_language_early', 2 );
+add_action( 'init', 'qtranxf_init_language_late', 0 );
+
+
+/*
+add_filter('wp_optimize_cache_key', function($key) {
+    if (!empty($_GET['lang'])) {
+        $lang = preg_replace('/[^a-z]/', '', strtolower($_GET['lang']));
+        $key .= '_lang_' . $lang;
+    }
+    return $key;
+});
+*/
+
+
+
+add_action('init', function() {
+    if (!empty($_GET['lang'])) {
+        $lang = preg_replace('/[^a-z]/', '', strtolower($_GET['lang']));
+
+        if (defined('QTKQ_COOKIE_NAME_FRONT')) {
+			setcookie(QTKQ_COOKIE_NAME_FRONT, $lang, time() + 3600*24*30, COOKIEPATH ?: '/');
+			$_COOKIE[QTKQ_COOKIE_NAME_FRONT] = $lang;
+		}
+    }
+}, 0);
+
+
+add_filter('wpo_can_cache_page', function($can_cache) {
+    if (!is_admin() && isset($_GET['lang'])) {
+        return true;
+    }
+    return $can_cache;
+});
+
+
+add_filter('wpo_user_agent_bypass', function($bypass) {
+    return false;
+});

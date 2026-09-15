@@ -1,13 +1,17 @@
 <?php
 
-class QTX_Module_Acf_Field_Image extends acf_field_image {
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
+class QTKQ_Module_Acf_Field_Image extends acf_field_image {
     /**
      *  Setup the field type data
      */
     function initialize() {
         parent::initialize();
         $this->name     = 'qtranslate_image';
-        $this->category = QTX_Module_Acf_Extended::ACF_CATEGORY_QTX;
+        $this->category = QTKQ_Module_Acf_Extended::ACF_CATEGORY_QTKQ;
         $this->label    .= ' [' . $this->category . ']';
     }
 
@@ -20,7 +24,7 @@ class QTX_Module_Acf_Field_Image extends acf_field_image {
         global $q_config;
 
         $languages       = qtranxf_getSortedLanguages( true );
-        $values          = QTX_Module_Acf_Extended::decode_language_values( $field['value'] );
+        $values          = QTKQ_Module_Acf_Extended::decode_language_values( $field['value'] );
         $currentLanguage = qtranxf_getLanguage();
 
         $field_name = $field['name'];

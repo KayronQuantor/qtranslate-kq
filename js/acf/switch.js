@@ -1,9 +1,10 @@
+/*! Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. */
 const $ = jQuery;
 
 const $body = $('body');
 
 /**
- * Sync qtranslate language switchers with qtranslatex language switchers.
+ * Sync qtranslate language switchers with qtranslatekq language switchers.
  */
 const onLanguageSwitch = function (language) {
     const parent = $('.multi-language-field');
@@ -24,7 +25,7 @@ $body.on('click', '.wp-switch-editor[data-language]', function () {
     parent.find('.current-language').removeClass('current-language');
     parent.find('[data-language="' + language + '"]').addClass('current-language');
     parent.find('input[data-language="' + language + '"], textarea[data-language="' + language + '"]').focus();
-    // TODO shouldn't we use qtx.switchActiveLanguage instead?
+    // TODO shouldn't we use qtkq.switchActiveLanguage instead?
     $('.qtranxs-lang-switch[lang="' + language + '"]:first').trigger('click');
     // Prevent default behavior switching Visual Editor
     return false;
@@ -58,9 +59,9 @@ $body.on('click', '.wp-editor-tabs .wp-switch-editor', function () {
 $(function () {
     if (!qTranslateConfig.LSB)
         return;
-    const qtx = qTranslateConfig.js.get_qtx();
+    const qtkq = qTranslateConfig.js.get_qtkq();
     // select the edit tab from active language
-    const language = qtx.getActiveLanguage();
+    const language = qtkq.getActiveLanguage();
     if (language) {
         // show the correct ACF fields
         onLanguageSwitch(language);

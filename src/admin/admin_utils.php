@@ -1,4 +1,9 @@
 <?php
+
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -40,7 +45,7 @@ function qtranxf_add_message( string $msg ): void {
  */
 function qtranxf_error_log( string $msg ): void {
     qtranxf_add_error( $msg );
-    error_log( 'qTranslate-X: ' . strip_tags( $msg ) );
+    error_log( 'qTranslate-KQ: ' . strip_tags( $msg ) );
 }
 
 /**
@@ -54,7 +59,7 @@ function qtranxf_enqueue_scripts( array $jss ): void {
         if ( isset( $js['src'] ) ) {
             $handle = $js['handle'] ?? ( is_string( $key ) ? $key : 'qtranslate-admin-js-' . ( ++$cnt ) );
             $src    = $js['src'];
-            $ver    = $js['ver'] ?? QTX_VERSION;
+            $ver    = $js['ver'] ?? QTKQ_VERSION;
             $url    = content_url( $src );
             if ( isset( $js['deps'] ) ) {
                 $deps = array_merge( $deps, $js['deps'] );
@@ -96,8 +101,8 @@ function qtranxf_detect_admin_language( array $url_info ): array {
         }
     }
 
-    if ( ! $lang && isset( $_COOKIE[ QTX_COOKIE_NAME_ADMIN ] ) ) {
-        $lang                          = qtranxf_resolveLangCase( $_COOKIE[ QTX_COOKIE_NAME_ADMIN ], $cs );
+    if ( ! $lang && isset( $_COOKIE[ QTKQ_COOKIE_NAME_ADMIN ] ) ) {
+        $lang                          = qtranxf_resolveLangCase( $_COOKIE[ QTKQ_COOKIE_NAME_ADMIN ], $cs );
         $url_info['lang_cookie_admin'] = $lang;
     }
 
@@ -183,12 +188,19 @@ function qtranxf_ensure_language_set( array &$langs, string $lang, ?string $defa
 function qtranxf_get_edit_language(): string {
     global $q_config;
 
-    if ( ! isset( $_REQUEST['qtranslate-edit-language'] ) ) {
-        throw new InvalidArgumentException( 'Missing "qtranslate-edit-language" field in $_REQUEST!' );
+    $lang = '';
+    if ( isset( $_POST['qtranslate-edit-language'] ) ) {
+        $lang = sanitize_text_field( wp_unslash( $_POST['qtranslate-edit-language'] ) );
+    } elseif ( isset( $_REQUEST['qtranslate-edit-language'] ) ) {
+        // Backward-compatible fallback, but do not let cookies or query params override the submitted form value.
+        $lang = sanitize_text_field( wp_unslash( $_REQUEST['qtranslate-edit-language'] ) );
     }
 
-    $lang = $_REQUEST['qtranslate-edit-language'];
-    if ( ! in_array( $lang, $q_config['enabled_languages'] ) ) {
+    if ( $lang === '' ) {
+        throw new InvalidArgumentException( 'Missing "qtranslate-edit-language" field in POST/REQUEST!' );
+    }
+
+    if ( ! in_array( $lang, $q_config['enabled_languages'], true ) ) {
         throw new UnexpectedValueException( 'The requested language "' . $lang . '" defined in "qtranslate-edit-language" is not enabled!' );
     }
 
@@ -319,13 +331,13 @@ function qtranxf_add_conf_filters() {
     global $q_config;
     // TODO: check impact of Gutenberg, note this hook is fired too early to check the editor in current screen
     switch ( $q_config['editor_mode'] ) {
-        case QTX_EDITOR_MODE_SINGLE:
-        case QTX_EDITOR_MODE_RAW:
+        case QTKQ_EDITOR_MODE_SINGLE:
+        case QTKQ_EDITOR_MODE_RAW:
             add_filter( 'gettext', 'qtranxf_gettext', 0 );
             add_filter( 'gettext_with_context', 'qtranxf_gettext_with_context', 0 );
             add_filter( 'ngettext', 'qtranxf_ngettext', 0 );
             break;
-        case QTX_EDITOR_MODE_LSB:
+        case QTKQ_EDITOR_MODE_LSB:
         default:
             // Nothing to do
             break;
@@ -354,12 +366,12 @@ function qtranxf_get_user_admin_color() {
 }
 
 function qtranxf_meta_box_LSB() {
-    printf( __( 'This is a set of "%s" from %s. Click any blank space between the buttons and drag it to a place where you would need it the most. Click the handle at the top-right corner of this widget to hide this message.', 'qtranslate' ), __( 'Language Switching Buttons', 'qtranslate' ), '<a href="https://github.com/qTranslate/qtranslate-xt/" target="_blank">qTranslate&#8209;XT</a>' );
+    printf( __( 'This is a set of "%s" from %s. Click any blank space between the buttons and drag it to a place where you would need it the most. Click the handle at the top-right corner of this widget to hide this message.', 'qtranslate' ), __( 'Language Switching Buttons', 'qtranslate' ), '<a href="https://github.com/KayronQuantor/qtranslate-kq" target="_blank">qTranslate&#8209;KQ</a>' );
 }
 
 function qtranxf_add_meta_box_LSB( $post_type, $post = null ) {
     global $q_config, $pagenow;
-    if ( $q_config['editor_mode'] != QTX_EDITOR_MODE_LSB ) {
+    if ( $q_config['editor_mode'] != QTKQ_EDITOR_MODE_LSB ) {
         return;
     }
     switch ( $pagenow ) {
@@ -439,7 +451,7 @@ function qtranxf_admin_debug_info() {
         $info['versions'] = array(
             'PHP_VERSION' => PHP_VERSION,
             'WP_VERSION'  => $wp_version,
-            'QTX_VERSION' => QTX_VERSION,
+            'QTKQ_VERSION' => QTKQ_VERSION,
             'Plugins'     => $plugin_versions
         );
     }

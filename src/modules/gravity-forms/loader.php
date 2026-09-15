@@ -1,4 +1,9 @@
 <?php
+
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 /**
  * Built-in module for GravityForms
  *
@@ -7,7 +12,7 @@
  * @link https://michel.weimerskirch.net
  */
 
-class QTX_Module_Gravity_Forms {
+class QTKQ_Module_Gravity_Forms {
     public function __construct() {
         add_filter( 'gform_pre_render', array( $this, 'gform_pre_render' ) );
         add_filter( 'gform_pre_submission_filter', array( $this, 'gform_pre_render' ) );
@@ -150,4 +155,4 @@ class QTX_Module_Gravity_Forms {
     }
 }
 
-new QTX_Module_Gravity_Forms();
+new QTKQ_Module_Gravity_Forms();

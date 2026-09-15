@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 /**
  * Check if a string contains at least one language token
  *
@@ -8,7 +12,7 @@
  * @return bool
  */
 function qtranxf_isMultilingual( ?string $str ): bool {
-    $lang_code = QTX_LANG_CODE_FORMAT;
+    $lang_code = QTKQ_LANG_CODE_FORMAT;
     return ! is_null( $str ) && preg_match( "/<!--:$lang_code-->|\[:$lang_code]|{:$lang_code}/im", $str );
 }
 
@@ -21,11 +25,30 @@ function qtranxf_isMultilingual( ?string $str ): bool {
  * @return string[] array of string tokens, including the ML tags.
  * @since 3.3.6 swirly bracket encoding added
  */
+
+
 function qtranxf_get_language_blocks( $text ): array {
-    $lang_code   = QTX_LANG_CODE_FORMAT;
+
+    static $cache = array();
+
+    if ( ! is_string( $text ) || $text === '' ) {
+        return array();
+    }
+
+    $key = md5( $text );
+
+    if ( isset( $cache[ $key ] ) ) {
+        return $cache[ $key ];
+    }
+
+    $lang_code   = QTKQ_LANG_CODE_FORMAT;
     $split_regex = "#(<!--:$lang_code-->|<!--:-->|\[:$lang_code\]|\[:\]|\{:$lang_code\}|\{:\})#ism";
 
-    return preg_split( $split_regex, $text, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE );
+    $result = preg_split( $split_regex, $text, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE );
+
+    $cache[ $key ] = $result;
+
+    return $result;
 }
 
 /**
@@ -50,16 +73,20 @@ function qtranxf_split( string $text ): array {
  * @return string[] array of string items indexed by language.
  * @since 3.4.5.2 $found added
  */
-function qtranxf_split_blocks( array $blocks, array &$found = array() ): array {
+
+
+ function qtranxf_split_blocks( array $blocks, array &$found = array() ): array {
+
     global $q_config;
 
     $result = array();
+
     foreach ( $q_config['enabled_languages'] as $language ) {
         $result[ $language ] = '';
     }
 
     $current_language = false;
-    $lang_code        = QTX_LANG_CODE_FORMAT;
+    $lang_code        = QTKQ_LANG_CODE_FORMAT;
 
     foreach ( $blocks as $block ) {
         // detect c-tags
@@ -112,7 +139,7 @@ function qtranxf_split_blocks( array $blocks, array &$found = array() ): array {
 function qtranxf_split_languages( array $blocks ): array {
     $result           = array();
     $current_language = false;
-    $lang_code        = QTX_LANG_CODE_FORMAT;
+    $lang_code        = QTKQ_LANG_CODE_FORMAT;
 
     foreach ( $blocks as $block ) {
         // detect c-tags
@@ -382,16 +409,70 @@ function qtranxf_use( string $lang, $text, bool $show_available = false, bool $s
     return qtranxf_use_language( $lang, $text, $show_available, $show_empty );
 }
 
+
 /** when $text is already known to be string */
 function qtranxf_use_language( string $lang, string $text, bool $show_available = false, bool $show_empty = false ) {
-    $blocks = qtranxf_get_language_blocks( $text );
-    if ( count( $blocks ) <= 1 )//no language is encoded in the $text, the most frequent case
-    {
-        return $text;
-    }
 
-    return qtranxf_use_block( $lang, $blocks, $show_available, $show_empty );
+// ==============================
+// Runtime cache (L1)
+// ==============================
+static $runtime_cache = array();
+
+// ==============================
+// cache key — PRZENIESIONE NA GÓRÊ
+// ==============================
+$cache_key = 'qtkq_' . md5( $lang . '|' . $text . '|' . (int)$show_available . (int)$show_empty );
+
+// ==============================
+// Persistent cache
+// ==============================
+	// Do not cache empty / short ones
+	if ( strlen( $text ) < 20 ) {
+		$blocks = qtranxf_get_language_blocks( $text );
+
+		if ( count( $blocks ) <= 1 ) {
+			$runtime_cache[ $cache_key ] = $text; // OK
+			return $text;
+		}
+
+		$result = qtranxf_use_block( $lang, $blocks, $show_available, $show_empty );
+		$runtime_cache[ $cache_key ] = $result; // OK
+
+		return $result;
+	}
+
+	// ?? L1 cache (runtime)
+	if ( isset( $runtime_cache[ $cache_key ] ) ) {
+		return $runtime_cache[ $cache_key ];
+	}
+
+	// try cache
+	$cached = get_transient( $cache_key );
+
+	if ( $cached !== false ) {
+		$runtime_cache[ $cache_key ] = $cached; // ? wa¿ne!
+		return $cached;
+	}
+
+	// --- ORIGINAL LOGIC ---
+	$blocks = qtranxf_get_language_blocks( $text );
+
+	if ( count( $blocks ) <= 1 ) {
+		$runtime_cache[ $cache_key ] = $text;
+		return $text;
+	}
+
+	$result = qtranxf_use_block( $lang, $blocks, $show_available, $show_empty );
+
+	// Write cache every... (TTL: 6h - in this example, it may be edited)
+	set_transient( $cache_key, $result, 6 * HOUR_IN_SECONDS );
+
+	// L1 write
+	$runtime_cache[ $cache_key ] = $result;
+
+	return $result;
 }
+
 
 function qtranxf_use_block( string $lang, array $blocks, bool $show_available = false, bool $show_empty = false ): string {
     $available_langs = array();
@@ -399,6 +480,7 @@ function qtranxf_use_block( string $lang, array $blocks, bool $show_available = 
 
     return qtranxf_use_content( $lang, $content, $available_langs, $show_available, $show_empty );
 }
+
 
 function qtranxf_use_content( string $lang, $content, array $available_langs, bool $show_available = false, bool $show_empty = false ): string {
     global $q_config;

@@ -1,4 +1,9 @@
 <?php
+
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -47,7 +52,7 @@ qtranxf_wc_add_filters_admin();
 
 add_action( 'admin_enqueue_scripts', 'qtranxf_wc_add_admin_styles' );
 function qtranxf_wc_add_admin_styles(): void {
-    wp_enqueue_style( 'qtranxf_wc_qtranslate_admin', plugins_url( '/css/modules/woo-commerce.css', QTRANSLATE_FILE ), array(), QTX_VERSION );
+    wp_enqueue_style( 'qtranxf_wc_qtranslate_admin', plugins_url( '/css/modules/woo-commerce.css', QTRANSLATE_FILE ), array(), QTKQ_VERSION );
 }
 
 add_filter( 'qtranslate_admin_config', 'qtranxf_wc_add_admin_page_config' );

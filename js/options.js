@@ -1,10 +1,11 @@
+/*! Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. */
 /* executed for
  /wp-admin/options-general.php
 */
 'use strict';
 const $ = jQuery;
 
-const keySection = 'qtranslate-xt-admin-section';
+const keySection = 'qtranslate-kq-admin-section';
 
 const switchTab = function (hash) {
     if (!hash) {
@@ -58,7 +59,7 @@ const onFlagChange = function (url) {
 };
 
 $(function () {
-    $(window).bind('hashchange', function () {
+    $(window).on('hashchange', function () {
         onHashChange();
     });
     onHashChange('#general');

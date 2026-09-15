@@ -1,10 +1,11 @@
+/*! Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. */
 (function ($) {
-    $(document).on('qtxLoadAdmin:aqpb-post', function (evt, qtx) {
+    $(document).on('qtkqLoadAdmin:aqpb-post', function (evt, qtkq) {
         if (!$.fn.wp_editor)
             return;
 
-        if (!qtx.get_ml) {
-            qtx.get_ml = function (h, sep) {
+        if (!qtkq.get_ml) {
+            qtkq.get_ml = function (h, sep) {
                 var text = h.contentField.value.trim();
                 var blocks = qtranxj_get_split_blocks(text);
                 if (!blocks || blocks.length > 1) {//already ML
@@ -46,8 +47,8 @@
             }
         }
 
-        if (!qtx.addTinyMceHook) {
-            qtx.addTinyMceHook = function (h) {
+        if (!qtkq.addTinyMceHook) {
+            qtkq.addTinyMceHook = function (h) {
                 if (!window.tinyMCE)
                     return;
                 if (!tinyMCE.editors[h.contentField.id])
@@ -65,7 +66,7 @@
             var bsm = $(this).closest('div.block-settings.modal');
 
             //console.log('wp_editor: this: %o', this);
-            var h = qtx.hasContentHook(id);
+            var h = qtkq.hasContentHook(id);
             if (h) {
                 var lang = h.lang;
                 var text = h.fields[lang].value;
@@ -88,20 +89,20 @@
 
             bsm.one('hidden.bs.modal', function () {
                 //console.log('hide.bs.modal: this: %o', this);
-                var v = qtx.get_ml(h);
+                var v = qtkq.get_ml(h);
                 h.contentField.value = v;
                 h.mce = null;
             });
 
-            qtx.addTinyMceHook(h);
+            qtkq.addTinyMceHook(h);
 
-            //var lsb = qtx.createSetOfLSB();
+            //var lsb = qtkq.createSetOfLSB();
             //$(e).closest('.wp-editor-wrap').parent().each( function() {
             //	this.insertBefore(lsb, this.firstChild);
             //});
 
-            //qtx.addContentHooksTinyMCE();
-            //qtx.addContentHook(e);
+            //qtkq.addContentHooksTinyMCE();
+            //qtkq.addContentHook(e);
         }
         /*
             $('.wp-editor-area.qtranxs-translatable').each( function() {

@@ -1,13 +1,17 @@
 <?php
 
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 require_once QTRANSLATE_DIR . '/src/modules/module_state.php';
 
 /**
  * Provide the ability to load the modules and check the stored state, with a minimal overhead for the front-side.
  *
- * @see QTX_Admin_Module_Manager::update_modules_state() for state updates. No state change is done here.
+ * @see QTKQ_Admin_Module_Manager::update_modules_state() for state updates. No state change is done here.
  */
-class QTX_Module_Loader {
+class QTKQ_Module_Loader {
     /**
      * Check if a module is active, by reading the state from the options.
      *
@@ -16,9 +20,9 @@ class QTX_Module_Loader {
      * @return bool true if module active.
      */
     public static function is_module_active( string $module_id ): bool {
-        $modules_state = get_option( QTX_OPTIONS_MODULES_STATE, array() );
+        $modules_state = get_option( QTKQ_OPTIONS_MODULES_STATE, array() );
 
-        return isset( $modules_state[ $module_id ] ) && $modules_state[ $module_id ] === QTX_MODULE_STATE_ACTIVE;
+        return isset( $modules_state[ $module_id ] ) && $modules_state[ $module_id ] === QTKQ_MODULE_STATE_ACTIVE;
     }
 
     /**
@@ -31,10 +35,10 @@ class QTX_Module_Loader {
      * Note also the modules should be loaded before "qtranslate_init_language" is triggered.
      */
     public static function load_active_modules(): void {
-        $modules_state = get_option( QTX_OPTIONS_MODULES_STATE, array() );
+        $modules_state = get_option( QTKQ_OPTIONS_MODULES_STATE, array() );
 
         foreach ( $modules_state as $module_id => $state ) {
-            if ( $state === QTX_MODULE_STATE_ACTIVE ) {
+            if ( $state === QTKQ_MODULE_STATE_ACTIVE ) {
                 require_once QTRANSLATE_DIR . '/src/modules/' . $module_id . '/' . 'loader.php';
             }
         }

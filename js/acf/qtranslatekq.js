@@ -1,9 +1,10 @@
+/*! Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. */
 const $ = jQuery;
 
 $(window).on('load', function () {
-    const qtx = qTranslateConfig.js.get_qtx();
+    const qtkq = qTranslateConfig.js.get_qtkq();
 
-    qtx.enableLanguageSwitchingButtons('block');
+    qtkq.enableLanguageSwitchingButtons('block');
 
     // Type of field e.g. text, textarea, wysiwyg.
     const isTranslatableStandardField = function (fieldType) {
@@ -29,8 +30,8 @@ $(window).on('load', function () {
             // They are given as .acf-field but the hooks must be set on the child elements like input and texts.
             settingField.$el.find('input:text, textarea').each(function () {
                 const element = this;
-                if (!qtx.hasContentHook(element) && isTranslatableGroupElement(element)) {
-                    qtx.addContentHookB(element);
+                if (!qtkq.hasContentHook(element) && isTranslatableGroupElement(element)) {
+                    qtkq.addContentHookB(element);
                 }
             });
         });
@@ -55,8 +56,8 @@ $(window).on('load', function () {
         acf.findFields({type: fieldType}).each(function () {
             // The hooks must be set on the child elements found by the selector, assuming a single one by field.
             $(this).find(selector).each(function () {
-                if (!qtx.hasContentHook(this) && isTranslatableElementForPostType(this, postType)) {
-                    qtx.addContentHookB(this);
+                if (!qtkq.hasContentHook(this) && isTranslatableElementForPostType(this, postType)) {
+                    qtkq.addContentHookB(this);
                 }
             });
         });
@@ -70,7 +71,7 @@ $(window).on('load', function () {
             if (field.type === 'wysiwyg') {
                 // In this filter the elements with new ID have been created, so we can finally create the content hooks.
                 const newFieldTextArea = field.$input()[0];
-                qtx.addContentHookB(newFieldTextArea);
+                qtkq.addContentHookB(newFieldTextArea);
                 // Link the init CB for the visual mode (HTML -> tinymce).
                 // Note: wysiwyg_tinymce_init event is not triggered if the Visual Mode is selected later.
                 const initCB = mceInit.init_instance_callback;
@@ -78,7 +79,7 @@ $(window).on('load', function () {
                     if (initCB !== undefined) {
                         initCB();
                     }
-                    qtx.attachEditorHook(editor);
+                    qtkq.attachEditorHook(editor);
                 };
             }
             return mceInit;
@@ -97,12 +98,12 @@ $(window).on('load', function () {
     // function repeaterRemove($el) {
     //     const row = ($el.$el || $el).closest('.acf-row'); // support old versions of ACF5PRO as well
     //     row.find(_.toArray(field_types).join(',')).filter('.qtranxs-translatable').each(function () {
-    //         qtx.removeContentHook(this);
+    //         qtkq.removeContentHook(this);
     //     });
     //     // call the original handler
     //     repeaterFieldRemove.call(this, $el);
     // }
 
     // LSB might have been skipped due to missing hooks, create them now if new hooks have been set.
-    qtx.setupLanguageSwitch();
+    qtkq.setupLanguageSwitch();
 });

@@ -1,6 +1,6 @@
 {
   "vendor": {
-    "plugins/qtranslate-xt": "3.6"
+    "plugins/qtranslate-kq": "3.6"
   },
   "admin-config": {
     "post": {

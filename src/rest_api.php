@@ -1,7 +1,11 @@
 <?php
 
+/*
+ * Modified for qTranslate-KQ on 2026-09-15.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 /**
- * Add specific rewrites to handle API REST for the default language, when hidden in QTX_URL_PATH mode.
+ * Add specific rewrites to handle API REST for the default language, when hidden in QTKQ_URL_PATH mode.
  * Most of the requests don't need this, as they are handled through custom home_url with the language.
  * Note: to make it work you have to flush your rewrite rules by saving the permalink structures from the admin page!
  *
@@ -15,7 +19,7 @@
  */
 function qtranxf_rest_api_register_rewrites(): void {
     global $q_config;
-    if ( ! $q_config['hide_default_language'] || $q_config['url_mode'] !== QTX_URL_PATH ) {
+    if ( ! $q_config['hide_default_language'] || $q_config['url_mode'] !== QTKQ_URL_PATH ) {
         return;
     }
 

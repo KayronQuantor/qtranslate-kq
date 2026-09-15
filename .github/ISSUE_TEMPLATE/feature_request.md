@@ -1,4 +1,3 @@
-<!-- Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. -->
 ---
 name: Feature request
 about: Suggest an idea for this project
@@ -7,6 +6,7 @@ labels: enhancement
 assignees: ''
 
 ---
+<!-- Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. -->
 
 **Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]

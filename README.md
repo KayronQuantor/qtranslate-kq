@@ -28,12 +28,6 @@ It keeps the qTranslate-KQ namespace separation, current WordPress compatibility
 
 The priority is compatibility and predictable behavior on existing qTranslate installations rather than speculative performance optimization.
 
-Version 4.1.2 deliberately returns several aggressive 4.0 runtime optimizations to qTranslate-XT-compatible behavior where they could alter language detection, request handling or translated output.
-
-It keeps the qTranslate-KQ namespace separation, current WordPress compatibility work, the multilingual Classic Widgets / Custom HTML fixes, and the lightweight in-request cache for parsed multilingual blocks.
-
-The priority is compatibility and predictable behavior on existing qTranslate installations rather than speculative performance optimization.
-
 ---
 
 ## ✅ Requirements

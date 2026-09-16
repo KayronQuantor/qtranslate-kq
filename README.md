@@ -57,11 +57,16 @@ This version introduces **significant internal refactoring and performance impro
 
 If you are already using qTranslate-XT:
 
-1. Replace plugin files
-2. Keep database unchanged
-3. Clear cache (if any)
+1. Extract the `qtranslate-kq` folder into your WordPress plugins directory (`wp-content/plugins/`).
+2. Log in to the WordPress administration panel and go to **Plugins**.
+3. Deactivate **qTranslate-XT**.
+4. Activate **qTranslate-KQ**.
+5. Remove the qTranslate-XT plugin directory manually from the server (`wp-content/plugins/qtranslate-xt`), for example via FTP, SSH, or your hosting file manager.
+6. Clear cache (if any)
 
-No content migration required.
+> **Important:** Do not use the **Delete** option for qTranslate-XT in the WordPress administration panel. Its uninstall routine may remove qTranslate settings and data that are also used by qTranslate-KQ.
+
+No content or database migration is required.
 
 ---
 

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Modified for qTranslate-KQ on 2026-09-15.
+ * Modified for qTranslate-KQ; latest changes 2026-09-16.
  * See MODIFICATIONS.md for the modification history and original-project attribution.
  */
 /**
@@ -22,17 +22,6 @@ function qtranxf_convertURL( string $url = '', string $lang = '', bool $forceadm
     if ( empty( $lang ) ) {
         $lang = $q_config['language'];
     }
-
-	// FIX: ignore static assets (css, js, images, etc.)
-	$parsed = qtranxf_parseURL($url);
-	if (isset($parsed['path']) && qtranxf_ignored_file_type($parsed['path'])) {
-		return $url;
-	}
-
-	// ? FIX 2: ignore qTranslate internal CSS loader (no extension case)
-	if (strpos($url, '/wp-content/plugins/qtranslate-kq/css/') !== false) {
-		return $url;
-	}
 
 
     if ( ! $q_config['url_info']['doing_front_end'] && ! $forceadmin ) {

@@ -1,8 +1,8 @@
-# qTranslate-KQ (v4.1.1)
+# qTranslate-KQ (v4.1.2)
 
-<!-- Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. -->
+<!-- Modified for qTranslate-KQ; latest changes 2026-09-16. See MODIFICATIONS.md for details and attribution. -->
 
-Performance-refactored version of the classic **qTranslate-XT** plugin.
+Maintenance-focused fork of the classic **qTranslate-XT** plugin.
 
 This fork is designed primarily for **legacy WordPress sites** that still rely on the qTranslate multilingual content format and have not migrated to modern alternatives.
 
@@ -20,29 +20,19 @@ It is intended for:
 
 ---
 
-## 🚀 Major Changes Introduced in 4.0
+## 🔧 Maintenance approach in 4.1.2
 
-This version introduces **significant internal refactoring and performance improvements**:
+Version 4.1.2 deliberately returns several aggressive 4.0 runtime optimizations to qTranslate-XT-compatible behavior where they could alter language detection, request handling or translated output.
 
-### 🔧 Architecture
-- bootstrap split (`plugins_loaded` → `init`)
-- reduced early execution overhead
-- better separation of runtime vs admin logic
+It keeps the qTranslate-KQ namespace separation, current WordPress compatibility work, the multilingual Classic Widgets / Custom HTML fixes, and the lightweight in-request cache for parsed multilingual blocks.
 
-### ⚡ Performance
-- L1 (in-memory) + L2 (transient) caching layer
-- reduced repeated parsing of multilingual blocks
-- minimized unnecessary filters execution
+The priority is compatibility and predictable behavior on existing qTranslate installations rather than speculative performance optimization.
 
-### 🧠 Smarter Execution
-- REST / AJAX isolation (no unnecessary translation processing)
-- conditional gettext filtering
-- optimized post/object translation flow
+Version 4.1.2 deliberately returns several aggressive 4.0 runtime optimizations to qTranslate-XT-compatible behavior where they could alter language detection, request handling or translated output.
 
-### 🛠 Compatibility
-- improved PHP 7.4+ and PHP 8.x compatibility
-- reduced deprecated behavior
-- safer property handling
+It keeps the qTranslate-KQ namespace separation, current WordPress compatibility work, the multilingual Classic Widgets / Custom HTML fixes, and the lightweight in-request cache for parsed multilingual blocks.
+
+The priority is compatibility and predictable behavior on existing qTranslate installations rather than speculative performance optimization.
 
 ---
 
@@ -61,8 +51,7 @@ If you are already using qTranslate-XT:
 2. Log in to the WordPress administration panel and go to **Plugins**.
 3. Deactivate **qTranslate-XT**.
 4. Activate **qTranslate-KQ**.
-5. Remove the qTranslate-XT plugin directory manually from the server (`wp-content/plugins/qtranslate-xt`), for example via FTP, SSH, or your hosting file manager.
-6. Clear cache (if any)
+5. Remove the qTranslate-XT plugin directory manually from the server, for example via FTP, SSH, or your hosting file manager.
 
 > **Important:** Do not use the **Delete** option for qTranslate-XT in the WordPress administration panel. Its uninstall routine may remove qTranslate settings and data that are also used by qTranslate-KQ.
 
@@ -136,7 +125,7 @@ Original authors:
 - Qian Qin
 - qTranslate Community
 
-Refactor & performance improvements:
+qTranslate-KQ maintenance and compatibility work:
 - Contributors (this fork)
 
 ---
@@ -154,7 +143,7 @@ The Classic Editor + Classic Widgets workflow has been tested in production-like
 This is a **maintenance-focused fork**, not a reinvention.
 
 Its goal is simple:
-> Keep legacy multilingual sites running — faster, safer, and compatible with modern PHP.
+> Keep legacy multilingual sites running safely and compatibly on current WordPress/PHP versions.
 
 Support for the Block Editor, Block Widgets, and Site Editor will be added as time permits; however, due to a lack of available time, progress will be slow.
 

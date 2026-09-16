@@ -1,11 +1,9 @@
 <?php
 
 /*
- * Modified for qTranslate-KQ on 2026-09-15.
+ * Modified for qTranslate-KQ; latest changes 2026-09-16.
  * See MODIFICATIONS.md for the modification history and original-project attribution.
  */
-require_once __DIR__ . '/admin/activation_hook.php';
-
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }

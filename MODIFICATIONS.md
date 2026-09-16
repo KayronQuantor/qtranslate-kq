@@ -4,7 +4,7 @@ This distribution is a modified fork of **qTranslate-XT**, licensed under the **
 
 ## Dated modification notice
 
-The qTranslate-KQ changes represented by this distribution were applied/documented on **2026-09-15**. The fork changes include renaming and namespacing, compatibility/refactoring work, WordPress compatibility maintenance, and fixes to multilingual handling of classic WordPress widgets.
+The qTranslate-KQ changes represented by this distribution were applied/documented on **2026-09-15**, with the latest maintenance changes applied on **2026-09-16**. The fork changes include renaming and namespacing, compatibility/refactoring work, WordPress compatibility maintenance, and fixes to multilingual handling of classic WordPress widgets.
 
 The supplied comparison base for this notice is the customized `qtranslate-xt_FIX5` source tree from which qTranslate-KQ was derived. This file documents the qTranslate-KQ fork changes relative to that supplied base; it does not attempt to reconstruct modification dates for changes that already existed in that base before the qTranslate-KQ rename.
 
@@ -14,6 +14,13 @@ The supplied comparison base for this notice is the customized `qtranslate-xt_FI
 - Original project: qTranslate-XT / qTranslate Community.
 - Original author information remains in `qtranslate.php` and the existing project documentation.
 - Historical qTranslate-X / qTranslate-XT references that identify prior projects, contributors, integrations or real upstream URLs are intentionally retained.
+
+
+## 2026-09-16 — 4.1.2 maintenance changes
+
+Version 4.1.2 removes legacy site-specific and aggressive runtime customizations inherited from the supplied `qtranslate-xt_FIX5` base where they could change language detection, redirects, request handling or translated output. It restores qTranslate-XT 3.15.3-compatible behavior for bootstrap timing, activation/deactivation hook registration, URL conversion, standard front-end translation filters and request handling while retaining qTranslate-KQ namespace separation and the tested Classic Widgets / Custom HTML fixes.
+
+Files changed for this maintenance release include `qtranslate.php`, `src/init.php`, `src/hooks.php`, `src/frontend.php`, `src/language_blocks.php`, `src/language_detect.php`, `src/url.php`, `src/utils.php`, release documentation and package metadata.
 
 ## Files modified or renamed in qTranslate-KQ relative to the supplied qTranslate-XT base
 
@@ -75,6 +82,7 @@ The supplied comparison base for this notice is the customized `qtranslate-xt_FI
 - `src/date_time.php`
 - `src/deprecated.php`
 - `src/frontend.php`
+- `src/hooks.php`
 - `src/init.php`
 - `src/language_blocks.php`
 - `src/language_config.php`
@@ -139,7 +147,7 @@ The `.po` files were reconstructed from the distributed `.mo` catalogs on **2026
 
 ## Inline-notice policy
 
-Source/text files that support comments safely carry an inline notice stating that they were modified for qTranslate-KQ on **2026-09-15** and referring to this document.
+Source/text files that support comments safely carry an inline qTranslate-KQ modification notice and refer to this document. Files changed again for 4.1.2 identify **2026-09-16** as their latest change date.
 
 The following changed machine-readable or binary files are deliberately **not** given inline comments because doing so would invalidate the file format or risk changing runtime behavior. Their dated modification notice is recorded here by exact path instead:
 

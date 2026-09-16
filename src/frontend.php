@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Modified for qTranslate-KQ on 2026-09-15.
+ * Modified for qTranslate-KQ; latest changes 2026-09-16.
  * See MODIFICATIONS.md for the modification history and original-project attribution.
  */
 if ( ! defined( 'ABSPATH' ) ) {
@@ -33,10 +33,6 @@ function qtranxf_get_front_page_config() {
 }
 
 function qtranxf_wp_head(): void {
-
-    if ( ! did_action( 'wp' ) ) {
-        return;
-    }
 
     global $q_config;
 
@@ -469,26 +465,6 @@ function qtranxf_translate_object_property( $lang, $txt, $key, $post, $show_avai
  * @since 3.4.6.5
  */
 function qtranxf_translate_post( $post, $lang ) {
-
-    static $cache = array();
-
-    // brak ID › nie cache'ujemy
-    if ( empty( $post->ID ) ) {
-        return;
-    }
-
-    $cache_key = $post->ID . ':' . $lang;
-
-    if ( isset( $cache[ $cache_key ] ) ) {
-	// error_log('CACHE HIT: ' . $cache_key);	// TEMP LINE, DEBUG
-        foreach ( $cache[ $cache_key ] as $k => $v ) {
-            qtranxf_set_property( $post, $k, $v );
-        }
-        return;
-    }
-
-    // buffer for results
-    $translated = array();
     foreach ( get_object_vars( $post ) as $key => $txt ) {
         switch ( $key ) {
             // known to skip
@@ -516,35 +492,20 @@ function qtranxf_translate_post( $post, $lang ) {
             // known to translate
             case 'post_content':
                 qtranxf_translate_object_property( $lang, $txt, $key, $post, true, false );
-				$translated[ $key ] = $post->$key;
                 break;
             case 'post_excerpt':
             case 'post_content_filtered'://not sure how this is in use
             case 'post_title':
                 qtranxf_translate_object_property( $lang, $txt, $key, $post, false, false );
-				$translated[ $key ] = $post->$key;
                 break;
             // other maybe, if it is a string, most likely it never comes here
             default:
-                $value = qtranxf_use( $lang, $txt, false );
-				qtranxf_set_property( $post, $key, $value );
-				$translated[ $key ] = $value;
+                qtranxf_set_property( $post, $key, qtranxf_use( $lang, $txt, false ) );
         }
     }
-
-$cache[ $cache_key ] = $translated;
-// error_log('QTKQ CACHE SET: ' . $cache_key);	// TEMP LINE, DEBUG
 }
 
 function qtranxf_postsFilter( $posts, $query ) {
-
-    if ( qtranxf_is_rest_request_expected() || qtranxf_is_ajax_request() ) {
-        return $posts;
-	}
-
-    if ( ! did_action( 'wp' ) ) {
-        return $posts;
-    }
 
     global $q_config;
 
@@ -568,9 +529,6 @@ function qtranxf_postsFilter( $posts, $query ) {
 
 /** allow all filters within WP_Query - many other add_filters may not be needed now? */
 function qtranxf_pre_get_posts( $query ) {//WP_Query
-    if ( qtranxf_is_rest_request_expected() || qtranxf_is_ajax_request() ) {
-        return;
-    }
 
     if ( isset( $query->query_vars['post_type'] ) ) {
         switch ( $query->query_vars['post_type'] ) {
@@ -625,10 +583,6 @@ function qtranxf_excludeUntranslatedAdjacentPosts( $where ): string {
 
 function qtranxf_excludeUntranslatedPosts( $where, $query ) {  // WP_Query
 
-    if ( ! did_action( 'wp' ) ) {
-        return $where;
-    }
-
     switch ( $query->query_vars['post_type'] ) {
         //known not to filter
         case 'nav_menu_item':
@@ -654,10 +608,6 @@ function qtranxf_excludeUntranslatedPosts( $where, $query ) {  // WP_Query
 
 function qtranxf_excludeUntranslatedPostComments( $clauses, $q /*WP_Comment_Query*/ ) {
 
-    if ( ! did_action( 'wp' ) ) {
-        return $clauses;
-    }
-
     global $wpdb;
 
 
@@ -682,10 +632,6 @@ function qtranxf_excludeUntranslatedPostComments( $clauses, $q /*WP_Comment_Quer
 
 function qtranxf_get_attachment_image_attributes( $attr, $attachment = null, $size = null ) {
 
-    if ( qtranxf_is_rest_request_expected() || qtranxf_is_ajax_request() ) {
-        return $attr;
-    }
-
     global $q_config;
     $lang = $q_config['language'];
     //qtranxf_dbg_echo('qtranxf_get_attachment_image_attributes: $attachment:',$attachment);
@@ -703,10 +649,6 @@ function qtranxf_home_url( $url, $path, $orig_scheme, $blog_id ): string {
 }
 
 function qtranxf_esc_html( $text ) {
-
-    if ( qtranxf_is_rest_request_expected() || qtranxf_is_ajax_request() ) {
-        return $text;
-    }
     return qtranxf_useCurrentLanguageIfNotFoundShowEmpty( $text );
 }
 
@@ -860,10 +802,6 @@ function qtranxf_translate_metadata( string $meta_type, $original_value, int $ob
  */
 function qtranxf_filter_postmeta( $original_value, int $object_id, string $meta_key = '', bool $single = false ) {
 
-    if ( qtranxf_is_rest_request_expected() || qtranxf_is_ajax_request() ) {
-        return $original_value;
-    }
-
     return qtranxf_translate_metadata( 'post', $original_value, $object_id, $meta_key, $single );
 }
 
@@ -880,10 +818,6 @@ function qtranxf_updated_postmeta( int $meta_id, int $object_id, string $meta_ke
  * @since 3.4 translation of usermeta
  */
 function qtranxf_filter_usermeta( $original_value, int $object_id, string $meta_key = '', bool $single = false ) {
-
-    if ( qtranxf_is_rest_request_expected() || qtranxf_is_ajax_request() ) {
-        return $original_value;
-    }
 
     return qtranxf_translate_metadata( 'user', $original_value, $object_id, $meta_key, $single );
 }
@@ -958,23 +892,11 @@ function qtranxf_add_front_filters(): void {
     add_action( 'updated_usermeta', 'qtranxf_updated_usermeta', 5, 4 );
     add_filter( 'redirect_canonical', 'qtranxf_checkCanonical', 10, 2 );
     add_filter( 'get_pagenum_link', 'qtranxf_pagenum_link' );
-
-// ==============================
-// Selective gettext hooks
-// ==============================
-	if (
-		! is_admin()
-		&& ! qtranxf_is_rest_request_expected()
-		&& ! qtranxf_is_ajax_request()
-		&& ! is_feed()
-		&& ! is_robots()
-		&& ! is_trackback()
-		)
-	{
-		add_filter( 'gettext', 'qtranxf_gettext', 0 );
-		add_filter( 'gettext_with_context', 'qtranxf_gettext_with_context', 0 );
-		add_filter( 'ngettext', 'qtranxf_ngettext', 0 );
-	}
+    // Time critical filters, not needed on admin side.
+    // In particular, they break WPBakery Visual Composer in raw Editor Mode.
+    add_filter( 'gettext', 'qtranxf_gettext', 0 );
+    add_filter( 'gettext_with_context', 'qtranxf_gettext_with_context', 0 );
+    add_filter( 'ngettext', 'qtranxf_ngettext', 0 );
 
     if ( $q_config['hide_untranslated'] ) {
         add_filter( 'wp_list_pages_excludes', 'qtranxf_excludePages' );//moved here from _hooks.php since 3.2.8
@@ -1000,7 +922,5 @@ function qtranxf_add_front_filters(): void {
         add_filter( 'home_url', 'qtranxf_home_url', 0, 4 );
     }
 
-    if ( ! is_admin() && ! wp_doing_ajax() ) {
-		qtranxf_filter_options();
-	}
+    qtranxf_filter_options();
 }

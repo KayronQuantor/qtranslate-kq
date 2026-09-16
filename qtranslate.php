@@ -1,20 +1,20 @@
 <?php
 
 /*
- * Modified for qTranslate-KQ on 2026-09-15.
+ * Modified for qTranslate-KQ; latest changes 2026-09-16.
  * See MODIFICATIONS.md for the modification history and original-project attribution.
  */
 /**
  * Plugin Name: qTranslate-KQ
  * Plugin URI: https://github.com/KayronQuantor/qtranslate-kq
- * Description: Performance-refactored version of qTranslate-XT. Maintained for legacy multilingual sites using qTranslate format.
- * Version: 4.1.1
+ * Description: Maintained fork of qTranslate-XT for legacy multilingual sites using the qTranslate content format.
+ * Version: 4.1.2
  * Requires at least: 5.0
  * Requires PHP: 7.4
  * Tested up to: 6.5
  * Author: qTranslate Community + Contributors
  * Author URI: https://github.com/qtranslate/
- * Tags: multilingual, translation, qtranslate, legacy, performance
+ * Tags: multilingual, translation, qtranslate, legacy
  * Text Domain: qtranslate
  * Domain Path: /lang/
  * License: GPLv2 or later
@@ -22,7 +22,7 @@
  * Original Author: John Clause and Qian Qin (https://www.qianqin.de mail@qianqin.de)
  *
  * Fork notice:
- * This version contains performance optimizations, refactoring and compatibility fixes
+ * This version contains maintenance, compatibility and multilingual widget fixes
  * beyond the original qTranslate-XT project.
  * qTranslate-KQ fork modifications are explicitly documented as of 2026-09-15.
  * See MODIFICATIONS.md for dated modification notices and the affected-file list.
@@ -67,53 +67,17 @@ if ( ! function_exists( 'add_filter' ) ) {
  * The constants defined below are designed as interface for other plugin integration.
  * @see https://github.com/qtranslate/qtranslate-xt/wiki/Integration-Guide/
  */
-const QTKQ_VERSION = '4.1.1';
+const QTKQ_VERSION = '4.1.2';
 
 if ( ! defined( 'QTRANSLATE_FILE' ) ) {
     define( 'QTRANSLATE_FILE', __FILE__ );
     define( 'QTRANSLATE_DIR', __DIR__ );
 }
 
-require_once QTRANSLATE_DIR . '/src/admin/activation_hook.php';
 require_once QTRANSLATE_DIR . '/src/init.php';
+add_action( 'plugins_loaded', 'qtranxf_init_language', 2 ); // User is not authenticated yet, high priority needed.
 
-// separated lifecycle
-add_action( 'plugins_loaded', 'qtranxf_init_language_early', 2 );
-add_action( 'init', 'qtranxf_init_language_late', 0 );
-
-
-/*
-add_filter('wp_optimize_cache_key', function($key) {
-    if (!empty($_GET['lang'])) {
-        $lang = preg_replace('/[^a-z]/', '', strtolower($_GET['lang']));
-        $key .= '_lang_' . $lang;
-    }
-    return $key;
-});
-*/
-
-
-
-add_action('init', function() {
-    if (!empty($_GET['lang'])) {
-        $lang = preg_replace('/[^a-z]/', '', strtolower($_GET['lang']));
-
-        if (defined('QTKQ_COOKIE_NAME_FRONT')) {
-			setcookie(QTKQ_COOKIE_NAME_FRONT, $lang, time() + 3600*24*30, COOKIEPATH ?: '/');
-			$_COOKIE[QTKQ_COOKIE_NAME_FRONT] = $lang;
-		}
-    }
-}, 0);
-
-
-add_filter('wpo_can_cache_page', function($can_cache) {
-    if (!is_admin() && isset($_GET['lang'])) {
-        return true;
-    }
-    return $can_cache;
-});
-
-
-add_filter('wpo_user_agent_bypass', function($bypass) {
-    return false;
-});
+if ( is_admin() || defined( 'WP_CLI' ) ) {
+    require_once QTRANSLATE_DIR . '/src/admin/activation_hook.php';
+    qtranxf_register_activation_hooks();
+}

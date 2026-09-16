@@ -1,4 +1,15 @@
-<!-- Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. -->
+<!-- Modified for qTranslate-KQ; latest changes 2026-09-16. See MODIFICATIONS.md for details and attribution. -->
+
+### 4.1.2 - 2026-09-16
+
+* Fix: removed a legacy site-specific PL/EN language-priority override that could cause canonical redirect loops on installations using other language codes.
+* Compatibility: restored qTranslate-XT-compatible plugin initialization timing and activation/deactivation hook registration.
+* Compatibility: removed WP-Optimize-specific runtime overrides and duplicate manual `?lang=` cookie handling.
+* Compatibility: removed hardcoded qTranslate-KQ CSS-path handling from URL conversion.
+* Stability: removed persistent transient translation-result caching and its direct SQL invalidation routine; retained only the lightweight in-request multilingual block parser cache.
+* Stability: removed post-object translation caching and broad REST/AJAX / pre-`wp` translation bypasses that could change translated output.
+* Compatibility: restored standard `the_content`, gettext and front-end option-filtering behavior.
+* Documentation: clarified the qTranslate-XT → qTranslate-KQ migration procedure and warning against deleting qTranslate-XT through wp-admin.
 
 ### 4.1.1 - 2026-09-15
 

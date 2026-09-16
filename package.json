@@ -1,6 +1,6 @@
 {
   "name": "qtranslate-kq",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "description": "qTranslate-KQ (eXTended)",
   "main": "dist/main.js",
   "private": true,

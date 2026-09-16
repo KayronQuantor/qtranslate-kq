@@ -1,4 +1,9 @@
 <?php
+
+/*
+ * Modified for qTranslate-KQ; latest changes 2026-09-16.
+ * See MODIFICATIONS.md for the modification history and original-project attribution.
+ */
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -127,7 +132,7 @@ function qtranxf_add_main_filters(): void {
     add_filter( 'comment_moderation_text', 'qtranxf_useDefaultLanguage', 0 );
     // since 3.1 changed priority from 0 to 100, since other plugins,
     // like https://wordpress.org/plugins/siteorigin-panels generate additional content, which also needs to be translated.
-    add_filter( 'the_content', 'qtranxf_filter_the_content_safe', 100 );
+    add_filter( 'the_content', 'qtranxf_useCurrentLanguageIfNotFoundShowAvailable', 100 );
     add_filter( 'the_excerpt', 'qtranxf_useCurrentLanguageIfNotFoundShowAvailable', 0 );
     add_filter( 'the_excerpt_rss', 'qtranxf_useCurrentLanguageIfNotFoundShowAvailable', 0 );
     add_filter( 'locale', 'qtranxf_localeForCurrentLanguage', 99 );
@@ -159,31 +164,4 @@ function qtranxf_add_main_filters(): void {
     add_filter( '_wp_post_revision_field_post_title', 'qtranxf_showAllSeparated', 0 );
     add_filter( '_wp_post_revision_field_post_content', 'qtranxf_showAllSeparated', 0 );
     add_filter( '_wp_post_revision_field_post_excerpt', 'qtranxf_showAllSeparated', 0 );
-}
-
-function qtranxf_add_gettext_filters(): void {
-    add_filter( 'gettext', 'qtranxf_gettext', 0 );
-    add_filter( 'gettext_with_context', 'qtranxf_gettext_with_context', 0 );
-    add_filter( 'ngettext', 'qtranxf_ngettext', 0 );
-}
-
-
-function qtranxf_filter_the_content_safe( $content ) {
-
-    // frontend only
-    if ( is_admin() ) {
-        return $content;
-    }
-
-    // main query only
-    if ( ! is_main_query() ) {
-        return $content;
-    }
-
-    // in-loop only
-    if ( ! in_the_loop() ) {
-        return $content;
-    }
-
-    return qtranxf_useCurrentLanguageIfNotFoundShowAvailable( $content );
 }

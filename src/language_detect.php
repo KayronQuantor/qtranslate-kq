@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Modified for qTranslate-KQ on 2026-09-15.
+ * Modified for qTranslate-KQ; latest changes 2026-09-16.
  * See MODIFICATIONS.md for the modification history and original-project attribution.
  */
 function qtranxf_detect_language( array &$url_info ) {
@@ -90,46 +90,6 @@ function qtranxf_detect_language( array &$url_info ) {
 
     // REST and GraphQL API calls should be deterministic (stateless), no special language detection e.g. based on cookie
     $url_info['set_cookie'] = ! ( qtranxf_is_ajax_request() || qtranxf_is_rest_request_expected() || qtranxf_is_graphql_request_expected() );
-
-
-	// === CUSTOM LANGUAGE PRIORITY OVERRIDE (START) ===
-
-	if (!is_admin()) {
-
-		$allowed = ['pl', 'en'];
-		$default = isset($q_config['default_language']) ? $q_config['default_language'] : 'en';
-
-		// 1. URL
-		if (!empty($_GET['lang'])) {
-			$lang = strtolower($_GET['lang']);
-			if (in_array($lang, $allowed)) {
-				$url_info['language'] = $lang;
-			}
-		}
-
-		// 2. COOKIE
-		elseif (!empty($url_info['lang_cookie_front'])) {
-			$lang = strtolower($url_info['lang_cookie_front']);
-			if (in_array($lang, $allowed)) {
-				$url_info['language'] = $lang;
-			}
-		}
-
-		// 3. BROWSER (z qTranslate, NIE z $_SERVER)
-		elseif (!empty($url_info['lang_browser'])) {
-			$lang = strtolower($url_info['lang_browser']);
-			if (in_array($lang, $allowed)) {
-				$url_info['language'] = $lang;
-			}
-		}
-
-		// 4. DEFAULT
-		if (empty($url_info['language']) || !in_array($url_info['language'], $allowed)) {
-			$url_info['language'] = $default;
-		}
-	}
-
-	// === CUSTOM LANGUAGE PRIORITY OVERRIDE (END) ===
 
     /**
      * Hook for possible other methods

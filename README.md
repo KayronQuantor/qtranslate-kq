@@ -155,3 +155,11 @@ This is a **maintenance-focused fork**, not a reinvention.
 
 Its goal is simple:
 > Keep legacy multilingual sites running — faster, safer, and compatible with modern PHP.
+
+Support for the Block Editor, Block Widgets, and Site Editor will be added as time permits; however, due to a lack of available time, progress will be slow.
+
+---
+
+.: **To the qTranslate-XT team** :.
+
+If you wish to use my work to develop your fork, please feel free to do so!

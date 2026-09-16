@@ -48,7 +48,7 @@ This version introduces **significant internal refactoring and performance impro
 
 ## ✅ Requirements
 
-- WordPress: **5.0+**
+- WordPress: **5.0+** (it seems to work on 7.1)
 - PHP: **7.4+** (recommended 8.0+)
 
 ---

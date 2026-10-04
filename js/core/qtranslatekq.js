@@ -1,4 +1,4 @@
-/*! Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. */
+/*! Modified for qTranslate-KQ; latest changes 2026-10-05. See MODIFICATIONS.md for details and attribution. */
 /**
  * Main qTranslateKQ class for LSB and content hooks
  *
@@ -563,7 +563,7 @@ const qTranslateKQ = function (pg) {
             const blocks = qtranxj_get_split_blocks(text);
             if (!blocks || blocks.length <= 1) {
                 // value is not ML, switch it to other language
-				const currentLang = qTranslateConfig.activeLanguage;
+				const currentLang = hook.lang;
 
 				hook.fields[currentLang].value = text;
 				hook.lang = lang;
@@ -863,6 +863,46 @@ const qTranslateKQ = function (pg) {
     };
 
     /**
+     * Register an integration callback for the existing "Copy from" language action.
+     * The callback receives (targetLanguage, sourceLanguage) and should return
+     * true only when it actually changed integration-managed content.
+     *
+     * Classic qTranslate content hooks remain handled directly by copyContentFrom().
+     * This extension point lets non-classic editors (such as native Block Widgets)
+     * participate without pretending to be DOM input fields.
+     */
+    this.addCopyContentFromListener = function (func) {
+        qTranslateConfig.onCopyContentFromFunctions.push(func);
+    };
+
+    this.delCopyContentFromListener = function (func) {
+        for (let i = 0; i < qTranslateConfig.onCopyContentFromFunctions.length; ++i) {
+            if (qTranslateConfig.onCopyContentFromFunctions[i] !== func)
+                continue;
+            qTranslateConfig.onCopyContentFromFunctions.splice(i, 1);
+            return;
+        }
+    };
+
+    /**
+     * Observe the result of Copy from after classic content hooks and custom
+     * integrations have been evaluated. Result listeners are notification-only
+     * and must not mutate copy state.
+     */
+    this.addCopyContentFromResultListener = function (func) {
+        qTranslateConfig.onCopyContentFromResultFunctions.push(func);
+    };
+
+    this.delCopyContentFromResultListener = function (func) {
+        for (let i = 0; i < qTranslateConfig.onCopyContentFromResultFunctions.length; ++i) {
+            if (qTranslateConfig.onCopyContentFromResultFunctions[i] !== func)
+                continue;
+            qTranslateConfig.onCopyContentFromResultFunctions.splice(i, 1);
+            return;
+        }
+    };
+
+    /**
      * @since 3.2.9.8.6
      * Designed as interface for other plugin integration. The documentation is available at
      * https://github.com/qtranslate/qtranslate-xt/wiki/Integration-Guide
@@ -1053,12 +1093,19 @@ const qTranslateKQ = function (pg) {
     this.copyContentFrom = function (langFrom) {
         const lang = qTranslateConfig.activeLanguage;
         let changed = false;
+        let classicChanged = false;
+        let classicSkippedNonEmpty = false;
+
         for (const key in contentHooks) {
             const hook = contentHooks[key];
             const visualMode = hook.mce && !hook.mce.hidden;
             let value = visualMode ? hook.mce.getContent() : hook.contentField.value;
-            if (value)
+            if (value) {
+                const sourceField = hook.fields && hook.fields[langFrom];
+                if (sourceField && sourceField.value)
+                    classicSkippedNonEmpty = true;
                 continue; // do not overwrite existent content
+            }
             value = hook.fields[langFrom].value;
             if (!value)
                 continue;
@@ -1066,10 +1113,32 @@ const qTranslateKQ = function (pg) {
             if (visualMode) {
                 updateMceEditorContent(hook);
             }
+            classicChanged = true;
             changed = true;
         }
+
+        // Allow integrations that do not use classic qTranslate DOM content hooks
+        // to implement the same non-overwriting copy semantics. A listener returns
+        // true only when it really copied content.
+        const copyFunctions = qTranslateConfig.onCopyContentFromFunctions;
+        for (let i = 0; i < copyFunctions.length; ++i) {
+            if (copyFunctions[i].call(qTranslateConfig.qtkq, lang, langFrom) === true)
+                changed = true;
+        }
+
         if (changed)
             qtkq.onLoadLanguage(lang, langFrom);
+
+        const copyResult = {
+            targetLanguage: lang,
+            sourceLanguage: langFrom,
+            changed,
+            classicChanged,
+            classicSkippedNonEmpty
+        };
+        const resultFunctions = qTranslateConfig.onCopyContentFromResultFunctions;
+        for (let i = 0; i < resultFunctions.length; ++i)
+            resultFunctions[i].call(qTranslateConfig.qtkq, copyResult);
     };
 
     /**
@@ -1200,11 +1269,14 @@ const qTranslateKQ = function (pg) {
      * Switching buttons should only be created if there is at least one hook, so this offers
      * the possibility to setup the language switch dynamically later.
      */
-    this.setupLanguageSwitch = function () {
+    this.setupLanguageSwitch = function (force) {
         if (languageSwitchInitialized || !qTranslateConfig.LSB) {
             return;
         }
-        if (!displayHookNodes.length && !displayHookAttrs.length && !Object.keys(contentHooks).length) {
+        // Native Block Widgets do not use classic qTranslate content/display hooks.
+        // Allow that integration to initialize the existing LSB explicitly while
+        // preserving the historical hook-required behaviour for every other caller.
+        if (!force && !displayHookNodes.length && !displayHookAttrs.length && !Object.keys(contentHooks).length) {
             return;
         }
 
@@ -1219,66 +1291,7 @@ const qTranslateKQ = function (pg) {
         languageSwitchInitialized = true;
 		
 		
-		/*	// Oby ten ch** wiedzia³ co robi!...
-		$('form').off('submit.qtranslateSync').on('submit.qtranslateSync', function () {
-		
-			console.log('QTKQ SUBMIT START');
 
-			for (const key in contentHooks) {
-
-				const hook = contentHooks[key];
-
-				if (!hook || !hook.fields || !hook.contentField) {
-					continue;
-				}
-
-				const visualMode = hook.mce && !hook.mce.hidden;
-
-				if (visualMode) {
-					hook.mce.save();
-				}
-
-				const currentValue = hook.contentField.value.trim();
-
-				console.log('HOOK:', key);
-				console.log('hook.lang =', hook.lang);
-				console.log('activeLanguage =', qTranslateConfig.activeLanguage);
-				console.log('currentValue =', currentValue);
-
-				for (const lang in hook.fields) {
-					console.log(
-						'BEFORE FIELD',
-						lang,
-						hook.fields[lang].value
-					);
-				}
-
-				const activeLang = qTranslateConfig.activeLanguage;
-
-			
-			//	if (hook.fields[activeLang]) {
-			//		hook.fields[activeLang].value = currentValue;
-			//	}
-			
-			
-				if (hook.fields[hook.lang]) {
-					hook.fields[hook.lang].value = currentValue;
-				}
-
-				hook.lang = activeLang;
-			
-			
-				for (const lang in hook.fields) {
-					console.log(
-						'AFTER FIELD',
-						lang,
-						hook.fields[lang].value
-					);
-				}
-			}
-
-		});
-		*/
 		
 		
     }
@@ -1307,6 +1320,10 @@ const qTranslateKQ = function (pg) {
             qTranslateConfig.onTabSwitchFunctionsSave = [];
         if (!qTranslateConfig.onTabSwitchFunctionsLoad)
             qTranslateConfig.onTabSwitchFunctionsLoad = [];
+        if (!qTranslateConfig.onCopyContentFromFunctions)
+            qTranslateConfig.onCopyContentFromFunctions = [];
+        if (!qTranslateConfig.onCopyContentFromResultFunctions)
+            qTranslateConfig.onCopyContentFromResultFunctions = [];
 			
 		
 			

@@ -183,7 +183,7 @@ class QTKQ_Admin_Block_Editor {
         wp_register_script(
             'qtkq-block-editor',
             plugins_url( 'dist/block-editor.js', QTRANSLATE_FILE ),
-            array( 'wp-api-fetch', 'wp-data' ),
+            array( 'wp-api-fetch', 'wp-data', 'wp-hooks', 'wp-element', 'wp-rich-text', 'wp-blocks' ),
             QTKQ_VERSION,
             true
         );

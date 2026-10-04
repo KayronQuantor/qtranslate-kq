@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Modified for qTranslate-KQ on 2026-09-15.
+ * Modified for qTranslate-KQ; latest changes 2026-10-05.
  * See MODIFICATIONS.md for the modification history and original-project attribution.
  */
 if ( ! defined( 'ABSPATH' ) ) {
@@ -89,29 +89,8 @@ function qtranxf_decode_json_name_value( $value ): ?array {
  */
 function qtranxf_collect_translations_posted() {
 
-/*
-	// DEBUG
-	error_log('=== SAVE WIDGET DEBUG ===');
-	error_log(print_r($_REQUEST, true));
-	// END DEBUG
-*/
 
-/*	// FIX - WYKLUCZ widget qTranslate (title) z przetwarzania	// STARA WERSJA - NIE DZIA£A
-	if (isset($_POST['widget-qtranslate'])) {
-		return;
-	}
-*/
-
-/*
-  // NIE DOTYKAJ widgetów — bo psuje TITLE	// a to nie pozwala w pe³ni edytowaæ title...
-    if (isset($_POST['action']) && $_POST['action'] === 'save-widget') {
-        return;
-    }
-*/
-
-	// Obs³uga widgetów: NIE blokujemy collect_translations,
-	// ale pozwalamy dzia³aæ tylko jeœli s¹ qtranslate-fields
-
+	// For widget saves, collect translations only when qtranslate-fields are present.
 	if (isset($_POST['action']) && $_POST['action'] === 'save-widget') {
 		if (empty($_REQUEST['qtranslate-fields'])) {
 			return;
@@ -461,8 +440,50 @@ function qtranxf_admin_footer() {
 
     // For Gutenberg, enforce the editor mode to QTKQ_EDITOR_MODE_SINGLE
     $current_screen = get_current_screen();
+
+    // Expose the widgets editor mode determined by WordPress itself. The widgets
+    // screen is a special case: WP_Screen::is_block_editor() is not
+    // sufficient on its own, while wp_use_widgets_block_editor() is the core
+    // decision point for this screen. This is diagnostics only; no widget data
+    // or save behaviour is modified here.
+    $is_widgets_block_editor = false;
+    if ( $current_screen && 'widgets' === $current_screen->id ) {
+        $screen_is_block_editor = method_exists( $current_screen, 'is_block_editor' )
+            ? (bool) $current_screen->is_block_editor()
+            : false;
+        $use_widgets_block_editor = function_exists( 'wp_use_widgets_block_editor' )
+            ? (bool) wp_use_widgets_block_editor()
+            : $screen_is_block_editor;
+
+        $config['widget_environment'] = array(
+            'editorMode'              => $use_widgets_block_editor ? 'block' : 'classic',
+            'screenId'                => $current_screen->id,
+            'wpScreenIsBlockEditor'   => $screen_is_block_editor,
+            'wpUseWidgetsBlockEditor' => $use_widgets_block_editor,
+        );
+
+        $is_widgets_block_editor = $use_widgets_block_editor;
+
+        // Configure the Block Widgets LSB anchor before qTranslateKQ initializes.
+        // setupLanguageSwitch() runs during construction and becomes
+        // final after its first pass, so changing anchors later in page JS is too late.
+        if ( $is_widgets_block_editor && isset( $config['page_config'] ) ) {
+            $config['page_config']['anchors'] = array(
+                'qtkq-block-widgets-lsb' => array(
+                    'jquery' => '.edit-widgets-header',
+                    'where'  => 'after',
+                ),
+            );
+        }
+    }
+
     if ( method_exists( $current_screen, 'is_block_editor' ) && $current_screen->is_block_editor() ) {
-        $config['LSB'] = false;
+        // Other Gutenberg editors keep the established single-language admin UI.
+        // Block Widgets are the deliberate exception because Legacy Widget forms
+        // use qTranslate-KQ's global language switcher.
+        $config['LSB'] = $is_widgets_block_editor
+            ? ( $q_config['editor_mode'] == QTKQ_EDITOR_MODE_LSB )
+            : false;
         $config['RAW'] = false;
     } else {
         $config['LSB'] = $q_config['editor_mode'] == QTKQ_EDITOR_MODE_LSB;
@@ -914,7 +935,4 @@ function qtranxf_admin_load() {
 
     require_once QTRANSLATE_DIR . '/src/admin/block_editor.php';
 
-    // Disable the block editor from managing widgets, including the Gutenberg plugin
-    add_filter( 'gutenberg_use_widgets_block_editor', '__return_false', 99 );
-    add_filter( 'use_widgets_block_editor', '__return_false', 99 );
 }

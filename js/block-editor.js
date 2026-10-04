@@ -6,6 +6,9 @@
  */
 'use strict';
 
+import './block-widgets/legacy-widget-lazy';
+import './block-widgets/native-blocks';
+
 (function () {
     // console.log('QT-KQ API: setup apiFetch');
     wp.apiFetch.use((options, next) => {

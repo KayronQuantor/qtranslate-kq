@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Modified for qTranslate-KQ; latest changes 2026-09-16.
+ * Modified for qTranslate-KQ; latest changes 2026-09-28.
  * See MODIFICATIONS.md for the modification history and original-project attribution.
  */
 if ( ! defined( 'ABSPATH' ) ) {
@@ -874,6 +874,54 @@ function qtranxf_pagenum_link( string $url ): string {
 }
 
 /**
+ * Restore only qTranslate square-bracket language markers escaped by core/code.
+ *
+ * WordPress serializes literal "[" characters inside Code blocks as HTML entities
+ * (for example "&#91;:pl]"). The browser decodes those entities only after the
+ * server-side qTranslate filters have already run, so the multilingual markers
+ * would otherwise reach the frontend as visible code. Decode only complete
+ * qTranslate marker tokens; do not decode arbitrary code-block entities.
+ */
+function qtranxf_restore_core_code_language_markers( string $block_content ): string {
+    $open_bracket  = '(?:&#0*91;|&#x0*5b;|&lbrack;)';
+    $close_bracket = '(?:\]|&#0*93;|&#x0*5d;|&rbrack;)';
+    $lang_code     = QTKQ_LANG_CODE_FORMAT;
+
+    $block_content = preg_replace(
+        '~' . $open_bracket . ':(' . $lang_code . ')' . $close_bracket . '~i',
+        '[:$1]',
+        $block_content
+    );
+
+    return preg_replace(
+        '~' . $open_bracket . ':' . $close_bracket . '~i',
+        '[:]',
+        $block_content
+    );
+}
+
+/**
+ * Translate multilingual core/code content on the frontend before the browser
+ * turns WordPress's escaped opening brackets back into literal qTranslate tags.
+ */
+function qtranxf_render_core_code_block( string $block_content ): string {
+    if (
+        stripos( $block_content, '&#91;:' ) === false &&
+        stripos( $block_content, '&#x5b;:' ) === false &&
+        stripos( $block_content, '&lbrack;:' ) === false
+    ) {
+        return $block_content;
+    }
+
+    $decoded_markers = qtranxf_restore_core_code_language_markers( $block_content );
+    if ( $decoded_markers === $block_content ) {
+        return $block_content;
+    }
+
+    return qtranxf_useCurrentLanguageIfNotFoundShowAvailable( $decoded_markers );
+}
+
+/**
  * @since 3.3.7
  */
 function qtranxf_add_front_filters(): void {
@@ -882,6 +930,7 @@ function qtranxf_add_front_filters(): void {
     add_action( 'wp_head', 'qtranxf_wp_head' );
     add_action( 'wp_head', 'qtranxf_wp_head_meta_generator' );
     add_filter( 'wp_get_nav_menu_items', 'qtranxf_wp_get_nav_menu_items', 20, 3 );
+    add_filter( 'render_block_core/code', 'qtranxf_render_core_code_block' );
     add_filter( 'wp_get_attachment_image_attributes', 'qtranxf_get_attachment_image_attributes', 5, 3 );
     add_filter( 'esc_html', 'qtranxf_esc_html', 0 );
     add_filter( 'the_posts', 'qtranxf_postsFilter', 5, 2 );

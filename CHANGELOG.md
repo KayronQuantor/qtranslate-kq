@@ -1,6 +1,21 @@
 # Changelog
 
-<!-- Modified for qTranslate-KQ; latest changes 2026-09-16. See MODIFICATIONS.md for details and attribution. -->
+<!-- Modified for qTranslate-KQ; latest changes 2026-10-05. See MODIFICATIONS.md for details and attribution. -->
+
+## 4.1.3 - Unreleased
+- fixed front-language persistence so neutral requests no longer overwrite an explicit user language choice in `qtrans_front_language`; the front cookie is written only for an explicit language selection
+- restored qTranslate-KQ's two-stage bootstrap: configuration on `plugins_loaded`, language-dependent runtime on `init`, with canonical redirects deferred to `template_redirect`
+- restored deterministic front-end language priority without hard-coded language codes: explicit request language → remembered client cookie → browser language (when enabled) → configured default
+- restored explicit `?lang=` preference persistence through qTranslate-KQ's existing secure client-cookie writer while retaining the 4.1.2 maintenance removals
+- added Block Widgets compatibility for multilingual Legacy Widgets and an explicit set of native RichText attributes; qTranslate-KQ no longer forces Classic Widgets or Block Widgets and instead follows WordPress's resulting widgets-editor choice
+- improved Legacy Widget previews (language-aware rendering of WordPress-generated Legacy previews): preview HTML is projected to the current qTranslate edit language, qTranslate markers are removed from the displayed preview, preview-only reCAPTCHA scripts that cause irrelevant admin-preview errors are stripped, and complete per-language `srcdoc` documents are cached for live language switching without an extra REST render
+- added a Custom HTML / CodeMirror compatibility patch (workaround for the known WordPress/Gutenberg blank-until-click Legacy Widget bug): a hidden-initialized Custom HTML editor is refreshed and synchronized when revealed without rewriting its content or dirtying the editor; upstream issue: https://github.com/WordPress/gutenberg/issues/33479
+- added lazy hydration for Legacy Widgets (workaround for the known WordPress/Gutenberg Legacy Widget performance cost): collapsed widget areas remain lightweight, an opened area hydrates each Legacy Widget once with one real `/encode`, the first preview reuses that response instead of issuing a separate initial `/render`, and reopening an already hydrated area performs no additional hydration REST work
+- fixed a Legacy preview navigation race by treating the iframe's current `srcdoc` token as authoritative while a new preview document is loading, preventing a stale cached placeholder from replacing a freshly installed real preview
+- preserved WordPress's native real `/encode` → `/render` path for genuine Legacy Widget edits, including Custom HTML edits and normal dirty-state handling
+- limited the Legacy performance patch to `core/legacy-widget` on `wp-admin/widgets.php`; native/new block widgets, unrelated REST traffic, and frontend widget output are not altered, and no global REST throttling is introduced
+- verified the new Legacy Widget path on a 37-widget fixture: with one three-widget area initially open, the observed fresh-screen load fell from roughly 45 s to roughly 7.4 s with 3 real startup `/encode` calls and 0 startup `/render` calls; this is a validation measurement, not a universal performance guarantee
+- the Custom HTML / CodeMirror and Legacy Widget performance patches address upstream WordPress/Gutenberg behavior; they are not fixes for regressions introduced by qTranslate-KQ 4.1.2
 
 ## 4.1.2 - 2026-09-16
 - removed a legacy site-specific PL/EN language-priority override that could cause canonical redirect loops on installations using other language codes

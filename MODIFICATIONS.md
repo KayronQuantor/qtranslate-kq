@@ -4,7 +4,7 @@ This distribution is a modified fork of **qTranslate-XT**, licensed under the **
 
 ## Dated modification notice
 
-The qTranslate-KQ changes represented by this distribution were applied/documented on **2026-09-15**, with the latest maintenance changes applied on **2026-09-16**. The fork changes include renaming and namespacing, compatibility/refactoring work, WordPress compatibility maintenance, and fixes to multilingual handling of classic WordPress widgets.
+The qTranslate-KQ changes represented by this distribution were applied/documented beginning on **2026-09-15**, with the latest maintenance changes applied on **2026-10-05**. Version 4.1.3 remains unreleased at the time of this notice; its publication date will be recorded in the changelog when the release is published. The fork changes include renaming and namespacing, compatibility/refactoring work, WordPress compatibility maintenance, and fixes to multilingual handling of classic WordPress widgets.
 
 The supplied comparison base for this notice is the customized `qtranslate-xt_FIX5` source tree from which qTranslate-KQ was derived. This file documents the qTranslate-KQ fork changes relative to that supplied base; it does not attempt to reconstruct modification dates for changes that already existed in that base before the qTranslate-KQ rename.
 
@@ -15,6 +15,46 @@ The supplied comparison base for this notice is the customized `qtranslate-xt_FI
 - Original author information remains in `qtranslate.php` and the existing project documentation.
 - Historical qTranslate-X / qTranslate-XT references that identify prior projects, contributors, integrations or real upstream URLs are intentionally retained.
 
+## 4.1.3 — Unreleased: controlled runtime and Block Widgets compatibility
+
+Version 4.1.3 builds on the 4.1.2 maintenance baseline. It restores only the selected runtime behaviors that were required for correct language persistence and adds a targeted compatibility layer for the WordPress Block Widgets screen; it does not reintroduce the aggressive caching, request bypasses or site-specific runtime overrides removed in 4.1.2.
+
+### Front-end language persistence and bootstrap
+
+- restore the two-stage bootstrap: configuration on `plugins_loaded`, language-dependent runtime on `init`, and canonical redirects on `template_redirect`;
+- restore deterministic front-end language priority: explicit request language → remembered client cookie → browser language (when enabled) → configured default;
+- persist only an explicit `?lang=` user choice through qTranslate-KQ's existing secure client-cookie path, so neutral/background requests do not overwrite the remembered manual selection;
+- keep the 4.1.2 removals of WP-Optimize-specific overrides, persistent translation-result transients, direct SQL invalidation, hard-coded plugin asset paths, post-object translation caching and broad REST/AJAX translation bypasses.
+
+### Block Widgets compatibility
+
+qTranslate-KQ adds an explicit Block Widgets compatibility path for multilingual Legacy Widgets and selected native RichText attributes. Native support is intentionally enumerated and currently covers `core/paragraph`, `core/heading`, `core/list-item`, `core/preformatted`, `core/verse`, `core/details`, `core/accordion-heading`, `core/file`, `core/pullquote`, `core/quote`, `core/image`, `core/video`, `core/audio`, `core/embed`, `core/gallery`, `core/table`, `core/code`, and `core/button`.
+
+### Legacy Widget previews
+
+Legacy Widget previews remain WordPress-generated preview documents, but qTranslate-KQ projects them to the currently selected qTranslate edit language before display while leaving canonical stored form values unchanged. The displayed preview is marker-free, verified preview-only Contact Form 7 / Google reCAPTCHA scripts are removed to avoid irrelevant admin-preview errors, and complete per-language `srcdoc` documents are cached so visible previews can switch language without a new Legacy REST render.
+
+### Custom HTML / CodeMirror patch — upstream WordPress/Gutenberg defect
+
+This patch addresses a documented WordPress/Gutenberg Legacy Widget bug, not a regression introduced by qTranslate-KQ. WordPress can initialize the Custom HTML CodeMirror editor while its Legacy Widget form is hidden, leaving a correct non-empty editor model with a blank viewport until the user clicks it; the upstream report is https://github.com/WordPress/gutenberg/issues/33479. qTranslate-KQ refreshes and synchronizes only the affected editor when revealed, without rewriting canonical content, generating a user-visible change, dirtying the widget area, or issuing unnecessary Legacy REST requests.
+
+### Lazy Legacy Widget hydration / performance patch — upstream WordPress/Gutenberg cost
+
+This patch likewise targets the WordPress/Gutenberg Legacy Widget compatibility path rather than a qTranslate-KQ 4.1.2 regression. WordPress/Gutenberg maintainers explicitly note the performance penalty of loading Legacy Widget assets in block editors (https://github.com/WordPress/gutenberg/discussions/35159). On `wp-admin/widgets.php`, existing `core/legacy-widget` blocks therefore bootstrap with lightweight placeholder form/preview responses; real hydration occurs only when the owning `core/widget-area` is expanded. Each still-lazy widget performs one real `/encode`, reuses that response's form and first preview, and avoids a separate initial `/render`. Collapsed areas stay lazy, and reopening an already hydrated area performs no second hydration batch.
+
+The first preview is installed only after the returned forms and any required hidden Custom HTML editor state are ready. During a new `iframe.srcdoc` navigation, qTranslate-KQ treats the current `srcdoc` token as authoritative and uses `contentDocument` only as a fallback, preventing the previous preview document from restoring a stale placeholder over a newly installed real preview. Genuine user edits continue through WordPress's native real `/encode` → `/render` path.
+
+The performance patch is deliberately limited to `core/legacy-widget` on `widgets.php`. It does not modify native/new block widgets, unrelated REST traffic or frontend Legacy Widget output, and it does not introduce global REST throttling.
+
+### Widgets editor mode
+
+The obsolete fork-level filters that forced `gutenberg_use_widgets_block_editor` and `use_widgets_block_editor` to `false` are removed. qTranslate-KQ no longer chooses Classic Widgets or Block Widgets for the site; it follows WordPress's resulting widgets-editor decision, including any external site/plugin policy.
+
+### Validation scope
+
+In the 37-Legacy-widget validation fixture, the previous native initial lifecycle produced one Legacy `/encode` plus one `/render` per widget and an observed end-to-end load of roughly 45 seconds. With the 4.1.3 lazy path and one three-widget area initially open, the measured fresh-screen load was roughly 7.4 seconds with 3 real startup `/encode` calls and 0 startup `/render` calls. This is a fixture measurement rather than a universal performance guarantee.
+
+The compatibility patches above address WordPress/Gutenberg Legacy Widget behavior and known upstream defects/limitations; they are not fixes for regressions introduced by qTranslate-KQ 4.1.2.
 
 ## 2026-09-16 — 4.1.2 maintenance changes
 
@@ -44,6 +84,9 @@ Files changed for this maintenance release include `qtranslate.php`, `src/init.p
 - `js/acf/qtranslatekq.js`
 - `js/acf/switch.js`
 - `js/block-editor.js`
+- `js/block-widgets/legacy-widget-lazy.js`
+- `js/block-widgets/native-blocks.js`
+- `js/block-widgets/native-rich-text.js`
 - `js/core/index.js`
 - `js/core/qtranslatekq.js`
 - `js/core/store.js`
@@ -52,6 +95,7 @@ Files changed for this maintenance release include `qtranslate.php`, `src/init.p
 - `js/pages/edit-tags.js`
 - `js/pages/nav-menus.js`
 - `js/pages/post.js`
+- `js/pages/widget-environment.js`
 - `js/pages/widgets.js`
 - `lang/qtranslate-fr_FR.mo`
 - `lang/qtranslate-hu_HU.mo`
@@ -147,7 +191,7 @@ The `.po` files were reconstructed from the distributed `.mo` catalogs on **2026
 
 ## Inline-notice policy
 
-Source/text files that support comments safely carry an inline qTranslate-KQ modification notice and refer to this document. Files changed again for 4.1.2 identify **2026-09-16** as their latest change date.
+Source/text files that support comments safely carry an inline qTranslate-KQ modification notice identifying the latest date on which that file was modified by the fork and referring to this document. The dated notices in this file record the release-level modification history; individual source comments are not intended to duplicate the full per-release changelog.
 
 The following changed machine-readable or binary files are deliberately **not** given inline comments because doing so would invalidate the file format or risk changing runtime behavior. Their dated modification notice is recorded here by exact path instead:
 

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Modified for qTranslate-KQ; latest changes 2026-09-16.
+ * Modified for qTranslate-KQ; latest changes 2026-09-25.
  * See MODIFICATIONS.md for the modification history and original-project attribution.
  */
 function qtranxf_detect_language( array &$url_info ) {
@@ -88,6 +88,18 @@ function qtranxf_detect_language( array &$url_info ) {
 
     $url_info['language'] = $lang;
 
+    /*
+     * qTranslate-KQ front-end priority:
+     * 1. explicit language in the request (?lang=... or configured URL mode),
+     * 2. remembered client cookie,
+     * 3. browser language (when enabled),
+     * 4. configured default language.
+     *
+     * Use configured/enabled languages rather than a hard-coded PL/EN list.
+     * REST, GraphQL and AJAX keep their existing deterministic/request-specific path.
+     */
+    qtranxf_apply_front_language_priority( $url_info );
+
     // REST and GraphQL API calls should be deterministic (stateless), no special language detection e.g. based on cookie
     $url_info['set_cookie'] = ! ( qtranxf_is_ajax_request() || qtranxf_is_rest_request_expected() || qtranxf_is_graphql_request_expected() );
 
@@ -98,11 +110,119 @@ function qtranxf_detect_language( array &$url_info ) {
 	$url_info = apply_filters( 'qtranslate_detect_language', $url_info );
 
     $lang = $url_info['language'];
+
+    /*
+     * Persist only an explicit front-end language selection.
+     *
+     * Manual ?lang= / language-in-URL selection is authoritative and is saved
+     * to qtrans_front_language. Neutral requests that merely resolve through an
+     * existing cookie, browser language or the configured default MUST NOT
+     * rewrite the front cookie. This prevents parallel/background/404 requests
+     * from racing with and overwriting a user's explicit language choice.
+     *
+     * The admin-language cookie keeps its existing behaviour.
+     */
     if ( $url_info['set_cookie'] ) {
-        qtranxf_set_language_cookie( $lang );
+        if ( is_admin() ) {
+            qtranxf_set_language_cookie( $lang );
+        } elseif ( ! $q_config['disable_client_cookies']
+                   && ! empty( $url_info['front_language_explicit'] )
+        ) {
+            qtranxf_setcookie_language( $lang, QTKQ_COOKIE_NAME_FRONT, COOKIEPATH );
+            // Keep downstream code in the same request consistent with Set-Cookie.
+            $_COOKIE[ QTKQ_COOKIE_NAME_FRONT ] = $lang;
+            $url_info['cookie_lang_front']     = $lang;
+            $url_info['lang_cookie_front']     = $lang;
+        }
     }
 
     return $lang;
+}
+
+/**
+ * Apply qTranslate-KQ's explicit front-end language priority without hard-coding
+ * particular language codes.
+ *
+ * @param array $url_info Parsed request information.
+ *
+ * @return void
+ */
+function qtranxf_apply_front_language_priority( array &$url_info ): void {
+    global $q_config;
+
+    if ( empty( $url_info['doing_front_end'] )
+         || qtranxf_is_ajax_request()
+         || qtranxf_is_rest_request_expected()
+         || qtranxf_is_graphql_request_expected()
+    ) {
+        return;
+    }
+
+    $lang          = false;
+    $case_redirect = null;
+
+    // 1a. Explicit ?lang= selection. Read the actual request first.
+    //
+    // 4.1.1 did this directly from $_GET. Do not depend on lang_query_get being
+    // populated by an earlier parser: the manual selector must be authoritative.
+    if ( isset( $_GET['lang'] ) && is_scalar( $_GET['lang'] ) ) {
+        $requested_lang = sanitize_key( wp_unslash( (string) $_GET['lang'] ) );
+        if ( $requested_lang !== '' ) {
+            $lang = qtranxf_resolveLangCase( $requested_lang, $case_redirect );
+            if ( $lang ) {
+                $url_info['lang_query_get']         = $lang;
+                $url_info['front_language_explicit'] = true;
+                $url_info['front_language_source']   = 'query';
+            }
+        }
+    }
+
+    // Compatibility fallback when another URL parser has already resolved it.
+    if ( ! $lang && ! empty( $url_info['lang_query_get'] ) ) {
+        $lang = qtranxf_resolveLangCase( $url_info['lang_query_get'], $case_redirect );
+        if ( $lang ) {
+            $url_info['front_language_explicit'] = true;
+            $url_info['front_language_source']   = 'query';
+        }
+    }
+
+    // 1b. Explicit language from path/domain URL modes.
+    if ( ! $lang && ! empty( $url_info['lang_url'] ) ) {
+        $lang = qtranxf_resolveLangCase( $url_info['lang_url'], $case_redirect );
+        if ( $lang ) {
+            $url_info['front_language_explicit'] = true;
+            $url_info['front_language_source']   = 'url';
+        }
+    }
+
+    // 2. Previously remembered front-end choice.
+    if ( ! $lang
+         && ! $q_config['disable_client_cookies']
+         && isset( $_COOKIE[ QTKQ_COOKIE_NAME_FRONT ] )
+    ) {
+        $lang = qtranxf_resolveLangCase( $_COOKIE[ QTKQ_COOKIE_NAME_FRONT ], $case_redirect );
+        if ( $lang ) {
+            $url_info['lang_cookie_front']   = $lang;
+            $url_info['front_language_source'] = 'cookie';
+        }
+    }
+
+    // 3. Browser language, but only when the normal qTranslate detection path
+    // has actually supplied one. This preserves its referrer/config semantics.
+    if ( ! $lang && ! empty( $url_info['lang_browser'] ) ) {
+        $lang = qtranxf_resolveLangCase( $url_info['lang_browser'], $case_redirect );
+        if ( $lang ) {
+            $url_info['front_language_source'] = 'browser';
+        }
+    }
+
+    // 4. Configured default.
+    if ( ! $lang ) {
+        $lang = $q_config['default_language'];
+        $url_info['front_language_source'] = 'default';
+    }
+
+    $url_info['language'] = $lang;
 }
 
 function qtranxf_resolveLangCase( string $lang, ?bool &$caseredirect ): string {

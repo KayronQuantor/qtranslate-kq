@@ -1,3 +1,4 @@
+<!-- Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. -->
 ---
 name: Bug report
 about: Help us to understand and reproduce the issue
@@ -6,7 +7,6 @@ labels: maybe bug
 assignees: ''
 
 ---
-<!-- Modified for qTranslate-KQ on 2026-09-15. See MODIFICATIONS.md for details and attribution. -->
 
 **Describe the bug**
 A clear and concise description of what the bug is.

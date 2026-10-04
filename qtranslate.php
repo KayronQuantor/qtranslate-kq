@@ -1,17 +1,17 @@
 <?php
 
 /*
- * Modified for qTranslate-KQ; latest changes 2026-09-16.
+ * Modified for qTranslate-KQ; latest changes 2026-10-05.
  * See MODIFICATIONS.md for the modification history and original-project attribution.
  */
 /**
  * Plugin Name: qTranslate-KQ
  * Plugin URI: https://github.com/KayronQuantor/qtranslate-kq
  * Description: Maintained fork of qTranslate-XT for legacy multilingual sites using the qTranslate content format.
- * Version: 4.1.2
+ * Version: 4.1.3
  * Requires at least: 5.0
  * Requires PHP: 7.4
- * Tested up to: 6.5
+ * Tested up to: 7.1
  * Author: qTranslate Community + Contributors
  * Author URI: https://github.com/qtranslate/
  * Tags: multilingual, translation, qtranslate, legacy
@@ -24,8 +24,8 @@
  * Fork notice:
  * This version contains maintenance, compatibility and multilingual widget fixes
  * beyond the original qTranslate-XT project.
- * qTranslate-KQ fork modifications are explicitly documented as of 2026-09-15.
- * See MODIFICATIONS.md for dated modification notices and the affected-file list.
+ * qTranslate-KQ fork modifications are documented in MODIFICATIONS.md.
+ * See that file for modification notices, release-level history and the affected-file list.
  */
 /*
 	Copyright 2019-2023 qTranslate Community
@@ -67,7 +67,7 @@ if ( ! function_exists( 'add_filter' ) ) {
  * The constants defined below are designed as interface for other plugin integration.
  * @see https://github.com/qtranslate/qtranslate-xt/wiki/Integration-Guide/
  */
-const QTKQ_VERSION = '4.1.2';
+const QTKQ_VERSION = '4.1.3';
 
 if ( ! defined( 'QTRANSLATE_FILE' ) ) {
     define( 'QTRANSLATE_FILE', __FILE__ );
@@ -75,7 +75,10 @@ if ( ! defined( 'QTRANSLATE_FILE' ) ) {
 }
 
 require_once QTRANSLATE_DIR . '/src/init.php';
-add_action( 'plugins_loaded', 'qtranxf_init_language', 2 ); // User is not authenticated yet, high priority needed.
+
+// Two-stage bootstrap: load configuration early, finish language/runtime setup on init.
+add_action( 'plugins_loaded', 'qtranxf_init_language_early', 2 );
+add_action( 'init', 'qtranxf_init_language_late', 0 );
 
 if ( is_admin() || defined( 'WP_CLI' ) ) {
     require_once QTRANSLATE_DIR . '/src/admin/activation_hook.php';
